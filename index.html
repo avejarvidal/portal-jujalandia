@@ -184,7 +184,7 @@
         <div style="max-width: 1000px; margin: 0 auto; background: #FFC93C; border: 5px solid #2B1B4D; border-radius: 24px; padding: 40px; box-shadow: 10px 10px 0 #2B1B4D; display: flex; gap: 30px; align-items: center; flex-wrap: wrap;">
           <div style="flex: 1; min-width: 260px;">
             <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 30px; margin-bottom: 8px;">Hacete ciudadano en 30 segundos</div>
-            <div style="font-size: 15px; font-weight: 700; line-height: 1.6;">Subí (o sacate) una foto, poné tu nombre y descargá tu pasaporte oficial. El Consejo Moral aprueba todo por defecto.</div>
+            <div style="font-size: 15px; font-weight: 700; line-height: 1.6;">Elegí un avatar, generá tu apodo oficial y descargá tu pasaporte. Sin fotos ni datos reales — el Consejo Moral aprueba todo por defecto.</div>
           </div>
           <button onClick="{{ goInmigracion }}" style="background: #2B1B4D; color: #FFC93C; border: 4px solid #2B1B4D; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 19px; padding: 18px 32px; border-radius: 14px; cursor: pointer; box-shadow: 6px 6px 0 #FF5A5F;">Solicitar ciudadanía 🛂</button>
         </div>
@@ -540,39 +540,35 @@
       <div style="max-width: 1000px; margin: 0 auto;">
         <div style="display: inline-block; background: #14C8B8; color: #2B1B4D; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 12px; padding: 6px 14px; border-radius: 999px; margin-bottom: 12px;">INMIGRACIÓN</div>
         <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 40px; margin-bottom: 10px;">Solicitá tu ciudadanía</div>
-        <p style="font-size: 16px; line-height: 1.7; font-weight: 600; opacity: 0.85; margin-bottom: 30px;">Poné tu nombre, subí o sacate una foto, y descargá tu pasaporte oficial. Aprobación tácita del Consejo Moral incluida.</p>
+        <p style="font-size: 16px; line-height: 1.7; font-weight: 600; opacity: 0.85; margin-bottom: 30px;">Elegí un avatar oficial y generá tu apodo de ciudadano para descargar tu pasaporte. Nada de fotos ni datos reales: acá el Consejo Moral prefiere el misterio.</p>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 34px;">
           <div style="background: #FFF6E9; border: 4px solid #2B1B4D; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #14C8B8;">
-            <label style="display: block; font-weight: 800; font-family: 'Baloo 2', sans-serif; font-size: 15px; margin-bottom: 6px;">Nombre completo</label>
-            <input type="text" value="{{ state.name }}" onChange="{{ handleName }}" placeholder="Ej. Juan Pérez" style="width: 100%; box-sizing: border-box; padding: 12px 14px; border-radius: 10px; border: 3px solid #2B1B4D; font-size: 15px; font-family: 'Nunito', sans-serif; font-weight: 700; margin-bottom: 20px;"/>
-
-            <label style="display: block; font-weight: 800; font-family: 'Baloo 2', sans-serif; font-size: 15px; margin-bottom: 8px;">Foto de ciudadanía</label>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px;">
-              <button onClick="{{ openCamera }}" style="background: #FFC93C; color: #2B1B4D; border: 3px solid #2B1B4D; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 11px 16px; border-radius: 10px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">📷 Tomar foto</button>
-              <button onClick="{{ pickFile }}" style="background: #FFF6E9; color: #2B1B4D; border: 3px solid #2B1B4D; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 11px 16px; border-radius: 10px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">📁 Subir archivo</button>
+            <label style="display: block; font-weight: 800; font-family: 'Baloo 2', sans-serif; font-size: 15px; margin-bottom: 10px;">Elegí tu avatar oficial</label>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 22px;">
+              <sc-for list="{{ avatarOptions }}" as="opt" hint-placeholder-count="8">
+                <div onClick="{{ opt.onClick }}" style="{{ opt.style }}">{{ opt.emoji }}</div>
+              </sc-for>
             </div>
-            <input ref="{{ fileInputRef }}" type="file" accept="image/*" onChange="{{ handlePhoto }}" style="display: none;"/>
 
-            <sc-if value="{{ hasCameraError }}" hint-placeholder-val="{{ false }}">
-              <div style="background: #FF5A5F; color: #FFF6E9; border-radius: 12px; padding: 14px 16px; font-size: 13px; font-weight: 700; line-height: 1.5; margin-bottom: 14px;">
-                {{ cameraError }}
-                <div style="margin-top: 10px;">
-                  <button onClick="{{ openInNewTab }}" style="background: #FFF6E9; color: #2B1B4D; border: 3px solid #2B1B4D; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 13px; padding: 8px 14px; border-radius: 9px; cursor: pointer;">Abrir en pestaña nueva ↗</button>
-                </div>
-              </div>
-            </sc-if>
+            <label style="display: block; font-weight: 800; font-family: 'Baloo 2', sans-serif; font-size: 15px; margin-bottom: 10px;">¿Cómo te identificás?</label>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
+              <sc-for list="{{ genderOptions }}" as="opt" hint-placeholder-count="3">
+                <div onClick="{{ opt.onClick }}" style="{{ opt.style }}">{{ opt.label }}</div>
+              </sc-for>
+            </div>
 
-            <sc-if value="{{ hasPhoto }}" hint-placeholder-val="{{ false }}">
-              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 18px;">
-                <img ref="{{ photoImgRef }}" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="foto elegida" style="width: 52px; height: 52px; border-radius: 10px; object-fit: cover; border: 3px solid #2B1B4D;"/>
-                <span style="font-size: 13px; font-weight: 800; opacity: 0.75;">Foto lista ✓</span>
+            <button onClick="{{ generateNickname }}" style="background: #FFC93C; color: #2B1B4D; border: 3px solid #2B1B4D; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 11px 16px; border-radius: 10px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D; margin-bottom: 14px;">🎲 Generar apodo oficial</button>
+
+            <sc-if value="{{ hasNickname }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 18px; background: #14C8B833; border-radius: 10px; padding: 12px 14px; font-size: 13px; font-weight: 700; line-height: 1.5;">
+                Tu apodo oficial: <strong>{{ nickname }}</strong>
               </div>
             </sc-if>
 
             <button onClick="{{ generatePassport }}" style="background: #14C8B8; color: #2B1B4D; border: 4px solid #2B1B4D; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 17px; padding: 15px 28px; border-radius: 12px; cursor: pointer; width: 100%; box-shadow: 6px 6px 0 #2B1B4D;">Generar pasaporte 🛂</button>
             <sc-if value="{{ showError }}">
-              <div style="color: #FF5A5F; font-weight: 800; font-size: 14px; margin-top: 12px;">Completá tu nombre y agregá una foto antes de generar el pasaporte.</div>
+              <div style="color: #FF5A5F; font-weight: 800; font-size: 14px; margin-top: 12px;">Elegí un avatar y generá tu apodo antes de crear el pasaporte.</div>
             </sc-if>
           </div>
 
@@ -604,19 +600,6 @@
       </div>
 
       <canvas ref="{{ canvasRef }}" width="900" height="560" style="display: none;"></canvas>
-
-      <sc-if value="{{ cameraOpen }}" hint-placeholder-val="{{ false }}">
-        <div style="position: fixed; inset: 0; background: #2B1B4Dee; display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px;">
-          <div style="background: #FFF6E9; border: 5px solid #2B1B4D; border-radius: 22px; padding: 24px; max-width: 480px; width: 100%; box-shadow: 10px 10px 0 #FF5A5F;">
-            <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 22px; margin-bottom: 14px;">📷 Sonreí para Jujalandia</div>
-            <video ref="{{ videoRef }}" autoPlay="{{ true }}" muted="{{ true }}" playsInline="{{ true }}" style="width: 100%; border-radius: 12px; border: 4px solid #2B1B4D; background: #000; margin-bottom: 16px;"></video>
-            <div style="display: flex; gap: 12px;">
-              <button onClick="{{ capturePhoto }}" style="flex: 1; background: #14C8B8; color: #2B1B4D; border: 4px solid #2B1B4D; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 16px; padding: 13px; border-radius: 11px; cursor: pointer;">Capturar</button>
-              <button onClick="{{ closeCamera }}" style="flex: 1; background: #FFF6E9; color: #2B1B4D; border: 4px solid #2B1B4D; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 16px; padding: 13px; border-radius: 11px; cursor: pointer;">Cancelar</button>
-            </div>
-          </div>
-        </div>
-      </sc-if>
     </div>
   </sc-if>
 
@@ -641,120 +624,62 @@
 
 </x-dc>
 <script type="text/x-dc" data-dc-script>
+const JJ_AVATARS = ['🍅', '🐾', '⭐', '📦', '🌻', '🦸', '🥷', '🎩'];
+const JJ_GENDERS = [
+  { key: 'nino', label: 'Niño' },
+  { key: 'nina', label: 'Niña' },
+  { key: 'sorpresa', label: 'Sorpresa' }
+];
+const JJ_ADJECTIVES = ['Valiente', 'Ilustre', 'Estelar', 'Radiante', 'Feroz', 'Increíble', 'Brillante', 'Gigante'];
+const JJ_TITLES = {
+  nino: ['Guardián', 'Capitán', 'Barón', 'Duque', 'Campeón', 'Comandante'],
+  nina: ['Guardiana', 'Capitana', 'Baronesa', 'Duquesa', 'Campeona', 'Comandante'],
+  sorpresa: ['Astro', 'Ícono', 'Fenómeno', 'Prodigio', 'Comandante', 'Elite']
+};
+const JJ_SUFFIXES = ['del Tomate Sagrado', 'de los Valles del Norte', 'de la Gran Caja', 'de Jujavisión', 'del Consejo Moral', 'de la Cosecha Dorada', 'de Nueva Juja'];
+
 class Component extends DCLogic {
   state = {
     page: 'hero',
-    name: '',
-    photoDataUrl: null,
+    avatar: null,
+    gender: null,
+    nickname: '',
     passportUrl: null,
-    showError: false,
-    cameraOpen: false,
-    cameraError: null
+    showError: false
   };
 
   constructor(props) {
     super(props);
     this.canvasRef = React.createRef();
-    this.videoRef = React.createRef();
-    this.photoImgRef = React.createRef();
     this.passportImgRef = React.createRef();
     this.passportLinkRef = React.createRef();
-    this.fileInputRef = React.createRef();
-    this.stream = null;
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.photoDataUrl !== this.state.photoDataUrl && this.photoImgRef.current && this.state.photoDataUrl) {
-      this.photoImgRef.current.src = this.state.photoDataUrl;
-    }
     if (prevState.passportUrl !== this.state.passportUrl && this.state.passportUrl) {
       if (this.passportImgRef.current) this.passportImgRef.current.src = this.state.passportUrl;
       if (this.passportLinkRef.current) this.passportLinkRef.current.href = this.state.passportUrl;
     }
-    if (this.state.cameraOpen && this.videoRef.current && this.stream && this.videoRef.current.srcObject !== this.stream) {
-      this.videoRef.current.srcObject = this.stream;
-      const p = this.videoRef.current.play();
-      if (p && p.catch) p.catch(() => {});
-    }
   }
-
-  componentWillUnmount() { this.stopStream(); }
 
   setPage = (p) => {
     this.setState({ page: p });
     if (typeof window !== 'undefined') window.scrollTo(0, 0);
   };
 
-  handleName = (e) => this.setState({ name: e.target.value, showError: false });
+  pickAvatar = (a) => this.setState({ avatar: a, showError: false });
 
-  pickFile = () => { if (this.fileInputRef.current) this.fileInputRef.current.click(); };
+  pickGender = (g) => this.setState({ gender: g, showError: false });
 
-  handlePhoto = (e) => {
-    const file = e.target.files && e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => this.setState({ photoDataUrl: reader.result, showError: false });
-    reader.readAsDataURL(file);
+  generateNickname = () => {
+    const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    const titles = JJ_TITLES[this.state.gender] || JJ_TITLES.sorpresa;
+    const nickname = pick(titles) + ' ' + pick(JJ_ADJECTIVES) + ' ' + pick(JJ_SUFFIXES);
+    this.setState({ nickname, showError: false });
   };
 
-  openInNewTab = () => {
-    if (typeof window !== 'undefined') window.open(window.location.href, '_blank');
-  };
-
-  openCamera = async () => {
-    const md = navigator.mediaDevices;
-    if (!md || !md.getUserMedia) {
-      this.setState({ cameraError: 'Esta vista no permite acceso a la cámara. Abrila en una pestaña propia y volvé a intentar.' });
-      return;
-    }
-    // open the modal first so the <video> exists when the stream arrives
-    this.setState({ cameraOpen: true, cameraError: null });
-    try {
-      this.stream = await md.getUserMedia({ video: { facingMode: 'user' }, audio: false });
-      if (this.videoRef.current) {
-        this.videoRef.current.srcObject = this.stream;
-        const p = this.videoRef.current.play();
-        if (p && p.catch) p.catch(() => {});
-      }
-      this.forceUpdate();
-    } catch (e) {
-      const msg = e && e.name === 'NotAllowedError'
-        ? 'El navegador bloqueó la cámara en esta vista. Abrí la página en una pestaña propia y aceptá el permiso.'
-        : 'No se pudo abrir la cámara (' + (e && e.name ? e.name : 'error') + '). Usá "Subir archivo" mientras tanto.';
-      this.setState({ cameraOpen: false, cameraError: msg });
-    }
-  };
-
-  stopStream = () => {
-    if (this.stream) this.stream.getTracks().forEach((t) => t.stop());
-    this.stream = null;
-  };
-
-  closeCamera = () => {
-    this.stopStream();
-    this.setState({ cameraOpen: false });
-  };
-
-  capturePhoto = () => {
-    const video = this.videoRef.current;
-    if (!video || !video.videoWidth) return;
-    const c = document.createElement('canvas');
-    c.width = video.videoWidth;
-    c.height = video.videoHeight;
-    c.getContext('2d').drawImage(video, 0, 0, c.width, c.height);
-    this.setState({ photoDataUrl: c.toDataURL('image/png'), showError: false });
-    this.closeCamera();
-  };
-
-  loadImage = (src) => new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => resolve(img);
-    img.onerror = reject;
-    img.src = src;
-  });
-
-  generatePassport = async () => {
-    if (!this.state.name.trim() || !this.state.photoDataUrl) {
+  generatePassport = () => {
+    if (!this.state.avatar || !this.state.nickname) {
       this.setState({ showError: true });
       return;
     }
@@ -811,24 +736,25 @@ class Component extends DCLogic {
     ctx.fillText('PASAPORTE OFICIAL DE CIUDADANÍA', card.x + 24, 74);
 
     const px = card.x + 30, py = 130, pw = 210, ph = 248;
-    try {
-      const photo = await this.loadImage(this.state.photoDataUrl);
-      ctx.save();
-      const cx = px + pw / 2, cy = py + ph / 2;
-      ctx.translate(cx, cy);
-      ctx.rotate(-0.035);
-      ctx.translate(-cx, -cy);
-      ctx.fillStyle = '#FFF6E9';
-      ctx.fillRect(px - 8, py - 8, pw + 16, ph + 16);
-      ctx.lineWidth = 6;
-      ctx.strokeStyle = '#FF5A5F';
-      ctx.strokeRect(px - 8, py - 8, pw + 16, ph + 16);
-      const scale = Math.max(pw / photo.width, ph / photo.height);
-      const sw = pw / scale, sh = ph / scale;
-      const sx = (photo.width - sw) / 2, sy = (photo.height - sh) / 2;
-      ctx.drawImage(photo, sx, sy, sw, sh, px, py, pw, ph);
-      ctx.restore();
-    } catch (e) {}
+    ctx.save();
+    const cx = px + pw / 2, cy = py + ph / 2;
+    ctx.translate(cx, cy);
+    ctx.rotate(-0.035);
+    ctx.translate(-cx, -cy);
+    ctx.fillStyle = '#FFF6E9';
+    ctx.fillRect(px - 8, py - 8, pw + 16, ph + 16);
+    ctx.lineWidth = 6;
+    ctx.strokeStyle = '#FF5A5F';
+    ctx.strokeRect(px - 8, py - 8, pw + 16, ph + 16);
+    ctx.fillStyle = '#FFC93C40';
+    ctx.fillRect(px, py, pw, ph);
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = '150px sans-serif';
+    ctx.fillText(this.state.avatar, px + pw / 2, py + ph / 2 + 8);
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+    ctx.restore();
 
     ctx.save();
     ctx.translate(px + pw - 16, py + ph - 6);
@@ -849,11 +775,18 @@ class Component extends DCLogic {
 
     const citizenId = Math.floor(100000 + Math.random() * 900000);
     const tx = px + pw + 42;
+    const maxLabelWidth = card.x + card.w - 20 - tx;
     ctx.fillStyle = '#2B1B4D';
     ctx.font = 'bold 13px "Nunito", sans-serif';
-    ctx.fillText('NOMBRE', tx, 148);
-    ctx.font = 'bold 25px "Baloo 2", sans-serif';
-    ctx.fillText(this.state.name.toUpperCase(), tx, 178);
+    ctx.fillText('APODO OFICIAL', tx, 148);
+    const nickText = this.state.nickname.toUpperCase();
+    let nickSize = 22;
+    ctx.font = 'bold ' + nickSize + 'px "Baloo 2", sans-serif';
+    while (ctx.measureText(nickText).width > maxLabelWidth && nickSize > 12) {
+      nickSize -= 1;
+      ctx.font = 'bold ' + nickSize + 'px "Baloo 2", sans-serif';
+    }
+    ctx.fillText(nickText, tx, 178);
 
     ctx.font = 'bold 13px "Nunito", sans-serif';
     ctx.fillText('N° DE CIUDADANO', tx, 220);
@@ -871,7 +804,8 @@ class Component extends DCLogic {
     ctx.fillText('ESTATUS', tx, 356);
     ctx.fillStyle = '#FF5A5F';
     ctx.font = 'bold 21px "Baloo 2", sans-serif';
-    ctx.fillText('Ciudadano Pleno 🌟', tx, 382);
+    const statusLabel = this.state.gender === 'nina' ? 'Ciudadana Plena 🌟' : this.state.gender === 'nino' ? 'Ciudadano Pleno 🌟' : 'Ciudadanía Plena 🌟';
+    ctx.fillText(statusLabel, tx, 382);
 
     drawStar(card.x + card.w - 52, 302, 12, '#FFC93C');
     drawStar(card.x + card.w - 30, 342, 8, '#14C8B8');
@@ -919,6 +853,41 @@ class Component extends DCLogic {
       }
     }));
 
+    const avatarOptions = JJ_AVATARS.map((a) => ({
+      emoji: a,
+      onClick: () => this.pickAvatar(a),
+      style: {
+        cursor: 'pointer',
+        fontSize: '28px',
+        width: '52px',
+        height: '52px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: '12px',
+        border: this.state.avatar === a ? '3px solid #2B1B4D' : '3px solid #2B1B4D33',
+        background: this.state.avatar === a ? '#FFC93C' : '#FFF6E9',
+        boxShadow: this.state.avatar === a ? '3px 3px 0 #2B1B4D' : 'none'
+      }
+    }));
+
+    const genderOptions = JJ_GENDERS.map((g) => ({
+      key: g.key,
+      label: g.label,
+      onClick: () => this.pickGender(g.key),
+      style: {
+        cursor: 'pointer',
+        padding: '10px 16px',
+        borderRadius: '10px',
+        fontFamily: "'Baloo 2', sans-serif",
+        fontWeight: 800,
+        fontSize: '14px',
+        border: this.state.gender === g.key ? '3px solid #2B1B4D' : '3px solid #2B1B4D33',
+        background: this.state.gender === g.key ? '#14C8B8' : 'transparent',
+        color: '#2B1B4D'
+      }
+    }));
+
     return {
       navItems,
       state: this.state,
@@ -934,27 +903,18 @@ class Component extends DCLogic {
       goHero: () => this.setPage('hero'),
       goInmigracion: () => this.setPage('inmigracion'),
       goTurismo: () => this.setPage('turismo'),
-      handleName: this.handleName,
-      handlePhoto: this.handlePhoto,
-      pickFile: this.pickFile,
-      fileInputRef: this.fileInputRef,
+      avatarOptions,
+      genderOptions,
+      generateNickname: this.generateNickname,
+      nickname: this.state.nickname,
+      hasNickname: !!this.state.nickname,
       generatePassport: this.generatePassport,
       canvasRef: this.canvasRef,
       showError: this.state.showError,
       hasPassport: !!this.state.passportUrl,
       noPassportYet: !this.state.passportUrl,
       passportImgRef: this.passportImgRef,
-      passportLinkRef: this.passportLinkRef,
-      cameraOpen: this.state.cameraOpen,
-      hasCameraError: !!this.state.cameraError,
-      cameraError: this.state.cameraError,
-      videoRef: this.videoRef,
-      openCamera: this.openCamera,
-      closeCamera: this.closeCamera,
-      capturePhoto: this.capturePhoto,
-      openInNewTab: this.openInNewTab,
-      hasPhoto: !!this.state.photoDataUrl,
-      photoImgRef: this.photoImgRef
+      passportLinkRef: this.passportLinkRef
     };
   }
 }
