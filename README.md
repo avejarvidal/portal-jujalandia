@@ -13,7 +13,17 @@ Abrí `index.html` en un navegador, o serví la carpeta con cualquier servidor e
 - **Inmigración** — elegís un avatar y generás un apodo oficial (sin fotos ni nombres reales) para descargar un pasaporte generado en `<canvas>`. El pasaporte lleva el número de ciudadano embebido en el propio PNG (metadato `tEXt`), sin servidor.
 - **Cómics** — biblioteca de historietas con lector de páginas (parte del "Centro Cultural" de la Plaza).
 - **Juegos** — "Atrapá el Tomate" y "Memoria de Jujalandia". Requieren subir el archivo del pasaporte: el sitio lee el número de ciudadano del PNG y guarda el mejor puntaje por ciudadano en el navegador.
-- **La Plaza de Jujalandia** (dentro de Turismo) — recorrido 3D inspirado en ["La Plaza"](https://es.wikipedia.org/wiki/Enlaces_(Chile)) (Proyecto Enlaces, Mineduc Chile, años 90): un Kiosco, un Centro Cultural, un Correo y un Museo que llevan a distintas secciones del sitio. También pide el pasaporte.
+- **La Plaza de Jujalandia** (dentro de Turismo) — mundo 3D recorrible en primera persona, inspirado en ["La Plaza"](https://es.wikipedia.org/wiki/Enlaces_(Chile)) (Proyecto Enlaces, Mineduc Chile, años 90): un Kiosco, un Centro Cultural, un Correo y un Museo que llevan a distintas secciones del sitio. También pide el pasaporte.
+
+### El motor 3D
+
+La Plaza no usa ninguna librería 3D: es un motor propio de ~200 líneas construido sobre transformaciones CSS 3D.
+
+- La cámara se simula aplicando la transformación inversa al mundo (`translateZ(focal) · rotateX(-pitch) · rotateY(-yaw) · translate3d(-x, -y, -z)`).
+- Los edificios son cajas reales de 5 caras, con brillo distinto por orientación para dar volumen.
+- Los sprites (árboles, mascotas, globos) se contra-rotan cada frame para encarar siempre a la cámara.
+- El bucle corre en `requestAnimationFrame` y escribe directo en el DOM, **fuera del estado de React**, para no disparar un re-render por frame.
+- Controles: `W A S D` / flechas para caminar y girar, `Q`/`E` para desplazarse de costado, `Shift` para correr, `Enter` para entrar. También se puede arrastrar el mouse para mirar y usar los botones en pantalla.
 
 ## Administrar contenido (ticker y cómics)
 

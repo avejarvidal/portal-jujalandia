@@ -506,7 +506,7 @@
 
         <div style="margin-top: 44px;">
           <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 26px; margin-bottom: 6px;">🏛️ La Plaza de Jujalandia</div>
-          <div style="font-size: 14px; opacity: 0.75; margin-bottom: 16px; font-weight: 600;">Un recorrido 3D inspirado en "La Plaza" (Enlaces, años 90): elegí un edificio para entrar a esa parte del país.</div>
+          <div style="font-size: 14px; opacity: 0.75; margin-bottom: 16px; font-weight: 600;">Un mundo 3D recorrible en primera persona, inspirado en "La Plaza" (Enlaces, años 90). Caminá hasta un edificio y entrá a esa parte del país.</div>
 
           <sc-if value="{{ needsVerification }}" hint-placeholder-val="{{ true }}">
             <div style="background: #FFF6E9; border: 4px dashed #2B1B4D; border-radius: 20px; padding: 30px 24px; text-align: center;">
@@ -530,21 +530,12 @@
               <span onClick="{{ logoutCitizen }}" style="cursor: pointer; text-decoration: underline; opacity: 0.8;">cambiar</span>
             </div>
 
-            <div style="position: relative; border: 5px solid #2B1B4D; border-radius: 22px; overflow: hidden; box-shadow: 8px 8px 0 #2B1B4D; height: 320px; perspective: 1000px; background: linear-gradient(180deg, #14C8B8, #FFF6E9);">
-              <div style="position: absolute; inset: 0; transform-style: preserve-3d; animation: jj-city-sway 18s ease-in-out infinite;">
-                <div style="position: absolute; left: 50%; bottom: 12%; transform: translateX(-50%); font-size: 56px;">⛲</div>
-                <sc-for list="{{ plazaBuildings }}" as="b" hint-placeholder-count="4">
-                  <div onClick="{{ b.onClick }}" style="{{ b.style }}">
-                    <div style="{{ b.iconStyle }}">{{ b.emoji }}</div>
-                    <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 13px; color: #2B1B4D; background: #FFF6E9cc; border-radius: 8px; padding: 2px 6px;">{{ b.label }}</div>
-                  </div>
-                </sc-for>
-              </div>
+            <div ref="{{ sceneRef }}" style="position: relative; border: 5px solid #2B1B4D; border-radius: 22px; overflow: hidden; box-shadow: 8px 8px 0 #2B1B4D; height: 460px; perspective: 720px; perspective-origin: 50% 50%; background: linear-gradient(180deg, #58d5ea 0%, #9fe8e4 46%, #d8f2d0 62%, #cfe6b8 100%); cursor: grab; touch-action: none; user-select: none;">
+              <div ref="{{ worldRef }}" style="position: absolute; left: 50%; top: 50%; width: 0; height: 0; transform-style: preserve-3d;"></div>
             </div>
-            <div style="display: flex; justify-content: center; gap: 18px; flex-wrap: wrap; margin-top: 14px; font-size: 12px; font-weight: 700; opacity: 0.7;">
-              <sc-for list="{{ plazaBuildings }}" as="b" hint-placeholder-count="4">
-                <span>{{ b.emoji }} {{ b.label }}: {{ b.desc }}</span>
-              </sc-for>
+            <div style="margin-top: 12px; font-size: 12px; font-weight: 700; opacity: 0.7; text-align: center; line-height: 1.7;">
+              Teclado: <strong>W A S D</strong> o <strong>flechas</strong> para caminar y girar · <strong>Q</strong>/<strong>E</strong> para desplazarte de costado · <strong>Shift</strong> para correr · <strong>Enter</strong> para entrar al edificio.<br/>
+              También podés arrastrar el mouse para mirar alrededor, o usar los botones de la pantalla.
             </div>
           </sc-if>
         </div>
@@ -825,15 +816,78 @@ const JJ_SUFFIXES = ['del Tomate Sagrado', 'de los Valles del Norte', 'de la Gra
 
 const HOLE_COLORS = ['#FFF6E9', '#FFC93C33', '#14C8B833', '#FF5A5F33'];
 
+// ===== Motor 3D de "La Plaza" =====
 // Inspirada en "La Plaza" (Proyecto Enlaces, Mineduc Chile, 1992-95): un software
 // educativo que usaba una plaza con edificios (Kiosco, Centro Cultural, Correo, Museo)
-// como metáfora de navegación entre secciones.
-const PLAZA_BUILDINGS = [
-  { id: 'kiosco', label: 'El Kiosco', desc: 'Las noticias del día', emoji: '🗞️', color: '#FFC93C', left: 14, z: 50, goTo: 'hero' },
-  { id: 'cultural', label: 'Centro Cultural', desc: 'Cómics y Jujavisión', emoji: '🎭', color: '#FF5A5F', left: 38, z: 85, goTo: 'comics' },
-  { id: 'correo', label: 'El Correo', desc: 'Trámites de ciudadanía', emoji: '✉️', color: '#14C8B8', left: 62, z: 85, goTo: 'inmigracion' },
-  { id: 'museo', label: 'El Museo', desc: 'Historia y gobierno', emoji: '🏛️', color: '#2B1B4D', left: 86, z: 50, goTo: 'historia' }
+// como metáfora de navegación entre secciones. Acá es un mundo 3D recorrible en
+// primera persona, construido sólo con transformaciones CSS 3D (sin librerías).
+const W3D = {
+  persp: 720,      // distancia focal de la cámara
+  eye: 168,        // altura de los ojos sobre el suelo
+  bound: 1500,     // límite del mundo caminable
+  speed: 8,        // px por frame
+  turn: 2.6,       // grados por frame
+  ground: 6000,
+  fountainR: 200
+};
+
+const W3D_BUILDINGS = [
+  { id: 'kiosco', label: 'El Kiosco', desc: 'Las noticias del día', emoji: '🗞️', goTo: 'hero',
+    x: -680, z: -620, w: 300, d: 240, h: 235, wall: '#FFC93C', roof: '#FF5A5F', ink: '#2B1B4D' },
+  { id: 'cultural', label: 'Centro Cultural', desc: 'Cómics y Jujavisión', emoji: '🎭', goTo: 'comics',
+    x: 680, z: -620, w: 350, d: 265, h: 340, wall: '#FF5A5F', roof: '#2B1B4D', ink: '#FFF6E9' },
+  { id: 'correo', label: 'El Correo', desc: 'Ciudadanía y pasaportes', emoji: '✉️', goTo: 'inmigracion',
+    x: -680, z: 620, w: 320, d: 245, h: 255, wall: '#14C8B8', roof: '#2B1B4D', ink: '#2B1B4D' },
+  { id: 'museo', label: 'El Museo', desc: 'Historia y gobierno', emoji: '🏛️', goTo: 'historia',
+    x: 680, z: 620, w: 365, d: 285, h: 310, wall: '#FFF6E9', roof: '#FFC93C', ink: '#2B1B4D' }
 ];
+
+// Decorados fijos: cada uno es un sprite que siempre mira a la cámara.
+const W3D_PROPS = [
+  { e: '🌳', x: -1180, z: -180, s: 190 }, { e: '🌳', x: 1180, z: -180, s: 190 },
+  { e: '🌳', x: -1180, z: 900, s: 165 },  { e: '🌳', x: 1180, z: 900, s: 165 },
+  { e: '🌳', x: -140, z: -1220, s: 175 }, { e: '🌳', x: 140, z: -1220, s: 175 },
+  { e: '🌻', x: -330, z: 340, s: 70 },    { e: '🌻', x: 330, z: 340, s: 70 },
+  { e: '🌻', x: -330, z: -340, s: 70 },   { e: '🌻', x: 330, z: -340, s: 70 },
+  { e: '🍅', x: -900, z: 60, s: 60 },     { e: '🍅', x: 905, z: -70, s: 60 },
+  { e: '🪧', x: -330, z: -1180, s: 110 }, { e: '🪧', x: 335, z: -1180, s: 110 },
+  { e: '🚩', x: -300, z: -300, s: 95 },   { e: '🚩', x: 300, z: -300, s: 95 },
+  { e: '🌷', x: -760, z: 0, s: 55 },      { e: '🌷', x: 765, z: 90, s: 55 },
+  { e: '🦋', x: -200, z: 520, s: 50 },    { e: '🦋', x: 250, z: -430, s: 50 }
+];
+
+// Cielo: sol y nubes, muy lejos y bien alto.
+const W3D_SKY = [
+  { e: '☀️', x: -1500, y: 1250, z: -3200, s: 320 },
+  { e: '☁️', x: 900, y: 1000, z: -2900, s: 420 },
+  { e: '☁️', x: -600, y: 1150, z: -2600, s: 340 },
+  { e: '☁️', x: 1700, y: 900, z: -1800, s: 300 },
+  { e: '☁️', x: -1900, y: 950, z: -1500, s: 280 }
+];
+
+// Farolas: poste 3D + halo luminoso.
+const W3D_LAMPS = [
+  { x: -420, z: -420 }, { x: 420, z: -420 }, { x: -420, z: 420 }, { x: 420, z: 420 },
+  { x: -1000, z: 1000 }, { x: 1000, z: 1000 }
+];
+
+// Jujapeludas que pasean solas y globos-tomate que flotan.
+const W3D_WALKERS = [
+  { cx: -480, cz: 120, r: 300, sp: 0.0055, ph: 0, s: 108 },
+  { cx: 520, cz: 200, r: 360, sp: -0.0042, ph: 2.1, s: 96 },
+  { cx: 60, cz: -780, r: 260, sp: 0.0068, ph: 4.3, s: 86 }
+];
+const W3D_BALLOONS = [
+  { e: '🎈', x: -540, z: -160, y: 430, s: 110, ph: 0 },
+  { e: '🍅', x: 600, z: 260, y: 500, s: 95, ph: 2.4 },
+  { e: '🎈', x: 120, z: -960, y: 470, s: 100, ph: 4.1 }
+];
+
+const W3D_KEYMAP = {
+  arrowup: 'fwd', w: 'fwd', arrowdown: 'back', s: 'back',
+  arrowleft: 'turnL', a: 'turnL', arrowright: 'turnR', d: 'turnR',
+  q: 'strafeL', e: 'strafeR', shift: 'run'
+};
 
 function shuffle(arr) {
   const a = arr.slice();
@@ -1007,6 +1061,16 @@ class Component extends DCLogic {
     this.passportLinkRef = React.createRef();
     this.readerImgRef = React.createRef();
     this.passportFileInputRef = React.createRef();
+    this.sceneRef = React.createRef();
+    this.worldRef = React.createRef();
+    // Estado del motor 3D: vive fuera de React para poder correr a 60fps
+    // sin disparar un re-render por frame.
+    this.cam = { x: 0, z: 1180, yaw: 0, pitch: 0, bob: 0, t: 0 };
+    this.keys = {};
+    this.focus3d = false;
+    this.near3d = null;
+    this.billboards = [];
+    this.drag = null;
   }
 
   syncReaderImage = () => {
@@ -1030,6 +1094,10 @@ class Component extends DCLogic {
         this.setState({ verifiedCitizen: saved, gameBestScore: scores.best || 0, memBestMoves: scores.bestMoves || 0 });
       }
     } catch (e) {}
+
+    window.addEventListener('keydown', this.onKey3D);
+    window.addEventListener('keyup', this.onKey3D);
+    this.raf3d = requestAnimationFrame(this.tick3D);
   }
 
   pickPassportFile = () => { if (this.passportFileInputRef.current) this.passportFileInputRef.current.click(); };
@@ -1070,6 +1138,397 @@ class Component extends DCLogic {
     this.setState({ verifiedCitizen: null, gamePlaying: false, memPlaying: false });
   };
 
+  // ============ MOTOR 3D DE LA PLAZA ============
+
+  // Un panel plano posicionado en el espacio 3D. Se centra en su propio origen
+  // (con márgenes negativos) para que el transform lo ubique por su centro.
+  make3DPanel = (w, h, transform, css) => {
+    const el = document.createElement('div');
+    el.style.cssText =
+      'position:absolute;left:0;top:0;width:' + w + 'px;height:' + h + 'px;' +
+      'margin-left:' + (-w / 2) + 'px;margin-top:' + (-h / 2) + 'px;' +
+      'transform:' + transform + ';' + (css || '');
+    return el;
+  };
+
+  // Sprite que siempre encara a la cámara (se contra-rota cada frame).
+  make3DSprite = (x, y, z, size, content, css) => {
+    const el = document.createElement('div');
+    el.className = 'jj-bb';
+    el.textContent = content;
+    el.style.cssText =
+      'position:absolute;left:0;top:0;font-size:' + size + 'px;line-height:1;' +
+      'margin-left:' + (-size / 2) + 'px;margin-top:' + (-size) + 'px;' +
+      'width:' + size + 'px;height:' + size + 'px;text-align:center;' +
+      'filter:drop-shadow(3px 6px 4px rgba(43,27,77,.35));' + (css || '');
+    el.dataset.x = x;
+    el.dataset.y = y;
+    el.dataset.z = z;
+    this.billboards.push(el);
+    return el;
+  };
+
+  build3DWorld = () => {
+    const world = this.worldRef.current;
+    if (!world) return;
+    world.innerHTML = '';
+    this.billboards = [];
+    this.walkerEls = [];
+    this.balloonEls = [];
+    this.signEls = [];
+
+    const P = this.make3DPanel;
+    const S = this.make3DSprite;
+
+    // ---- Suelo: plaza empedrada con anillo central y senderos ----
+    const g = W3D.ground;
+    world.appendChild(P(g, g, 'translate3d(0,0,0) rotateX(90deg)',
+      'background:' +
+        'radial-gradient(circle at 50% 50%, rgba(255,201,60,.55) 0 3.2%, rgba(0,0,0,0) 3.4%),' +
+        'radial-gradient(circle at 50% 50%, rgba(255,246,233,.9) 0 8%, rgba(0,0,0,0) 8.2%),' +
+        'radial-gradient(circle at 50% 50%, rgba(255,246,233,0) 0 15.5%, rgba(43,27,77,.22) 15.5% 16%, rgba(0,0,0,0) 16%),' +
+        'repeating-linear-gradient(0deg, rgba(43,27,77,.10) 0 2px, rgba(0,0,0,0) 2px 120px),' +
+        'repeating-linear-gradient(90deg, rgba(43,27,77,.10) 0 2px, rgba(0,0,0,0) 2px 120px),' +
+        'radial-gradient(circle at 50% 50%, #efe3c6 0 26%, #d9e8c0 26% 44%, #cfe0b4 100%);'));
+
+    // ---- Fuente central: agua, borde octogonal de piedra y chorro ----
+    world.appendChild(P(300, 300, 'translate3d(0,-46px,0) rotateX(90deg)',
+      'background:radial-gradient(circle, #bff0fb 0 40%, #7fd8ea 40% 100%);border-radius:50%;'));
+    const fn = 18, fr = 158;
+    for (let i = 0; i < fn; i++) {
+      const a = (i / fn) * Math.PI * 2;
+      const deg = a * 180 / Math.PI;
+      world.appendChild(P(60, 54,
+        'translate3d(' + (Math.cos(a) * fr) + 'px,-27px,' + (Math.sin(a) * fr) + 'px) rotateY(' + (90 - deg) + 'deg)',
+        'background:linear-gradient(180deg,#FFF6E9,#e6d6b8);border-top:5px solid #2B1B4D;box-sizing:border-box;'));
+    }
+    world.appendChild(P(330, 330, 'translate3d(0,-54px,0) rotateX(90deg)',
+      'background:radial-gradient(circle, rgba(0,0,0,0) 0 90%, #2B1B4D 90% 100%);border-radius:50%;'));
+    world.appendChild(S(0, -46, 0, 130, '⛲'));
+
+    // ---- Cielo ----
+    W3D_SKY.forEach((s) => world.appendChild(S(s.x, -s.y, s.z, s.s, s.e, 'filter:none;opacity:.95;')));
+
+    // ---- Edificios: cajas 3D con paredes, techo, puerta, ventanas y cartel ----
+    W3D_BUILDINGS.forEach((b) => {
+      const hw = b.w / 2, hd = b.d / 2, cy = -b.h / 2;
+      const wallCss = 'background:' + b.wall + ';border:4px solid #2B1B4D;box-sizing:border-box;';
+
+      // Cuatro paredes, con brillo distinto por orientación para dar volumen.
+      world.appendChild(P(b.w, b.h, 'translate3d(' + b.x + 'px,' + cy + 'px,' + (b.z + hd) + 'px)',
+        wallCss + 'filter:brightness(1.06);'));
+      world.appendChild(P(b.w, b.h, 'translate3d(' + b.x + 'px,' + cy + 'px,' + (b.z - hd) + 'px) rotateY(180deg)',
+        wallCss + 'filter:brightness(.82);'));
+      world.appendChild(P(b.d, b.h, 'translate3d(' + (b.x - hw) + 'px,' + cy + 'px,' + b.z + 'px) rotateY(-90deg)',
+        wallCss + 'filter:brightness(.9);'));
+      world.appendChild(P(b.d, b.h, 'translate3d(' + (b.x + hw) + 'px,' + cy + 'px,' + b.z + 'px) rotateY(90deg)',
+        wallCss + 'filter:brightness(.95);'));
+      // Techo
+      world.appendChild(P(b.w, b.d, 'translate3d(' + b.x + 'px,' + (-b.h) + 'px,' + b.z + 'px) rotateX(90deg)',
+        'background:' + b.roof + ';border:4px solid #2B1B4D;box-sizing:border-box;'));
+
+      // La fachada mira siempre hacia el centro de la plaza.
+      const front = b.z < 0 ? 1 : -1;
+      const fz = b.z + front * (hd + 2);
+      const rot = front === 1 ? '' : ' rotateY(180deg)';
+
+      // Puerta
+      world.appendChild(P(92, 130, 'translate3d(' + b.x + 'px,-65px,' + fz + 'px)' + rot,
+        'background:#2B1B4D;border:4px solid #2B1B4D;box-sizing:border-box;border-radius:46px 46px 0 0;'));
+      world.appendChild(P(70, 108, 'translate3d(' + b.x + 'px,-58px,' + (fz + front * 1) + 'px)' + rot,
+        'background:linear-gradient(180deg,#FFF6E9,#FFC93C);border-radius:35px 35px 0 0;'));
+
+      // Ventanas a los costados de la puerta
+      [-1, 1].forEach((side) => {
+        world.appendChild(P(64, 64, 'translate3d(' + (b.x + side * (hw * 0.55)) + 'px,' + (-b.h + 78) + 'px,' + fz + 'px)' + rot,
+          'background:#9fe8f5;border:4px solid #2B1B4D;box-sizing:border-box;border-radius:8px;' +
+          'background-image:linear-gradient(135deg, rgba(255,255,255,.85) 0 40%, rgba(0,0,0,0) 40%);'));
+      });
+
+      // Cartel con el emoji y el nombre, colgado sobre la puerta
+      const sign = P(b.w * 0.82, 54, 'translate3d(' + b.x + 'px,' + (-b.h - 6) + 'px,' + fz + 'px)' + rot,
+        'background:#FFF6E9;border:4px solid #2B1B4D;box-sizing:border-box;border-radius:12px;' +
+        'display:flex;align-items:center;justify-content:center;gap:8px;' +
+        'font-family:\'Baloo 2\',sans-serif;font-weight:800;font-size:19px;color:#2B1B4D;' +
+        'box-shadow:0 0 0 rgba(255,201,60,0);transition:box-shadow .25s,background .25s;');
+      sign.textContent = b.emoji + ' ' + b.label;
+      sign.dataset.id = b.id;
+      world.appendChild(sign);
+      this.signEls.push(sign);
+
+      // Toda la fachada es clickeable, además de la tecla Enter.
+      const hit = P(b.w, b.h, 'translate3d(' + b.x + 'px,' + cy + 'px,' + (fz + front * 2) + 'px)' + rot,
+        'background:rgba(0,0,0,0);cursor:pointer;');
+      hit.addEventListener('click', () => this.setPage(b.goTo));
+      world.appendChild(hit);
+    });
+
+    // ---- Farolas ----
+    W3D_LAMPS.forEach((l) => {
+      world.appendChild(P(12, 210, 'translate3d(' + l.x + 'px,-105px,' + l.z + 'px)', 'background:#2B1B4D;'));
+      world.appendChild(P(12, 210, 'translate3d(' + l.x + 'px,-105px,' + l.z + 'px) rotateY(90deg)', 'background:#3d2a63;'));
+      world.appendChild(S(l.x, -210, l.z, 54, '💡', 'filter:drop-shadow(0 0 16px rgba(255,201,60,.95));'));
+    });
+
+    // ---- Muro perimetral de cajas (la Gran Caja que rodea Nueva Juja) ----
+    for (let i = -6; i <= 6; i++) {
+      [-1, 1].forEach((sgn) => {
+        const h = 150 + ((i + 7) % 3) * 60;
+        world.appendChild(P(240, h, 'translate3d(' + (i * 250) + 'px,' + (-h / 2) + 'px,' + (sgn * 1650) + 'px)' + (sgn === 1 ? ' rotateY(180deg)' : ''),
+          'background:#c39a63;border:4px solid #2B1B4D;box-sizing:border-box;' +
+          'background-image:repeating-linear-gradient(90deg, rgba(43,27,77,.18) 0 3px, rgba(0,0,0,0) 3px 40px);'));
+        world.appendChild(P(240, h, 'translate3d(' + (sgn * 1650) + 'px,' + (-h / 2) + 'px,' + (i * 250) + 'px) rotateY(' + (sgn * 90) + 'deg)',
+          'background:#b98d57;border:4px solid #2B1B4D;box-sizing:border-box;' +
+          'background-image:repeating-linear-gradient(90deg, rgba(43,27,77,.18) 0 3px, rgba(0,0,0,0) 3px 40px);'));
+      });
+    }
+
+    // ---- Decorados, paseantes y globos ----
+    W3D_PROPS.forEach((p) => world.appendChild(S(p.x, 0, p.z, p.s, p.e)));
+
+    // Jujapeludas de carne y hueso paseando por la plaza: la mascota real,
+    // recortada en redondo, siempre encarando a la cámara.
+    W3D_WALKERS.forEach((w) => {
+      const el = S(w.cx, 0, w.cz, w.s, '',
+        'border-radius:50%;overflow:hidden;border:4px solid #FFC93C;box-sizing:border-box;' +
+        'background:#FFF6E9 url(uploads/jujapeluda.jpeg) center/cover no-repeat;');
+      this.walkerEls.push({ el: el, cfg: w });
+      world.appendChild(el);
+    });
+    W3D_BALLOONS.forEach((b) => {
+      const el = S(b.x, -b.y, b.z, b.s, b.e);
+      this.balloonEls.push({ el: el, cfg: b });
+      world.appendChild(el);
+    });
+
+    this.build3DHud();
+  };
+
+  build3DHud = () => {
+    const scene = this.sceneRef.current;
+    if (!scene) return;
+    Array.prototype.slice.call(scene.querySelectorAll('[data-hud]')).forEach((n) => n.remove());
+
+    const mk = (css, html) => {
+      const el = document.createElement('div');
+      el.setAttribute('data-hud', '');
+      el.style.cssText = 'position:absolute;z-index:5;' + css;
+      if (html) el.innerHTML = html;
+      scene.appendChild(el);
+      return el;
+    };
+
+    // Cartel de ubicación
+    this.locEl = mk('top:12px;left:12px;background:#2B1B4Dd9;color:#FFF6E9;padding:7px 14px;' +
+      'border-radius:999px;font-family:\'Baloo 2\',sans-serif;font-weight:800;font-size:13px;pointer-events:none;');
+    this.locEl.textContent = '📍 Plaza de Jujalandia';
+
+    // Minimapa
+    const mini = mk('top:12px;right:12px;width:104px;height:104px;background:#FFF6E9d9;' +
+      'border:3px solid #2B1B4D;border-radius:12px;pointer-events:none;overflow:hidden;');
+    W3D_BUILDINGS.forEach((b) => {
+      const d = document.createElement('div');
+      const s = 104 / (W3D.bound * 2.4);
+      d.style.cssText = 'position:absolute;width:16px;height:16px;border-radius:4px;border:2px solid #2B1B4D;' +
+        'box-sizing:border-box;background:' + b.wall + ';' +
+        'left:' + (52 + b.x * s - 8) + 'px;top:' + (52 + b.z * s - 8) + 'px;';
+      mini.appendChild(d);
+    });
+    const fountainDot = document.createElement('div');
+    fountainDot.style.cssText = 'position:absolute;left:47px;top:47px;width:10px;height:10px;border-radius:50%;background:#7fd8ea;border:2px solid #2B1B4D;box-sizing:border-box;';
+    mini.appendChild(fountainDot);
+    this.miniDot = document.createElement('div');
+    this.miniDot.style.cssText = 'position:absolute;width:0;height:0;border-left:6px solid transparent;' +
+      'border-right:6px solid transparent;border-bottom:14px solid #FF5A5F;';
+    mini.appendChild(this.miniDot);
+
+    // Aviso de "entrar"
+    this.promptEl = mk('bottom:88px;left:50%;transform:translateX(-50%);background:#FFC93C;color:#2B1B4D;' +
+      'border:4px solid #2B1B4D;border-radius:14px;padding:10px 20px;font-family:\'Baloo 2\',sans-serif;' +
+      'font-weight:800;font-size:15px;box-shadow:5px 5px 0 #2B1B4D;cursor:pointer;display:none;' +
+      'white-space:nowrap;');
+    this.promptEl.addEventListener('click', () => this.enter3DBuilding());
+
+    // Controles en pantalla (funcionan con mouse y con dedo)
+    const pad = mk('bottom:14px;left:14px;display:grid;grid-template-columns:repeat(3,42px);' +
+      'grid-template-rows:repeat(2,42px);gap:6px;');
+    const btn = (label, act, col, row) => {
+      const b = document.createElement('button');
+      b.textContent = label;
+      b.style.cssText = 'grid-column:' + col + ';grid-row:' + row + ';background:#FFF6E9e6;border:3px solid #2B1B4D;' +
+        'border-radius:10px;font-size:16px;font-weight:800;cursor:pointer;padding:0;touch-action:none;';
+      const on = (e) => { e.preventDefault(); this.keys[act] = true; };
+      const off = () => { this.keys[act] = false; };
+      b.addEventListener('mousedown', on);
+      b.addEventListener('touchstart', on, { passive: false });
+      ['mouseup', 'mouseleave', 'touchend', 'touchcancel'].forEach((ev) => b.addEventListener(ev, off));
+      pad.appendChild(b);
+    };
+    btn('▲', 'fwd', 2, 1);
+    btn('◀', 'turnL', 1, 2);
+    btn('▼', 'back', 2, 2);
+    btn('▶', 'turnR', 3, 2);
+
+    // Mirar alrededor arrastrando
+    const down = (e) => {
+      const p = e.touches ? e.touches[0] : e;
+      this.drag = { x: p.clientX, y: p.clientY };
+      scene.style.cursor = 'grabbing';
+    };
+    const move = (e) => {
+      if (!this.drag) return;
+      const p = e.touches ? e.touches[0] : e;
+      this.cam.yaw -= (p.clientX - this.drag.x) * 0.25;
+      this.cam.pitch = Math.max(-22, Math.min(22, this.cam.pitch + (p.clientY - this.drag.y) * 0.12));
+      this.drag = { x: p.clientX, y: p.clientY };
+      e.preventDefault();
+    };
+    const up = () => { this.drag = null; scene.style.cursor = 'grab'; };
+    scene.addEventListener('mousedown', down);
+    scene.addEventListener('touchstart', down, { passive: true });
+    scene.addEventListener('mousemove', move);
+    scene.addEventListener('touchmove', move, { passive: false });
+    scene.addEventListener('mouseup', up);
+    scene.addEventListener('mouseleave', () => { up(); this.focus3d = false; });
+    scene.addEventListener('touchend', up);
+    scene.addEventListener('mouseenter', () => { this.focus3d = true; });
+  };
+
+  enter3DBuilding = () => {
+    const b = W3D_BUILDINGS.find((x) => x.id === this.near3d);
+    if (b) this.setPage(b.goTo);
+  };
+
+  onKey3D = (e) => {
+    if (!this.focus3d || !this.worldRef.current) return;
+    const k = (e.key || '').toLowerCase();
+    if (k === 'enter' || k === ' ') {
+      if (e.type === 'keydown') this.enter3DBuilding();
+      e.preventDefault();
+      return;
+    }
+    const act = W3D_KEYMAP[k];
+    if (!act) return;
+    this.keys[act] = e.type === 'keydown';
+    e.preventDefault();
+  };
+
+  // ¿La posición choca contra un edificio o la fuente?
+  blocked3D = (x, z) => {
+    if (Math.abs(x) > W3D.bound || Math.abs(z) > W3D.bound) return true;
+    if (Math.sqrt(x * x + z * z) < W3D.fountainR + 40) return true;
+    for (let i = 0; i < W3D_BUILDINGS.length; i++) {
+      const b = W3D_BUILDINGS[i];
+      if (Math.abs(x - b.x) < b.w / 2 + 95 && Math.abs(z - b.z) < b.d / 2 + 95) return true;
+    }
+    return false;
+  };
+
+  tick3D = () => {
+    this.raf3d = requestAnimationFrame(this.tick3D);
+    const world = this.worldRef.current;
+    if (!world) { this.built3d = false; return; }
+    if (!this.built3d || !world.firstChild) { this.build3DWorld(); this.built3d = true; }
+
+    const cam = this.cam;
+    const k = this.keys;
+    cam.t += 1;
+
+    const boost = k.run ? 1.85 : 1;
+    if (k.turnL) cam.yaw += W3D.turn * boost;
+    if (k.turnR) cam.yaw -= W3D.turn * boost;
+
+    const rad = cam.yaw * Math.PI / 180;
+    // Con world = rotateY(-yaw), la cámara mira hacia (-sin yaw, 0, -cos yaw).
+    const fx = -Math.sin(rad), fz = -Math.cos(rad);
+    const rx = Math.cos(rad), rz = -Math.sin(rad);
+
+    let dx = 0, dz = 0;
+    if (k.fwd) { dx += fx; dz += fz; }
+    if (k.back) { dx -= fx; dz -= fz; }
+    if (k.strafeR) { dx += rx; dz += rz; }
+    if (k.strafeL) { dx -= rx; dz -= rz; }
+
+    const moving = dx !== 0 || dz !== 0;
+    if (moving) {
+      const len = Math.sqrt(dx * dx + dz * dz) || 1;
+      const step = W3D.speed * boost;
+      const nx = cam.x + (dx / len) * step;
+      const nz = cam.z + (dz / len) * step;
+      // Se resuelve eje por eje para poder "deslizarse" contra las paredes.
+      if (!this.blocked3D(nx, cam.z)) cam.x = nx;
+      if (!this.blocked3D(cam.x, nz)) cam.z = nz;
+      cam.bob += 0.28 * boost;
+    } else {
+      cam.bob += 0.03;
+    }
+
+    const eye = W3D.eye + Math.sin(cam.bob) * (moving ? 4.5 : 1.2);
+
+    world.style.transform =
+      'translateZ(' + W3D.persp + 'px) rotateX(' + (-cam.pitch) + 'deg) rotateY(' + (-cam.yaw) + 'deg) ' +
+      'translate3d(' + (-cam.x) + 'px,' + eye + 'px,' + (-cam.z) + 'px)';
+
+    // Los sprites se contra-rotan para encarar siempre a la cámara.
+    const face = 'rotateY(' + cam.yaw + 'deg)';
+    for (let i = 0; i < this.billboards.length; i++) {
+      const el = this.billboards[i];
+      el.style.transform = 'translate3d(' + el.dataset.x + 'px,' + el.dataset.y + 'px,' + el.dataset.z + 'px) ' + face;
+    }
+
+    // Jujapeludas paseando en círculos y globos flotando.
+    for (let i = 0; i < this.walkerEls.length; i++) {
+      const w = this.walkerEls[i], c = w.cfg;
+      const a = c.ph + cam.t * c.sp;
+      w.el.dataset.x = c.cx + Math.cos(a) * c.r;
+      w.el.dataset.z = c.cz + Math.sin(a) * c.r;
+      w.el.dataset.y = -Math.abs(Math.sin(a * 9)) * 12;
+    }
+    for (let i = 0; i < this.balloonEls.length; i++) {
+      const b = this.balloonEls[i], c = b.cfg;
+      b.el.dataset.y = -(c.y + Math.sin(c.ph + cam.t * 0.012) * 42);
+      b.el.dataset.x = c.x + Math.sin(c.ph + cam.t * 0.005) * 70;
+    }
+
+    // Minimapa
+    if (this.miniDot) {
+      const s = 104 / (W3D.bound * 2.4);
+      this.miniDot.style.left = (52 + cam.x * s - 6) + 'px';
+      this.miniDot.style.top = (52 + cam.z * s - 7) + 'px';
+      this.miniDot.style.transform = 'rotate(' + (180 - cam.yaw) + 'deg)';
+    }
+
+    // ¿Estamos cerca de una puerta Y mirándola? Sin el segundo chequeo, el aviso
+    // ofrecería entrar a un edificio que quedó a nuestras espaldas.
+    let near = null, bestD = 520;
+    for (let i = 0; i < W3D_BUILDINGS.length; i++) {
+      const b = W3D_BUILDINGS[i];
+      const front = b.z < 0 ? 1 : -1;
+      const doorX = b.x, doorZ = b.z + front * (b.d / 2 + 60);
+      const vx = doorX - cam.x, vz = doorZ - cam.z;
+      const d = Math.sqrt(vx * vx + vz * vz);
+      if (d >= bestD || d < 1) continue;
+      if ((vx / d) * fx + (vz / d) * fz < 0.4) continue; // fuera del cono de visión
+      bestD = d;
+      near = b;
+    }
+    const nearId = near ? near.id : null;
+    if (nearId !== this.near3d) {
+      this.near3d = nearId;
+      if (this.promptEl) {
+        this.promptEl.style.display = near ? 'block' : 'none';
+        if (near) this.promptEl.textContent = near.emoji + '  Entrar a ' + near.label + ' — ' + near.desc + '  ⏎';
+      }
+      if (this.locEl) this.locEl.textContent = near ? ('📍 ' + near.label) : '📍 Plaza de Jujalandia';
+      for (let i = 0; i < this.signEls.length; i++) {
+        const s = this.signEls[i];
+        const on = s.dataset.id === nearId;
+        s.style.background = on ? '#FFC93C' : '#FFF6E9';
+        s.style.boxShadow = on ? '0 0 26px 8px rgba(255,201,60,.9)' : '0 0 0 rgba(255,201,60,0)';
+      }
+    }
+  };
+
   openComicReader = (id) => this.setState({ readerComicId: id, readerPage: 0 }, this.syncReaderImage);
 
   closeComicReader = () => this.setState({ readerComicId: null });
@@ -1087,6 +1546,9 @@ class Component extends DCLogic {
   componentWillUnmount() {
     clearInterval(this.moleTimer);
     clearInterval(this.countdownTimer);
+    cancelAnimationFrame(this.raf3d);
+    window.removeEventListener('keydown', this.onKey3D);
+    window.removeEventListener('keyup', this.onKey3D);
   }
 
   startGame = () => {
@@ -1408,35 +1870,6 @@ class Component extends DCLogic {
       bg: HOLE_COLORS[i % HOLE_COLORS.length]
     }));
 
-    const plazaBuildings = PLAZA_BUILDINGS.map((b) => ({
-      label: b.label,
-      desc: b.desc,
-      emoji: b.emoji,
-      onClick: () => this.setPage(b.goTo),
-      style: {
-        position: 'absolute',
-        left: b.left + '%',
-        bottom: '14%',
-        transform: 'translateX(-50%) translateZ(' + b.z + 'px)',
-        cursor: 'pointer',
-        textAlign: 'center',
-        width: '110px'
-      },
-      iconStyle: {
-        width: '64px',
-        height: '64px',
-        margin: '0 auto 6px',
-        borderRadius: '50%',
-        background: b.color,
-        border: '4px solid #2B1B4D',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '30px',
-        boxShadow: '4px 4px 0 #2B1B4D'
-      }
-    }));
-
     const memCards = this.state.memCards.map((c, i) => {
       const faceUp = this.state.memFlipped.includes(i) || this.state.memMatched.includes(i);
       const matched = this.state.memMatched.includes(i);
@@ -1483,7 +1916,8 @@ class Component extends DCLogic {
       gameHoles,
       startGame: this.startGame,
       playButtonLabel: this.state.gameTimeLeft === 30 ? 'Jugar 🍅' : 'Jugar de nuevo 🍅',
-      plazaBuildings,
+      sceneRef: this.sceneRef,
+      worldRef: this.worldRef,
       memCards,
       memPlaying: this.state.memPlaying,
       memNotPlaying: !this.state.memPlaying,
