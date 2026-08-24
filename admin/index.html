@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Administración — Jujalandia</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8D%85%3C/text%3E%3C/svg%3E">
+<style>
+  :root { --navy:#2B1B4D; --teal:#14C8B8; --coral:#FF5A5F; --mustard:#FFC93C; --cream:#FFF6E9; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Segoe UI', Nunito, sans-serif; background: var(--cream); color: var(--navy); }
+  header { background: var(--navy); color: var(--mustard); padding: 22px 24px; }
+  header h1 { margin: 0; font-size: 22px; }
+  header p { margin: 6px 0 0; color: var(--cream); font-size: 13px; opacity: .85; }
+  main { max-width: 880px; margin: 0 auto; padding: 24px; }
+  .box { background: #fff; border: 3px solid var(--navy); border-radius: 16px; padding: 20px; margin-bottom: 24px; box-shadow: 5px 5px 0 var(--teal); }
+  .box h2 { margin-top: 0; font-size: 18px; }
+  .steps { background: var(--mustard); border: 3px solid var(--navy); border-radius: 16px; padding: 18px 20px; margin-bottom: 24px; font-size: 14px; line-height: 1.6; }
+  .steps ol { margin: 8px 0 0; padding-left: 20px; }
+  .row { display: flex; gap: 8px; margin-bottom: 8px; align-items: flex-start; }
+  .row input, .row textarea { flex: 1; padding: 8px 10px; border: 2px solid var(--navy); border-radius: 8px; font: inherit; font-size: 13px; }
+  .row textarea { resize: vertical; min-height: 38px; }
+  button { cursor: pointer; font-family: inherit; font-weight: 700; border-radius: 8px; border: 2px solid var(--navy); padding: 8px 14px; font-size: 13px; background: var(--cream); }
+  button.primary { background: var(--teal); }
+  button.danger { background: var(--coral); color: #fff; }
+  button.add { background: var(--mustard); margin-top: 6px; }
+  .comic-card { border: 2px dashed var(--navy); border-radius: 12px; padding: 14px; margin-bottom: 16px; }
+  .comic-card .meta-row input { width: 100%; margin-bottom: 8px; }
+  .page-row { background: var(--cream); border: 1px solid #ccc; border-radius: 8px; padding: 8px; margin-bottom: 6px; }
+  .field-label { font-size: 11px; font-weight: 800; text-transform: uppercase; opacity: .6; display: block; margin-bottom: 2px; }
+  .toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+  .status { font-size: 12px; font-weight: 700; margin-top: 8px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🍅 Panel de administración de Jujalandia</h1>
+  <p>Editá el ticker de noticias y los cómics del sitio. Esto NO publica solo — descargás el archivo y lo subís a GitHub.</p>
+</header>
+<main>
+  <div class="steps">
+    <strong>Cómo aplicar los cambios:</strong>
+    <ol>
+      <li>Editá lo que quieras acá abajo.</li>
+      <li>Apretá "Descargar" en la sección que cambiaste.</li>
+      <li>Andá a tu repositorio en GitHub → carpeta <code>content/</code> → abrí el archivo (<code>ticker.json</code> o <code>comics.json</code>) → ícono de lápiz ✏️ (Edit) → borrá todo → pegá el contenido del archivo descargado → "Commit changes".</li>
+      <li>A los 1-2 minutos GitHub Pages actualiza el sitio solo.</li>
+      <li>Para fotos de páginas de cómic: subilas primero a la carpeta <code>uploads/</code> del repo ("Add file → Upload files"), y después escribí acá el nombre, ej: <code>uploads/comic-ep1-pag1.jpg</code>.</li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <h2>📰 Noticias del zócalo (ticker)</h2>
+    <div id="ticker-list"></div>
+    <div class="toolbar">
+      <button class="add" onclick="addTicker()">+ Agregar noticia</button>
+      <button class="primary" onclick="downloadTicker()">⬇ Descargar ticker.json</button>
+    </div>
+  </div>
+
+  <div class="box">
+    <h2>📖 Cómics</h2>
+    <div id="comics-list"></div>
+    <div class="toolbar">
+      <button class="add" onclick="addComic()">+ Agregar cómic</button>
+      <button class="primary" onclick="downloadComics()">⬇ Descargar comics.json</button>
+    </div>
+  </div>
+
+  <div class="status" id="status"></div>
+</main>
+
+<script>
+const DEFAULT_TICKER = [
+  { text: '🍅 El Tomate Gigante crece 3 cm este trimestre' },
+  { text: '🐾 Censo nacional: 41 jujapeludas registradas' },
+  { text: '📺 Jujavisión estrena temporada de Tomat-Gol' },
+  { text: '⚖️ La Tía veta la importación de castillos' },
+  { text: '🥇 Nueva Juja gana premio a "Caja mejor cuidada"' }
+];
+const DEFAULT_COMICS = [
+  {
+    id: 'ep1',
+    title: 'Episodio 1: El Hallazgo de la Caja Dorada',
+    cover_caption: '🍅📦',
+    summary: 'Cómo los Abuelos encontraron la Caja Dorada (versión de muestra).',
+    pages: [
+      { caption: 'Página 1: Los Abuelos cavan en el fondo del jardín buscando dónde enterrar el tomate de más.' },
+      { caption: 'Página 2: ¡CLONC! La pala golpea algo dorado. "Esto no estaba en el plano", dice el Abuelo.' },
+      { caption: 'Página 3: Adentro, el Tomate Gigante brilla. Desde ese día, cavar se declaró deporte nacional.' }
+    ]
+  }
+];
+
+let ticker = [];
+let comics = [];
+
+function slugify(s) {
+  return (s || 'comic').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'comic';
+}
+
+function setStatus(msg) {
+  document.getElementById('status').textContent = msg;
+  setTimeout(() => { document.getElementById('status').textContent = ''; }, 4000);
+}
+
+function download(filename, data) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+  setStatus('Descargado ' + filename + ' — ahora subilo a GitHub siguiendo los pasos de arriba.');
+}
+
+function renderTicker() {
+  const el = document.getElementById('ticker-list');
+  el.innerHTML = '';
+  ticker.forEach((item, i) => {
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML =
+      '<input value="' + escapeAttr(item.text) + '" oninput="ticker[' + i + '].text=this.value" />' +
+      '<button class="danger" onclick="removeTicker(' + i + ')">Quitar</button>';
+    el.appendChild(row);
+  });
+}
+
+function addTicker() { ticker.push({ text: '' }); renderTicker(); }
+function removeTicker(i) { ticker.splice(i, 1); renderTicker(); }
+function downloadTicker() { download('ticker.json', ticker); }
+
+function renderComics() {
+  const el = document.getElementById('comics-list');
+  el.innerHTML = '';
+  comics.forEach((comic, ci) => {
+    const card = document.createElement('div');
+    card.className = 'comic-card';
+    let pagesHtml = '';
+    comic.pages.forEach((p, pi) => {
+      pagesHtml +=
+        '<div class="page-row">' +
+          '<span class="field-label">Página ' + (pi + 1) + '</span>' +
+          '<div class="row">' +
+            '<textarea placeholder="Texto de la página (si no hay imagen)" oninput="comics[' + ci + '].pages[' + pi + '].caption=this.value">' + escapeHtml(p.caption || '') + '</textarea>' +
+          '</div>' +
+          '<div class="row">' +
+            '<input placeholder="uploads/nombre-de-imagen.jpg (opcional)" value="' + escapeAttr(p.image || '') + '" oninput="comics[' + ci + '].pages[' + pi + '].image=this.value" />' +
+            '<button class="danger" onclick="removePage(' + ci + ',' + pi + ')">Quitar página</button>' +
+          '</div>' +
+        '</div>';
+    });
+    card.innerHTML =
+      '<div class="meta-row">' +
+        '<span class="field-label">Título</span>' +
+        '<input value="' + escapeAttr(comic.title) + '" oninput="comics[' + ci + '].title=this.value" />' +
+        '<span class="field-label">Resumen</span>' +
+        '<input value="' + escapeAttr(comic.summary) + '" oninput="comics[' + ci + '].summary=this.value" />' +
+        '<span class="field-label">Emoji de tapa</span>' +
+        '<input value="' + escapeAttr(comic.cover_caption) + '" oninput="comics[' + ci + '].cover_caption=this.value" style="width:100px" />' +
+      '</div>' +
+      pagesHtml +
+      '<div class="toolbar">' +
+        '<button class="add" onclick="addPage(' + ci + ')">+ Agregar página</button>' +
+        '<button class="danger" onclick="removeComic(' + ci + ')">Quitar este cómic</button>' +
+      '</div>';
+    el.appendChild(card);
+  });
+}
+
+function addComic() {
+  const title = 'Nuevo episodio';
+  comics.push({ id: slugify(title) + '-' + (comics.length + 1), title, cover_caption: '🍅', summary: '', pages: [{ caption: '' }] });
+  renderComics();
+}
+function removeComic(ci) { comics.splice(ci, 1); renderComics(); }
+function addPage(ci) { comics[ci].pages.push({ caption: '' }); renderComics(); }
+function removePage(ci, pi) { comics[ci].pages.splice(pi, 1); renderComics(); }
+function downloadComics() { download('comics.json', comics); }
+
+function escapeHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escapeAttr(s) { return escapeHtml(s).replace(/"/g,'&quot;'); }
+
+async function loadCurrent() {
+  try {
+    const r = await fetch('../content/ticker.json');
+    ticker = r.ok ? await r.json() : DEFAULT_TICKER;
+  } catch (e) { ticker = DEFAULT_TICKER; }
+  try {
+    const r2 = await fetch('../content/comics.json');
+    comics = r2.ok ? await r2.json() : DEFAULT_COMICS;
+  } catch (e) { comics = DEFAULT_COMICS; }
+  renderTicker();
+  renderComics();
+}
+
+loadCurrent();
+</script>
+</body>
+</html>

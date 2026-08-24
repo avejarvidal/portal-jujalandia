@@ -1,0 +1,13 @@
+[
+  {
+    "id": "ep1",
+    "title": "Episodio 1: El Hallazgo de la Caja Dorada",
+    "cover_caption": "🍅📦",
+    "summary": "Cómo los Abuelos encontraron la Caja Dorada (versión de muestra).",
+    "pages": [
+      { "caption": "Página 1: Los Abuelos cavan en el fondo del jardín buscando dónde enterrar el tomate de más." },
+      { "caption": "Página 2: ¡CLONC! La pala golpea algo dorado. \"Esto no estaba en el plano\", dice el Abuelo." },
+      { "caption": "Página 3: Adentro, el Tomate Gigante brilla. Desde ese día, cavar se declaró deporte nacional." }
+    ]
+  }
+]
