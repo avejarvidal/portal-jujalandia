@@ -10,8 +10,10 @@ Abrí `index.html` en un navegador, o serví la carpeta con cualquier servidor e
 
 - **Inicio** — bienvenida, bandera nacional, estadísticas, símbolos patrios y un skyline 3D animado de Nueva Juja.
 - **Historia**, **Gobierno**, **Cultura**, **Naturaleza**, **Relaciones Exteriores**, **Turismo** y **Leyes** — los "capítulos" del país.
-- **Inmigración** — elegís un avatar y generás un apodo oficial (sin fotos ni nombres reales) para descargar un pasaporte generado en `<canvas>`.
-- **Cómics** — biblioteca de historietas con lector de páginas.
+- **Inmigración** — elegís un avatar y generás un apodo oficial (sin fotos ni nombres reales) para descargar un pasaporte generado en `<canvas>`. El pasaporte lleva el número de ciudadano embebido en el propio PNG (metadato `tEXt`), sin servidor.
+- **Cómics** — biblioteca de historietas con lector de páginas (parte del "Centro Cultural" de la Plaza).
+- **Juegos** — "Atrapá el Tomate" y "Memoria de Jujalandia". Requieren subir el archivo del pasaporte: el sitio lee el número de ciudadano del PNG y guarda el mejor puntaje por ciudadano en el navegador.
+- **La Plaza de Jujalandia** (dentro de Turismo) — recorrido 3D inspirado en ["La Plaza"](https://es.wikipedia.org/wiki/Enlaces_(Chile)) (Proyecto Enlaces, Mineduc Chile, años 90): un Kiosco, un Centro Cultural, un Correo y un Museo que llevan a distintas secciones del sitio. También pide el pasaporte.
 
 ## Administrar contenido (ticker y cómics)
 
