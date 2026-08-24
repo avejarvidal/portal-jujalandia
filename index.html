@@ -314,7 +314,20 @@
             <div style="display: inline-block; background: #FF5A5F; color: #FFF6E9; font-size: 12px; font-weight: 800; padding: 7px 14px; border-radius: 999px; transform: rotate(-2deg);">Lema oficial: "Raro, pero no tanto"</div>
           </div>
           <div style="background: #2B1B4D; color: #FFF6E9; border: 4px solid #2B1B4D; border-radius: 20px; padding: 26px; box-shadow: 6px 6px 0 #FF5A5F;">
-            <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 20px; color: #FFC93C; margin-bottom: 14px;">📺 Programación de Jujavisión</div>
+            <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 20px; color: #FFC93C; margin-bottom: 14px;">📺 Jujavisión — Señal en vivo</div>
+            <div style="background: #000; border: 3px solid #FFC93C; border-radius: 12px; padding: 10px; position: relative; overflow: hidden; height: 140px; margin-bottom: 16px;">
+              <div style="position: absolute; top: 10px; left: 10px; display: flex; align-items: center; gap: 6px; z-index: 2;">
+                <div style="width: 8px; height: 8px; border-radius: 50%; background: #FF5A5F; animation: jj-beacon 1.3s ease-in-out infinite;"></div>
+                <span style="color: #FFF6E9; font-size: 10px; font-weight: 800; font-family: 'Baloo 2', sans-serif; letter-spacing: 0.05em;">EN VIVO · GATITOS 24/7</span>
+              </div>
+              <div style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; gap: 20px; font-size: 38px;">
+                <span style="animation: jj-float 5s ease-in-out infinite;">🐱</span>
+                <span style="animation: jj-float2 6.5s ease-in-out infinite;">😸</span>
+                <span style="animation: jj-float 7.5s ease-in-out infinite;">🐈</span>
+                <span style="animation: jj-float2 5.5s ease-in-out infinite;">🐈‍⬛</span>
+              </div>
+            </div>
+            <div style="font-size: 12px; font-weight: 700; opacity: 0.6; margin-bottom: 16px; line-height: 1.5;">Nota de la redacción: la grilla dice otra cosa, pero el canal transmite gatos desde 2019 y nadie se anima a cambiarlo.</div>
             <div style="display: grid; gap: 10px; font-size: 14px; font-weight: 700;">
               <div style="display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px dashed #FFF6E955; padding-bottom: 8px;"><span>08:00</span><span>Buen día, Tomate</span></div>
               <div style="display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px dashed #FFF6E955; padding-bottom: 8px;"><span>13:00</span><span>Comunicado del Consejo</span></div>
@@ -490,6 +503,30 @@
             </div>
           </div>
         </div>
+
+        <div style="margin-top: 44px;">
+          <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 26px; margin-bottom: 6px;">🎥 Recorrido 3D por Nueva Juja</div>
+          <div style="font-size: 14px; opacity: 0.75; margin-bottom: 16px; font-weight: 600;">Caminá por el país. Elegí hacia dónde ir.</div>
+
+          <div style="position: relative; border: 5px solid #2B1B4D; border-radius: 22px; overflow: hidden; box-shadow: 8px 8px 0 #2B1B4D; height: 340px; perspective: 1000px;">
+            <div style="position: absolute; inset: 0; background: {{ tourSky }};"></div>
+            <div style="position: absolute; inset: 0; transform-style: preserve-3d; animation: jj-city-sway 18s ease-in-out infinite;">
+              <sc-for list="{{ tourItems }}" as="it" hint-placeholder-count="4">
+                <div style="{{ it.style }}">{{ it.e }}</div>
+              </sc-for>
+            </div>
+            <div style="position: absolute; top: 14px; left: 14px; background: #2B1B4Dcc; color: #FFF6E9; padding: 6px 14px; border-radius: 999px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 13px;">📍 {{ tourLabel }}</div>
+            <sc-for list="{{ tourLinks }}" as="link" hint-placeholder-count="2">
+              <button onClick="{{ link.onClick }}" style="{{ link.style }}">{{ link.label }}</button>
+            </sc-for>
+          </div>
+
+          <div style="display: flex; justify-content: center; gap: 8px; margin-top: 14px;">
+            <sc-for list="{{ tourDots }}" as="dot" hint-placeholder-count="5">
+              <div onClick="{{ dot.onClick }}" style="{{ dot.style }}"></div>
+            </sc-for>
+          </div>
+        </div>
       </div>
     </div>
   </sc-if>
@@ -543,6 +580,46 @@
           </div>
         </div>
       </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- ===== JUEGOS ===== -->
+  <sc-if value="{{ isJuegos }}">
+    <div data-screen-label="Juegos" style="padding: 56px 24px 70px;">
+      <div style="max-width: 640px; margin: 0 auto; text-align: center;">
+        <div style="display: inline-block; background: #FF5A5F; color: #FFF6E9; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 12px; padding: 6px 14px; border-radius: 999px; margin-bottom: 12px;">JUEGOS OFICIALES</div>
+        <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 40px; margin-bottom: 10px;">Atrapá el Tomate</div>
+        <p style="font-size: 15px; font-weight: 600; opacity: 0.8; margin-bottom: 26px;">30 segundos. Hacé clic en el tomate apenas aparezca. Solo para ciudadanos con pasaporte oficial.</p>
+
+        <sc-if value="{{ needsPassportForGame }}" hint-placeholder-val="{{ false }}">
+          <div style="background: #FFF6E9; border: 4px dashed #2B1B4D; border-radius: 20px; padding: 34px 24px;">
+            <div style="font-size: 40px; margin-bottom: 10px;">🔒</div>
+            <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; margin-bottom: 10px;">Necesitás tu pasaporte oficial para jugar</div>
+            <div style="font-size: 14px; font-weight: 600; opacity: 0.8; margin-bottom: 18px;">El Consejo Moral no deja entrar a nadie sin ciudadanía. Es rápido: elegís avatar y apodo, y listo.</div>
+            <button onClick="{{ goInmigracion }}" style="background: #14C8B8; color: #2B1B4D; border: 4px solid #2B1B4D; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; padding: 13px 24px; border-radius: 12px; cursor: pointer; box-shadow: 5px 5px 0 #2B1B4D;">Sacar mi pasaporte 🛂</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ canPlayGame }}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; justify-content: center; gap: 24px; margin-bottom: 18px; font-family: 'Baloo 2', sans-serif; font-weight: 800;">
+            <div>PUNTAJE<div style="font-size: 26px; color: #FF5A5F;">{{ gameScore }}</div></div>
+            <div>TIEMPO<div style="font-size: 26px; color: #14C8B8;">{{ gameTimeLeft }}</div></div>
+            <div>MEJOR<div style="font-size: 26px; color: #2B1B4D;">{{ gameBestScore }}</div></div>
+          </div>
+
+          <sc-if value="{{ gamePlaying }}" hint-placeholder-val="{{ false }}">
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; max-width: 340px; margin: 0 auto;">
+              <sc-for list="{{ gameHoles }}" as="hole" hint-placeholder-count="9">
+                <div onClick="{{ hole.onClick }}" style="aspect-ratio: 1; border-radius: 50%; background: {{ hole.bg }}; border: 4px solid #2B1B4D; display: flex; align-items: center; justify-content: center; font-size: 30px; cursor: pointer;">{{ hole.emoji }}</div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ gameNotPlaying }}" hint-placeholder-val="{{ true }}">
+            <button onClick="{{ startGame }}" style="background: #FF5A5F; color: #FFF6E9; border: 4px solid #2B1B4D; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 17px; padding: 15px 30px; border-radius: 12px; cursor: pointer; box-shadow: 6px 6px 0 #2B1B4D;">{{ playButtonLabel }}</button>
+          </sc-if>
+        </sc-if>
+      </div>
     </div>
   </sc-if>
 
@@ -683,6 +760,67 @@ const JJ_TITLES = {
 };
 const JJ_SUFFIXES = ['del Tomate Sagrado', 'de los Valles del Norte', 'de la Gran Caja', 'de Jujavisión', 'del Consejo Moral', 'de la Cosecha Dorada', 'de Nueva Juja'];
 
+const HOLE_COLORS = ['#FFF6E9', '#FFC93C33', '#14C8B833', '#FF5A5F33'];
+
+const TOUR_SCENES = [
+  {
+    id: 'plaza', label: 'Plaza de la Gran Caja', sky: 'linear-gradient(180deg, #14C8B8, #FFF6E9)',
+    items: [
+      { e: '📦', size: 110, left: 50, bottom: 4, z: 40 },
+      { e: '🍅', size: 44, left: 18, bottom: 8, z: 90 },
+      { e: '⭐', size: 26, left: 82, bottom: 55, z: 10 },
+      { e: '🚩', size: 34, left: 72, bottom: 10, z: 70 }
+    ],
+    links: [{ to: 'interior', label: 'Entrar a la Caja →' }]
+  },
+  {
+    id: 'interior', label: 'Adentro de la Gran Caja (Nueva Juja)', sky: 'linear-gradient(180deg, #2B1B4D, #14C8B8)',
+    items: [
+      { e: '📦', size: 260, left: 50, bottom: -10, z: 10 },
+      { e: '🏠', size: 60, left: 28, bottom: 8, z: 80 },
+      { e: '🏠', size: 50, left: 70, bottom: 6, z: 70 },
+      { e: '🍅', size: 30, left: 50, bottom: 6, z: 95 }
+    ],
+    links: [{ to: 'plaza', label: '← Salir a la Plaza' }, { to: 'valles', label: 'Ir a los Valles del Norte →' }]
+  },
+  {
+    id: 'valles', label: 'Valles del Norte', sky: 'linear-gradient(180deg, #FFC93C, #FFF6E9)',
+    items: [
+      { e: '🐾', size: 70, left: 45, bottom: 6, z: 90 },
+      { e: '🌻', size: 50, left: 20, bottom: 8, z: 70 },
+      { e: '🌻', size: 40, left: 76, bottom: 10, z: 60 },
+      { e: '⭐', size: 24, left: 60, bottom: 60, z: 10 }
+    ],
+    links: [{ to: 'interior', label: '← Volver a Nueva Juja' }, { to: 'cancha', label: 'Ir a la Cancha Nacional →' }]
+  },
+  {
+    id: 'cancha', label: 'Cancha Nacional de Tomat-Gol', sky: 'linear-gradient(180deg, #FF5A5F, #FFF6E9)',
+    items: [
+      { e: '⚽', size: 50, left: 50, bottom: 6, z: 90 },
+      { e: '🥅', size: 60, left: 20, bottom: 8, z: 70 },
+      { e: '🍅', size: 30, left: 78, bottom: 10, z: 60 }
+    ],
+    links: [{ to: 'valles', label: '← Volver a los Valles' }, { to: 'museo', label: 'Ir al Museo →' }]
+  },
+  {
+    id: 'museo', label: 'Museo de la Caja Dorada', sky: 'linear-gradient(180deg, #2B1B4D, #FFC93C)',
+    items: [
+      { e: '📦', size: 90, left: 50, bottom: 6, z: 90 },
+      { e: '✨', size: 34, left: 35, bottom: 40, z: 20 },
+      { e: '✨', size: 26, left: 68, bottom: 50, z: 15 }
+    ],
+    links: [{ to: 'cancha', label: '← Volver a la Cancha' }, { to: 'plaza', label: 'Volver a la Plaza →' }]
+  }
+];
+
+function readBestScore() {
+  try {
+    return Number(localStorage.getItem('jj-best-score')) || 0;
+  } catch (e) {
+    return 0;
+  }
+}
+
 const DEFAULT_TICKER = [
   { text: '🍅 El Tomate Gigante crece 3 cm este trimestre' },
   { text: '🐾 Censo nacional: 41 jujapeludas registradas' },
@@ -716,7 +854,13 @@ class Component extends DCLogic {
     ticker: DEFAULT_TICKER,
     comics: DEFAULT_COMICS,
     readerComicId: null,
-    readerPage: 0
+    readerPage: 0,
+    gamePlaying: false,
+    gameScore: 0,
+    gameTimeLeft: 30,
+    gameActiveHole: null,
+    gameBestScore: readBestScore(),
+    tourScene: 'plaza'
   };
 
   constructor(props) {
@@ -756,6 +900,43 @@ class Component extends DCLogic {
   prevComicPage = () => {
     this.setState({ readerPage: Math.max(this.state.readerPage - 1, 0) }, this.syncReaderImage);
   };
+
+  componentWillUnmount() {
+    clearInterval(this.moleTimer);
+    clearInterval(this.countdownTimer);
+  }
+
+  startGame = () => {
+    if (!this.state.passportUrl) return;
+    clearInterval(this.moleTimer);
+    clearInterval(this.countdownTimer);
+    this.setState({ gamePlaying: true, gameScore: 0, gameTimeLeft: 30, gameActiveHole: null });
+    this.moleTimer = setInterval(this.popMole, 800);
+    this.countdownTimer = setInterval(() => {
+      this.setState((s) => {
+        const t = s.gameTimeLeft - 1;
+        if (t <= 0) {
+          clearInterval(this.moleTimer);
+          clearInterval(this.countdownTimer);
+          const best = Math.max(s.gameScore, s.gameBestScore);
+          try { localStorage.setItem('jj-best-score', String(best)); } catch (e) {}
+          return { gameTimeLeft: 0, gamePlaying: false, gameActiveHole: null, gameBestScore: best };
+        }
+        return { gameTimeLeft: t };
+      });
+    }, 1000);
+  };
+
+  popMole = () => {
+    this.setState((s) => (s.gamePlaying ? { gameActiveHole: Math.floor(Math.random() * 9) } : null));
+  };
+
+  hitMole = (i) => {
+    if (this.state.gameActiveHole !== i) return;
+    this.setState((s) => ({ gameScore: s.gameScore + 1, gameActiveHole: null }));
+  };
+
+  goToScene = (id) => this.setState({ tourScene: id });
 
   setPage = (p) => {
     this.setState({ page: p });
@@ -934,7 +1115,7 @@ class Component extends DCLogic {
     const navDefs = [
       ['hero', 'Inicio'], ['historia', 'Historia'], ['gobierno', 'Gobierno'],
       ['cultura', 'Cultura'], ['naturaleza', 'Naturaleza'], ['exterior', 'Exterior'],
-      ['turismo', 'Turismo'], ['comics', 'Cómics'], ['leyes', 'Leyes'], ['inmigracion', 'Ciudadanía']
+      ['turismo', 'Turismo'], ['comics', 'Cómics'], ['juegos', 'Juegos'], ['leyes', 'Leyes'], ['inmigracion', 'Ciudadanía']
     ];
     const navItems = navDefs.map(([key, label]) => ({
       key, label,
@@ -997,10 +1178,76 @@ class Component extends DCLogic {
     const readerComic = this.state.comics.find((c) => c.id === this.state.readerComicId) || null;
     const readerPageData = readerComic ? readerComic.pages[this.state.readerPage] : null;
 
+    const gameHoles = Array.from({ length: 9 }, (_, i) => ({
+      index: i,
+      onClick: () => this.hitMole(i),
+      emoji: this.state.gameActiveHole === i ? '🍅' : '',
+      bg: HOLE_COLORS[i % HOLE_COLORS.length]
+    }));
+
+    const currentScene = TOUR_SCENES.find((s) => s.id === this.state.tourScene) || TOUR_SCENES[0];
+    const tourItems = currentScene.items.map((it) => ({
+      e: it.e,
+      style: {
+        position: 'absolute',
+        left: it.left + '%',
+        bottom: it.bottom + '%',
+        fontSize: it.size + 'px',
+        transform: 'translateX(-50%) translateZ(' + it.z + 'px)'
+      }
+    }));
+    const tourLinks = currentScene.links.map((l, i) => ({
+      label: l.label,
+      onClick: () => this.goToScene(l.to),
+      style: {
+        position: 'absolute',
+        bottom: '16px',
+        left: i === 0 ? '16px' : 'auto',
+        right: i === 0 ? 'auto' : '16px',
+        background: '#FFF6E9',
+        color: '#2B1B4D',
+        border: '3px solid #2B1B4D',
+        borderRadius: '10px',
+        padding: '10px 16px',
+        fontFamily: "'Baloo 2', sans-serif",
+        fontWeight: 800,
+        fontSize: '13px',
+        cursor: 'pointer',
+        boxShadow: '4px 4px 0 #2B1B4D'
+      }
+    }));
+    const tourDots = TOUR_SCENES.map((s) => ({
+      onClick: () => this.goToScene(s.id),
+      style: {
+        width: '10px',
+        height: '10px',
+        borderRadius: '50%',
+        cursor: 'pointer',
+        background: s.id === this.state.tourScene ? '#FF5A5F' : '#2B1B4D33',
+        border: '2px solid #2B1B4D'
+      }
+    }));
+
     return {
       navItems,
       state: this.state,
       isComics: page === 'comics',
+      isJuegos: page === 'juegos',
+      needsPassportForGame: !this.state.passportUrl,
+      canPlayGame: !!this.state.passportUrl,
+      gamePlaying: this.state.gamePlaying,
+      gameNotPlaying: !this.state.gamePlaying,
+      gameScore: this.state.gameScore,
+      gameTimeLeft: this.state.gameTimeLeft,
+      gameBestScore: this.state.gameBestScore,
+      gameHoles,
+      startGame: this.startGame,
+      playButtonLabel: this.state.gameTimeLeft === 30 ? 'Jugar 🍅' : 'Jugar de nuevo 🍅',
+      tourSky: currentScene.sky,
+      tourLabel: currentScene.label,
+      tourItems,
+      tourLinks,
+      tourDots,
       tickerItems,
       comics,
       noComics: comics.length === 0,
