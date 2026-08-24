@@ -10,7 +10,12 @@ Abrí `index.html` en un navegador, o serví la carpeta con cualquier servidor e
 
 - **Inicio** — bienvenida, bandera nacional, estadísticas, símbolos patrios y un skyline 3D animado de Nueva Juja.
 - **Historia**, **Gobierno**, **Cultura**, **Naturaleza**, **Relaciones Exteriores**, **Turismo** y **Leyes** — los "capítulos" del país.
-- **Inmigración** — formulario de ciudadanía que genera un pasaporte oficial descargable (foto por cámara o archivo + `<canvas>`).
+- **Inmigración** — elegís un avatar y generás un apodo oficial (sin fotos ni nombres reales) para descargar un pasaporte generado en `<canvas>`.
+- **Cómics** — biblioteca de historietas con lector de páginas.
+
+## Administrar contenido (ticker y cómics)
+
+Abrí `admin/index.html` (en el sitio publicado: `/admin/`). Ahí podés editar las noticias del zócalo y los cómics, y descargar los archivos `ticker.json` / `comics.json` actualizados. Para publicarlos: subilos a la carpeta `content/` del repositorio en GitHub (editar el archivo o "Add file → Upload files" reemplazando el existente) y hacer commit. El panel no publica solo — es un editor local que genera el archivo para subir a mano.
 
 ## Estructura
 
@@ -18,6 +23,8 @@ Abrí `index.html` en un navegador, o serví la carpeta con cualquier servidor e
 index.html       Página completa (todas las secciones viven en un solo archivo)
 support.js       Runtime que interpreta el template y monta React (generado, no editar a mano)
 uploads/         Imágenes usadas en el sitio
+content/         ticker.json y comics.json — contenido editable desde admin/
+admin/           Panel de administración simple (sin login, edita en el navegador)
 ```
 
 ## Créditos
