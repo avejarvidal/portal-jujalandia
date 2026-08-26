@@ -69,6 +69,7 @@
     <sc-for list="{{ navItems }}" as="item" hint-placeholder-count="9">
       <div onClick="{{ item.onClick }}" style="{{ item.style }}">{{ item.label }}</div>
     </sc-for>
+    <button onClick="{{ toggleSound }}" style="background: {{ soundBtnBg }}; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 999px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 13px; padding: 6px 14px; cursor: pointer; box-shadow: 2px 2px 0 #2B1B4D;">{{ soundBtnLabel }}</button>
   </div>
 
   <!-- ===== INICIO ===== -->
@@ -608,20 +609,22 @@
               <div style="display: flex; align-items: center; gap: 8px;">
                 <span>✅ CIUDADANO VERIFICADO: {{ verifiedLabel }}</span>
               </div>
-              <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="background: #FFC93C; color: #2B1B4D; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 800;">🎖️ {{ stampsCount }}/6 SELLOS</div>
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <button onClick="{{ cycleTimeMode }}" style="background: #FFC93C; color: #2B1B4D; border: 2px solid #FFF6E9; border-radius: 8px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 12px; padding: 5px 12px; cursor: pointer;" title="Cambiar hora o seguir hora de Chile">{{ plazaTimeLabel }}</button>
+                <button onClick="{{ toggleSound }}" style="background: {{ soundBtnBg }}; color: #2B1B4D; border: 2px solid #FFF6E9; border-radius: 8px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 12px; padding: 5px 12px; cursor: pointer;">{{ soundBtnLabel }}</button>
+                <div style="background: #14C8B8; color: #2B1B4D; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 800;">🎖️ {{ stampsCount }}/6 SELLOS</div>
                 <span onClick="{{ logoutCitizen }}" style="cursor: pointer; text-decoration: underline; opacity: 0.8;">cambiar</span>
               </div>
             </div>
 
             <!-- MODO CAMINAR EN LA PLAZA 3D -->
             <sc-if value="{{ plazaModeIsWalk }}" hint-placeholder-val="{{ true }}">
-              <div ref="{{ sceneRef }}" style="position: relative; border: 5px solid #2B1B4D; border-radius: 22px; overflow: hidden; box-shadow: 8px 8px 0 #2B1B4D; height: 460px; perspective: 720px; perspective-origin: 50% 50%; background: linear-gradient(180deg, #58d5ea 0%, #9fe8e4 46%, #d8f2d0 62%, #cfe6b8 100%); cursor: grab; touch-action: none; user-select: none;">
+              <div ref="{{ sceneRef }}" style="position: relative; border: 5px solid #2B1B4D; border-radius: 22px; overflow: hidden; box-shadow: 8px 8px 0 #2B1B4D; height: 460px; perspective: 720px; perspective-origin: 50% 50%; background: {{ plazaSkyBackground }}; cursor: grab; touch-action: none; user-select: none;">
                 <div ref="{{ worldRef }}" style="position: absolute; left: 50%; top: 50%; width: 0; height: 0; transform-style: preserve-3d;"></div>
               </div>
               <div style="margin-top: 12px; font-size: 12px; font-weight: 700; opacity: 0.7; text-align: center; line-height: 1.7;">
                 Teclado: <strong>W A S D</strong> o <strong>flechas</strong> para caminar y girar · <strong>Q</strong>/<strong>E</strong> para desplazarte de costado · <strong>Shift</strong> para correr · <strong>Enter</strong> o <strong>clic</strong> para interactuar / entrar.<br/>
-                Acercate a <strong>La Tía</strong>, a <strong>Roberto Musso</strong>, a <strong>El Chino</strong>, a las <strong>Jujapeludas</strong> o a la <strong>Fuente</strong> para hablar o interactuar.
+                Acercate a <strong>La Tía</strong>, a <strong>Roberto Musso</strong>, a <strong>El Chino</strong>, a <strong>Papá</strong>, a <strong>Mamá</strong>, a las <strong>Jujapeludas</strong> o a la <strong>Fuente</strong> para hablar o interactuar.
               </div>
 
               <!-- MODAL DIÁLOGO NPC EN LA PLAZA -->
@@ -1860,6 +1863,25 @@ const ROCKOLA_TRACKS_DEF = [
   { id: 'balada', title: '4. Balada de la Jujapeluda', desc: 'Melodía dulce y esponjosa' }
 ];
 
+let soundMutedGlobal = false;
+try {
+  soundMutedGlobal = localStorage.getItem('jj-sound-muted') === 'true';
+} catch (e) {}
+
+function getChileTime() {
+  try {
+    const now = new Date();
+    const str = now.toLocaleString("en-US", { timeZone: "America/Santiago", hour: 'numeric', minute: 'numeric', hour12: false });
+    const parts = str.split(':');
+    const hour = parseInt(parts[0], 10);
+    const min = parseInt(parts[1], 10);
+    return { hour, min, formatted: (hour < 10 ? '0' + hour : hour) + ':' + (min < 10 ? '0' + min : min) };
+  } catch (e) {
+    const d = new Date();
+    return { hour: d.getHours(), min: d.getMinutes(), formatted: d.getHours() + ':' + (d.getMinutes() < 10 ? '0' + d.getMinutes() : d.getMinutes()) };
+  }
+}
+
 let activeAudioCtx = null;
 let synthTimeouts = [];
 
@@ -1872,7 +1894,315 @@ function stopChiptune() {
   }
 }
 
+function playSfx(type) {
+  if (soundMutedGlobal) return;
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    if (ctx.state === 'suspended') ctx.resume();
+    const t = ctx.currentTime;
+
+    if (type === 'npc_tia') {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(440, t);
+      osc.frequency.exponentialRampToValueAtTime(659.25, t + 0.15);
+      osc.frequency.exponentialRampToValueAtTime(554.37, t + 0.35);
+      gain.gain.setValueAtTime(0.12, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.45);
+    } else if (type === 'npc_musso') {
+      [164.81, 246.94, 329.63].forEach((f) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(f, t);
+        osc.frequency.exponentialRampToValueAtTime(f * 1.05, t + 0.1);
+        gain.gain.setValueAtTime(0.09, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.4);
+      });
+    } else if (type === 'npc_chino') {
+      [0, 0.12].forEach((offset) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(780, t + offset);
+        osc.frequency.exponentialRampToValueAtTime(220, t + offset + 0.08);
+        gain.gain.setValueAtTime(0.12, t + offset);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + offset + 0.09);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t + offset);
+        osc.stop(t + offset + 0.09);
+      });
+    } else if (type === 'npc_papa') {
+      [523.25, 659.25, 783.99].forEach((f, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(f, t + i * 0.08);
+        gain.gain.setValueAtTime(0.12, t + i * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.08 + 0.25);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t + i * 0.08);
+        osc.stop(t + i * 0.08 + 0.25);
+      });
+    } else if (type === 'npc_mama') {
+      [880, 1174.66, 1318.51].forEach((f, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(f, t + i * 0.07);
+        gain.gain.setValueAtTime(0.14, t + i * 0.07);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.07 + 0.3);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t + i * 0.07);
+        osc.stop(t + i * 0.07 + 0.3);
+      });
+    } else if (type === 'pet_jujapeluda') {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(587.33, t);
+      osc.frequency.exponentialRampToValueAtTime(880, t + 0.12);
+      osc.frequency.exponentialRampToValueAtTime(659.25, t + 0.28);
+      gain.gain.setValueAtTime(0.14, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.32);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.32);
+    } else if (type === 'fountain_magic') {
+      [330, 440, 554, 659, 880, 1108].forEach((f, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(f, t + i * 0.05);
+        gain.gain.setValueAtTime(0.1, t + i * 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.05 + 0.2);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t + i * 0.05);
+        osc.stop(t + i * 0.05 + 0.2);
+      });
+    } else if (type === 'enter_building') {
+      [523.25, 783.99].forEach((f, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(f, t + i * 0.1);
+        gain.gain.setValueAtTime(0.15, t + i * 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.1 + 0.35);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t + i * 0.1);
+        osc.stop(t + i * 0.1 + 0.35);
+      });
+    } else if (type === 'exit_building') {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(659.25, t);
+      osc.frequency.exponentialRampToValueAtTime(440, t + 0.18);
+      gain.gain.setValueAtTime(0.12, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.22);
+    } else if (type === 'footstep') {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(160, t);
+      osc.frequency.exponentialRampToValueAtTime(40, t + 0.04);
+      gain.gain.setValueAtTime(0.04, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.05);
+    } else if (type === 'kiosco_headline') {
+      [0, 0.06, 0.12].forEach((offset) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(600 + Math.random() * 200, t + offset);
+        gain.gain.setValueAtTime(0.06, t + offset);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + offset + 0.04);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t + offset);
+        osc.stop(t + offset + 0.04);
+      });
+    } else if (type === 'correo_stamp') {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(320, t);
+      osc.frequency.exponentialRampToValueAtTime(90, t + 0.08);
+      gain.gain.setValueAtTime(0.15, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.1);
+    } else if (type === 'relic_chime') {
+      [523.25, 659.25, 1046.50].forEach((f) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(f, t);
+        gain.gain.setValueAtTime(0.1, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.6);
+      });
+    } else if (type === 'trivia_correct') {
+      [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(f, t + i * 0.08);
+        gain.gain.setValueAtTime(0.12, t + i * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.08 + 0.25);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t + i * 0.08);
+        osc.stop(t + i * 0.08 + 0.25);
+      });
+    } else if (type === 'trivia_wrong') {
+      [350, 310, 270, 240].forEach((f, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(f, t + i * 0.12);
+        gain.gain.setValueAtTime(0.08, t + i * 0.12);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.12 + 0.18);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t + i * 0.12);
+        osc.stop(t + i * 0.12 + 0.18);
+      });
+    } else if (type === 'tomato_splat') {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(480, t);
+      osc.frequency.exponentialRampToValueAtTime(110, t + 0.1);
+      gain.gain.setValueAtTime(0.18, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.12);
+    } else if (type === 'card_flip') {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(600, t);
+      osc.frequency.exponentialRampToValueAtTime(900, t + 0.05);
+      gain.gain.setValueAtTime(0.08, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.06);
+    } else if (type === 'card_match') {
+      [659.25, 880, 1046.50].forEach((f, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(f, t + i * 0.07);
+        gain.gain.setValueAtTime(0.12, t + i * 0.07);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.07 + 0.22);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t + i * 0.07);
+        osc.stop(t + i * 0.07 + 0.22);
+      });
+    } else if (type === 'tomatgol_kick') {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(260, t);
+      osc.frequency.exponentialRampToValueAtTime(60, t + 0.08);
+      gain.gain.setValueAtTime(0.2, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.09);
+    } else if (type === 'tomatgol_save') {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(180, t);
+      osc.frequency.exponentialRampToValueAtTime(320, t + 0.08);
+      gain.gain.setValueAtTime(0.15, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.1);
+    } else if (type === 'tomatgol_goal') {
+      [523.25, 659.25, 783.99, 1046.50, 1318.51].forEach((f, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(f, t + i * 0.07);
+        gain.gain.setValueAtTime(0.1, t + i * 0.07);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.07 + 0.28);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t + i * 0.07);
+        osc.stop(t + i * 0.07 + 0.28);
+      });
+    } else if (type === 'passport_stamp' || type === 'treaty_fanfare') {
+      [0, 0.14].forEach((offset) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(450, t + offset);
+        osc.frequency.exponentialRampToValueAtTime(120, t + offset + 0.08);
+        gain.gain.setValueAtTime(0.16, t + offset);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + offset + 0.1);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t + offset);
+        osc.stop(t + offset + 0.1);
+      });
+      [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(f, t + 0.28 + i * 0.08);
+        gain.gain.setValueAtTime(0.12, t + 0.28 + i * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.28 + i * 0.08 + 0.3);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t + 0.28 + i * 0.08);
+        osc.stop(t + 0.28 + i * 0.08 + 0.3);
+      });
+    }
+  } catch (e) {}
+}
+
 function playChiptune(trackId) {
+  if (soundMutedGlobal) return;
   stopChiptune();
   try {
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -2136,7 +2466,11 @@ class Component extends DCLogic {
 
     // Bilateral Passport / 2 Citizens Interaction State
     secondCitizen: null,
-    treatyUrl: null
+    treatyUrl: null,
+
+    // Sound and Chile Time Cycle State
+    soundMuted: soundMutedGlobal,
+    plazaTimeMode: 'auto' // 'auto' | 'day' | 'sunset' | 'night'
   };
 
   constructor(props) {
@@ -2270,6 +2604,63 @@ class Component extends DCLogic {
     this.setState({ verifiedCitizen: null, gamePlaying: false, memPlaying: false, plazaView: 'walk', secondCitizen: null, treatyUrl: null });
   };
 
+  toggleSound = () => {
+    const next = !this.state.soundMuted;
+    soundMutedGlobal = next;
+    try {
+      localStorage.setItem('jj-sound-muted', next ? 'true' : 'false');
+    } catch (e) {}
+    this.setState({ soundMuted: next });
+    if (!next) {
+      setTimeout(() => playSfx('npc_tia'), 50);
+    }
+  };
+
+  getEffectivePlazaTime = () => {
+    if (this.state.plazaTimeMode && this.state.plazaTimeMode !== 'auto') {
+      return this.state.plazaTimeMode;
+    }
+    const ct = getChileTime();
+    const h = ct.hour;
+    if (h >= 19 && h < 21) return 'sunset';
+    if (h >= 21 || h < 7) return 'night';
+    if (h === 7 && ct.min < 30) return 'night';
+    return 'day';
+  };
+
+  cycleTimeMode = () => {
+    const modes = ['auto', 'day', 'sunset', 'night'];
+    const cur = this.state.plazaTimeMode || 'auto';
+    const next = modes[(modes.indexOf(cur) + 1) % modes.length];
+    this.setState({ plazaTimeMode: next }, () => {
+      this.build3DWorld();
+    });
+  };
+
+  getPlazaTimeLabel = () => {
+    const ct = getChileTime();
+    const mode = this.state.plazaTimeMode || 'auto';
+    if (mode === 'auto') {
+      const eff = this.getEffectivePlazaTime();
+      const icon = eff === 'day' ? '☀️' : (eff === 'sunset' ? '🌅' : '🌙');
+      return '🇨🇱 Auto ' + icon + ' (' + ct.formatted + ')';
+    }
+    if (mode === 'day') return '☀️ Modo Día';
+    if (mode === 'sunset') return '🌅 Modo Atardecer';
+    return '🌙 Modo Noche';
+  };
+
+  getPlazaSkyBackground = () => {
+    const eff = this.getEffectivePlazaTime();
+    if (eff === 'sunset') {
+      return 'linear-gradient(180deg, #ea580c 0%, #f97316 35%, #ec4899 65%, #831843 85%, #47174e 100%)';
+    }
+    if (eff === 'night') {
+      return 'linear-gradient(180deg, #090d16 0%, #0f172a 45%, #1e1b4b 75%, #180d2b 100%)';
+    }
+    return 'linear-gradient(180deg, #58d5ea 0%, #9fe8e4 46%, #d8f2d0 62%, #cfe6b8 100%)';
+  };
+
   // ============ MOTOR 3D DE LA PLAZA ============
 
   make3DPanel = (w, h, transform, css) => {
@@ -2315,17 +2706,32 @@ class Component extends DCLogic {
 
     const P = this.make3DPanel;
     const S = this.make3DSprite;
+    const effTime = this.getEffectivePlazaTime();
 
-    // Suelo
+    // Suelo con paleta de iluminación según momento del día
     const g = W3D.ground;
-    world.appendChild(P(g, g, 'translate3d(0,0,0) rotateX(90deg)',
-      'background:' +
-        'radial-gradient(circle at 50% 50%, rgba(255,201,60,.55) 0 3.2%, rgba(0,0,0,0) 3.4%),' +
-        'radial-gradient(circle at 50% 50%, rgba(255,246,233,.9) 0 8%, rgba(0,0,0,0) 8.2%),' +
-        'radial-gradient(circle at 50% 50%, rgba(255,246,233,0) 0 15.5%, rgba(43,27,77,.22) 15.5% 16%, rgba(0,0,0,0) 16%),' +
-        'repeating-linear-gradient(0deg, rgba(43,27,77,.10) 0 2px, rgba(0,0,0,0) 2px 120px),' +
-        'repeating-linear-gradient(90deg, rgba(43,27,77,.10) 0 2px, rgba(0,0,0,0) 2px 120px),' +
-        'radial-gradient(circle at 50% 50%, #efe3c6 0 26%, #d9e8c0 26% 44%, #cfe0b4 100%);'));
+    const groundGrad = effTime === 'night'
+      ? 'radial-gradient(circle at 50% 50%, rgba(255,201,60,.15) 0 3.2%, rgba(0,0,0,0) 3.4%),' +
+        'radial-gradient(circle at 50% 50%, rgba(30,41,59,.9) 0 8%, rgba(0,0,0,0) 8.2%),' +
+        'radial-gradient(circle at 50% 50%, rgba(30,41,59,0) 0 15.5%, rgba(15,23,42,.4) 15.5% 16%, rgba(0,0,0,0) 16%),' +
+        'repeating-linear-gradient(0deg, rgba(15,23,42,.3) 0 2px, rgba(0,0,0,0) 2px 120px),' +
+        'repeating-linear-gradient(90deg, rgba(15,23,42,.3) 0 2px, rgba(0,0,0,0) 2px 120px),' +
+        'radial-gradient(circle at 50% 50%, #293548 0 26%, #1e293b 26% 44%, #0f172a 100%);'
+      : (effTime === 'sunset'
+        ? 'radial-gradient(circle at 50% 50%, rgba(255,201,60,.45) 0 3.2%, rgba(0,0,0,0) 3.4%),' +
+          'radial-gradient(circle at 50% 50%, rgba(254,215,170,.9) 0 8%, rgba(0,0,0,0) 8.2%),' +
+          'radial-gradient(circle at 50% 50%, rgba(254,215,170,0) 0 15.5%, rgba(67,23,78,.25) 15.5% 16%, rgba(0,0,0,0) 16%),' +
+          'repeating-linear-gradient(0deg, rgba(67,23,78,.15) 0 2px, rgba(0,0,0,0) 2px 120px),' +
+          'repeating-linear-gradient(90deg, rgba(67,23,78,.15) 0 2px, rgba(0,0,0,0) 2px 120px),' +
+          'radial-gradient(circle at 50% 50%, #fbd5b5 0 26%, #e8b4b8 26% 44%, #b5838d 100%);'
+        : 'radial-gradient(circle at 50% 50%, rgba(255,201,60,.55) 0 3.2%, rgba(0,0,0,0) 3.4%),' +
+          'radial-gradient(circle at 50% 50%, rgba(255,246,233,.9) 0 8%, rgba(0,0,0,0) 8.2%),' +
+          'radial-gradient(circle at 50% 50%, rgba(255,246,233,0) 0 15.5%, rgba(43,27,77,.22) 15.5% 16%, rgba(0,0,0,0) 16%),' +
+          'repeating-linear-gradient(0deg, rgba(43,27,77,.10) 0 2px, rgba(0,0,0,0) 2px 120px),' +
+          'repeating-linear-gradient(90deg, rgba(43,27,77,.10) 0 2px, rgba(0,0,0,0) 2px 120px),' +
+          'radial-gradient(circle at 50% 50%, #efe3c6 0 26%, #d9e8c0 26% 44%, #cfe0b4 100%);');
+
+    world.appendChild(P(g, g, 'translate3d(0,0,0) rotateX(90deg)', 'background:' + groundGrad));
 
     // Fuente central
     world.appendChild(P(300, 300, 'translate3d(0,-46px,0) rotateX(90deg)',
@@ -2342,19 +2748,42 @@ class Component extends DCLogic {
       'background:radial-gradient(circle, rgba(0,0,0,0) 0 90%, #2B1B4D 90% 100%);border-radius:50%;'));
     world.appendChild(S(0, -46, 0, 130, '⛲'));
 
-    // Cielo
-    W3D_SKY.forEach((s) => world.appendChild(S(s.x, -s.y, s.z, s.s, s.e, 'filter:none;opacity:.95;')));
+    // Cielo según ciclo día/atardecer/noche
+    const skyProps = effTime === 'night'
+      ? [
+          { e: '🌙', x: -1300, y: 1150, z: -3100, s: 320, css: 'filter:drop-shadow(0 0 40px #E0F2FE);' },
+          { e: '✨', x: 900, y: 1300, z: -2800, s: 130, css: 'filter:drop-shadow(0 0 12px #FFD700);' },
+          { e: '⭐', x: -600, y: 1250, z: -2500, s: 120, css: 'filter:drop-shadow(0 0 15px #FFD700);' },
+          { e: '✨', x: 1600, y: 1050, z: -2000, s: 140, css: 'filter:drop-shadow(0 0 10px #FFD700);' },
+          { e: '⭐', x: -1800, y: 1100, z: -1600, s: 110, css: 'filter:drop-shadow(0 0 12px #FFD700);' }
+        ]
+      : (effTime === 'sunset'
+        ? [
+            { e: '🌅', x: -1200, y: 700, z: -3000, s: 380, css: 'filter:drop-shadow(0 0 45px #F97316);' },
+            { e: '⛅', x: 800, y: 950, z: -2800, s: 400, css: 'filter:sepia(0.5) hue-rotate(-20deg);' },
+            { e: '☁️', x: -400, y: 1100, z: -2500, s: 330, css: 'filter:sepia(0.4) hue-rotate(-25deg);' },
+            { e: '✨', x: 1400, y: 1200, z: -2200, s: 100, css: 'filter:drop-shadow(0 0 10px #FFD700);' }
+          ]
+        : [
+            { e: '☀️', x: -1500, y: 1250, z: -3200, s: 320, css: 'filter:drop-shadow(0 0 35px #FFD700);' },
+            { e: '☁️', x: 900, y: 1000, z: -2900, s: 420, css: '' },
+            { e: '☁️', x: -600, y: 1150, z: -2600, s: 340, css: '' },
+            { e: '☁️', x: 1700, y: 900, z: -1800, s: 300, css: '' }
+          ]);
+
+    skyProps.forEach((s) => world.appendChild(S(s.x, -s.y, s.z, s.s, s.e, 'opacity:.95;' + (s.css || ''))));
 
     // Edificios
     W3D_BUILDINGS.forEach((b) => {
       const hw = b.w / 2, hd = b.d / 2, cy = -b.h / 2;
-      const wallCss = 'background:' + b.wall + ';border:4px solid #2B1B4D;box-sizing:border-box;';
+      const bFilter = effTime === 'night' ? 'brightness(.75);' : (effTime === 'sunset' ? 'brightness(.95) sepia(.2);' : '');
+      const wallCss = 'background:' + b.wall + ';border:4px solid #2B1B4D;box-sizing:border-box;' + bFilter;
 
-      world.appendChild(P(b.w, b.h, 'translate3d(' + b.x + 'px,' + cy + 'px,' + (b.z + hd) + 'px)', wallCss + 'filter:brightness(1.06);'));
-      world.appendChild(P(b.w, b.h, 'translate3d(' + b.x + 'px,' + cy + 'px,' + (b.z - hd) + 'px) rotateY(180deg)', wallCss + 'filter:brightness(.82);'));
-      world.appendChild(P(b.d, b.h, 'translate3d(' + (b.x - hw) + 'px,' + cy + 'px,' + b.z + 'px) rotateY(-90deg)', wallCss + 'filter:brightness(.9);'));
-      world.appendChild(P(b.d, b.h, 'translate3d(' + (b.x + hw) + 'px,' + cy + 'px,' + b.z + 'px) rotateY(90deg)', wallCss + 'filter:brightness(.95);'));
-      world.appendChild(P(b.w, b.d, 'translate3d(' + b.x + 'px,' + (-b.h) + 'px,' + b.z + 'px) rotateX(90deg)', 'background:' + b.roof + ';border:4px solid #2B1B4D;box-sizing:border-box;'));
+      world.appendChild(P(b.w, b.h, 'translate3d(' + b.x + 'px,' + cy + 'px,' + (b.z + hd) + 'px)', wallCss));
+      world.appendChild(P(b.w, b.h, 'translate3d(' + b.x + 'px,' + cy + 'px,' + (b.z - hd) + 'px) rotateY(180deg)', wallCss));
+      world.appendChild(P(b.d, b.h, 'translate3d(' + (b.x - hw) + 'px,' + cy + 'px,' + b.z + 'px) rotateY(-90deg)', wallCss));
+      world.appendChild(P(b.d, b.h, 'translate3d(' + (b.x + hw) + 'px,' + cy + 'px,' + b.z + 'px) rotateY(90deg)', wallCss));
+      world.appendChild(P(b.w, b.d, 'translate3d(' + b.x + 'px,' + (-b.h) + 'px,' + b.z + 'px) rotateX(90deg)', 'background:' + b.roof + ';border:4px solid #2B1B4D;box-sizing:border-box;' + bFilter));
 
       const front = b.z < 0 ? 1 : -1;
       const fz = b.z + front * (hd + 2);
@@ -2364,8 +2793,9 @@ class Component extends DCLogic {
       world.appendChild(P(70, 108, 'translate3d(' + b.x + 'px,-58px,' + (fz + front * 1) + 'px)' + rot, 'background:linear-gradient(180deg,#FFF6E9,#FFC93C);border-radius:35px 35px 0 0;'));
 
       [-1, 1].forEach((side) => {
+        const winGlow = effTime === 'night' ? 'box-shadow:0 0 18px rgba(255,201,60,.9);' : '';
         world.appendChild(P(64, 64, 'translate3d(' + (b.x + side * (hw * 0.55)) + 'px,' + (-b.h + 78) + 'px,' + fz + 'px)' + rot,
-          'background:#9fe8f5;border:4px solid #2B1B4D;box-sizing:border-box;border-radius:8px;background-image:linear-gradient(135deg, rgba(255,255,255,.85) 0 40%, rgba(0,0,0,0) 40%);'));
+          'background:#9fe8f5;border:4px solid #2B1B4D;box-sizing:border-box;border-radius:8px;background-image:linear-gradient(135deg, rgba(255,255,255,.85) 0 40%, rgba(0,0,0,0) 40%);' + winGlow));
       });
 
       const sign = P(b.w * 0.82, 54, 'translate3d(' + b.x + 'px,' + (-b.h - 6) + 'px,' + fz + 'px)' + rot,
@@ -2380,11 +2810,21 @@ class Component extends DCLogic {
       world.appendChild(hit);
     });
 
-    // Farolas
+    // Farolas con iluminación de suelo y halos dinámicos
     W3D_LAMPS.forEach((l) => {
       world.appendChild(P(12, 210, 'translate3d(' + l.x + 'px,-105px,' + l.z + 'px)', 'background:#2B1B4D;'));
       world.appendChild(P(12, 210, 'translate3d(' + l.x + 'px,-105px,' + l.z + 'px) rotateY(90deg)', 'background:#3d2a63;'));
-      world.appendChild(S(l.x, -210, l.z, 54, '💡', 'filter:drop-shadow(0 0 16px rgba(255,201,60,.95));'));
+      const lampGlow = effTime === 'night'
+        ? 'filter:drop-shadow(0 0 35px #FFD700) drop-shadow(0 0 60px #FFA500);'
+        : (effTime === 'sunset'
+          ? 'filter:drop-shadow(0 0 25px rgba(255,201,60,1));'
+          : 'filter:drop-shadow(0 0 10px rgba(255,201,60,.4));');
+      world.appendChild(S(l.x, -210, l.z, effTime === 'night' ? 62 : 54, '💡', lampGlow));
+
+      if (effTime === 'night' || effTime === 'sunset') {
+        world.appendChild(P(260, 260, 'translate3d(' + l.x + 'px,-2px,' + l.z + 'px) rotateX(90deg)',
+          'background:radial-gradient(circle, rgba(255,201,60,' + (effTime === 'night' ? '0.45' : '0.25') + ') 0%, rgba(255,201,60,0) 70%);border-radius:50%;pointer-events:none;'));
+      }
     });
 
     // Muro perimetral
@@ -2525,18 +2965,21 @@ class Component extends DCLogic {
 
   openPlazaBuilding = (buildingId) => {
     stopChiptune();
+    playSfx('enter_building');
     this.setState({ plazaView: buildingId });
     this.unlockStamp(buildingId);
   };
 
   exitPlazaInterior = () => {
     stopChiptune();
+    playSfx('exit_building');
     this.setState({ plazaView: 'walk' });
   };
 
   talkToNpc = (npcId) => {
     const npc = W3D_NPCS.find((n) => n.id === npcId);
     if (!npc) return;
+    playSfx('npc_' + npcId);
     this.setState({ activeNpc: npc, npcReply: null });
   };
 
@@ -2549,6 +2992,7 @@ class Component extends DCLogic {
   };
 
   petJujapeluda = () => {
+    playSfx('pet_jujapeluda');
     const newPats = this.state.patCount + 1;
     this.setState({ patCount: newPats });
     try { localStorage.setItem('jj-pats', newPats.toString()); } catch (e) {}
@@ -2557,6 +3001,7 @@ class Component extends DCLogic {
   };
 
   useFountain = () => {
+    playSfx('fountain_magic');
     const fortunes = [
       'El Tomate Gigante bendice tu huerto con abundancia de semillas.',
       'El agua de la fuente susurra: "No dejes hervir el termo de La Tía".',
@@ -2750,27 +3195,31 @@ class Component extends DCLogic {
   // Kiosco Handlers
   setKioscoTab = (tab) => this.setState({ kioscoTab: tab });
   generateRandomHeadline = () => {
+    playSfx('kiosco_headline');
     const next = HEADLINES_POOL[Math.floor(Math.random() * HEADLINES_POOL.length)];
     this.setState({ currentHeadline: next });
     this.unlockStamp('kiosco');
   };
   selectHoroscopo = (idx) => {
+    playSfx('footstep');
     this.setState({ selectedHoroscopo: idx });
     this.unlockStamp('kiosco');
   };
   claimKioscoStamp = () => {
+    playSfx('correo_stamp');
     this.unlockStamp('kiosco');
     this.showToast('📰 ¡Sello de Prensa Libre estampado en tu pasaporte!');
   };
 
   // Correo Handlers
   setCorreoTab = (tab) => this.setState({ correoTab: tab });
-  selectLetterRecipient = (r) => this.setState({ letterRecipient: r });
-  selectLetterStamp = (s) => this.setState({ letterStamp: s });
+  selectLetterRecipient = (r) => { playSfx('footstep'); this.setState({ letterRecipient: r }); };
+  selectLetterStamp = (s) => { playSfx('footstep'); this.setState({ letterStamp: s }); };
   onLetterTextInput = (e) => this.setState({ letterText: e.target.value });
   sendOfficialLetter = () => {
     const { letterText, letterRecipient, letterStamp, verifiedCitizen, letters } = this.state;
     if (!letterText.trim()) return;
+    playSfx('correo_stamp');
     const authorName = verifiedCitizen ? verifiedCitizen.nickname + ' (' + verifiedCitizen.id + ')' : 'Ciudadano Anónimo';
     const stampObj = { tomate: { e: '🍅', l: 'Tomate' }, jujapeluda: { e: '🐾', l: 'Jujapeluda' }, caja: { e: '📦', l: 'Gran Caja' } }[letterStamp] || { e: '✉️', l: 'Oficial' };
     const recName = { consejo: 'Al Consejo Moral', tia: 'A La Tía Constituyente', musso: 'A Roberto Musso', chino: 'Al Chino de Ultramar', publico: 'Al Buzón de la Plaza' }[letterRecipient] || 'Oficial';
@@ -2814,7 +3263,7 @@ class Component extends DCLogic {
     stopChiptune();
     this.setState({ rockolaPlaying: null });
   };
-  selectMuralStamp = (emoji) => this.setState({ selectedMuralStamp: emoji });
+  selectMuralStamp = (emoji) => { playSfx('footstep'); this.setState({ selectedMuralStamp: emoji }); };
   onMuralClick = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = Math.max(5, Math.min(92, Math.round(((e.clientX - rect.left) / rect.width) * 100)));
@@ -2822,6 +3271,7 @@ class Component extends DCLogic {
     const author = this.state.verifiedCitizen ? this.state.verifiedCitizen.id : 'JJ-CIUDAD';
     const stamp = { emoji: this.state.selectedMuralStamp, x, y, author };
     const updated = [...this.state.muralStamps, stamp];
+    playSfx('tomato_splat');
     this.setState({ muralStamps: updated });
     try { localStorage.setItem('jj-mural-stamps', JSON.stringify(updated)); } catch (err) {}
     this.unlockStamp('cultural');
@@ -2831,10 +3281,12 @@ class Component extends DCLogic {
   // Museo Handlers
   setMuseoTab = (tab) => this.setState({ museoTab: tab });
   selectRelic = (index) => {
+    playSfx('relic_chime');
     this.setState({ selectedRelicIndex: index });
     this.unlockStamp('museo');
   };
   answerTrivia = (qIndex, isCorrect) => {
+    playSfx(isCorrect ? 'trivia_correct' : 'trivia_wrong');
     const updated = { ...this.state.triviaAnswers, [qIndex]: isCorrect };
     let score = null;
     if (Object.keys(updated).length === TRIVIA_QUESTIONS.length) {
@@ -2867,6 +3319,7 @@ class Component extends DCLogic {
 
   shootTomatGol = (dir) => {
     if (this.state.tgShooting || this.state.tgGameOver) return;
+    playSfx('tomatgol_kick');
     this.setState({ tgShooting: true });
 
     // Direcciones: 'left': -70px, 'center': 0px, 'right': 70px
@@ -2888,7 +3341,9 @@ class Component extends DCLogic {
 
     setTimeout(() => {
       if (isGoal) {
-        playChiptune('jingle');
+        playSfx('tomatgol_goal');
+      } else {
+        playSfx('tomatgol_save');
       }
 
       this.setState((s) => {
@@ -3100,6 +3555,7 @@ class Component extends DCLogic {
     ctx.fillText('Expedido en Nueva Juja el 25/08/2026 · Válido en toda la Gran Caja y los Valles del Norte', W / 2, 570);
 
     const dataUrl = canvas.toDataURL('image/png');
+    playSfx('treaty_fanfare');
     this.setState({ treatyUrl: dataUrl }, () => {
       if (this.treatyImgRef.current) this.treatyImgRef.current.src = dataUrl;
       if (this.treatyLinkRef.current) this.treatyLinkRef.current.href = dataUrl;
@@ -3154,6 +3610,7 @@ class Component extends DCLogic {
 
   hitMole = (i) => {
     if (this.state.gameActiveHole !== i) return;
+    playSfx('tomato_splat');
     this.setState((s) => ({ gameScore: s.gameScore + 1, gameActiveHole: null }));
   };
 
@@ -3167,6 +3624,7 @@ class Component extends DCLogic {
   flipMemoryCard = (i) => {
     const { memFlipped, memMatched } = this.state;
     if (memFlipped.length === 2 || memFlipped.includes(i) || memMatched.includes(i)) return;
+    playSfx('card_flip');
     const newFlipped = [...memFlipped, i];
     this.setState({ memFlipped: newFlipped, memMoves: newFlipped.length === 2 ? this.state.memMoves + 1 : this.state.memMoves });
     if (newFlipped.length < 2) return;
@@ -3174,6 +3632,7 @@ class Component extends DCLogic {
     setTimeout(() => {
       this.setState((s) => {
         const isMatch = s.memCards[a] && s.memCards[b] && s.memCards[a].emoji === s.memCards[b].emoji;
+        if (isMatch) playSfx('card_match');
         const matched = isMatch ? [...s.memMatched, a, b] : s.memMatched;
         const finished = matched.length === s.memCards.length;
         let bestMoves = s.memBestMoves;
@@ -3391,6 +3850,7 @@ class Component extends DCLogic {
     const fullId = 'JJ-' + citizenIdNum;
     let dataUrl = canvas.toDataURL('image/png');
     try { dataUrl = embedPassportId(dataUrl, fullId, this.state.nickname); } catch (e) {}
+    playSfx('passport_stamp');
     this.setState({ passportUrl: dataUrl, citizenId: fullId, showError: false }, () => {
       if (this.passportImgRef.current) this.passportImgRef.current.src = dataUrl;
       if (this.passportLinkRef.current) this.passportLinkRef.current.href = dataUrl;
@@ -3741,6 +4201,14 @@ class Component extends DCLogic {
       affinityVerdict,
       useCurrentPassport: this.useCurrentPassport,
       logoutCitizen: this.logoutCitizen,
+
+      // Sound & Chile Time Controls
+      soundBtnBg: this.state.soundMuted ? '#FF5A5F33' : '#14C8B8',
+      soundBtnLabel: this.state.soundMuted ? '🔇 Silencio' : '🔊 Sonido',
+      toggleSound: this.toggleSound,
+      plazaTimeLabel: this.getPlazaTimeLabel(),
+      cycleTimeMode: this.cycleTimeMode,
+      plazaSkyBackground: this.getPlazaSkyBackground(),
 
       // Plaza 3D & Modes
       plazaModeIsWalk: plazaView === 'walk',
