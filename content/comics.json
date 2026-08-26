@@ -23,5 +23,29 @@
       { "caption": "Página 4 — El Consejo Moral la aprueba por unanimidad. La unanimidad son dos personas y una jujapeluda." },
       { "caption": "Página 5 — Desde ese día, toda ley del país se mide contra ese cuaderno. Sigue vigente porque nadie se anima a corregirla." }
     ]
+  },
+  {
+    "id": "ep3",
+    "title": "Episodio 3: La Batalla de la Purpurina de Disney",
+    "cover_caption": "🏰✨",
+    "summary": "Año 10. Un emisario de Disney llega con purpurina y castillos inflables buscando cambiar nuestro suelo patrio.",
+    "pages": [
+      { "caption": "Página 1 — Un diplomático con orejas de ratón cruza la cerca de Nueva Juja con un contrato de 400 páginas y purpurina en aerosol." },
+      { "caption": "Página 2 — \"Les damos un castillo de fibra de vidrio por 10 hectáreas de tomates\", dice el emisario con sonrisa corporativa." },
+      { "caption": "Página 3 — El Chino en la aduana saca la lupa reglamentaria: \"Esta purpurina no está autorizada por el Consejo Moral. Decomisada.\"" },
+      { "caption": "Página 4 — La Tía estampa un sello gigante de 'RECHAZADO' con tinta de remolacha y le convida un mate amargo al emisario, quien huye desconcertado." }
+    ]
+  },
+  {
+    "id": "ep4",
+    "title": "Episodio 4: El Primer Clásico de Tomat-Gol",
+    "cover_caption": "⚽🍅",
+    "summary": "Año 15. La inauguración del estadio de cartón corrugado y la pelota de semillas seleccionadas.",
+    "pages": [
+      { "caption": "Página 1 — Nace el deporte nacional: Tomat-Gol. Las reglas son simples: el arco es una caja y la pelota no se puede comer hasta que termine el partido." },
+      { "caption": "Página 2 — Roberto Musso relata por Jujavisión Canal 1. El público son 12 parientes y 6 jujapeludas bostezando en la tribuna." },
+      { "caption": "Página 3 — En el minuto 89, una jujapeluda entra a la cancha y empuja la pelota de semillas con el hocico. ¡GOL HISTÓRICO!" },
+      { "caption": "Página 4 — El Consejo Moral convalida el tanto. Se entrega la Copa Dorada de Cartón y se decreta asado con ensalada de tomate." }
+    ]
   }
 ]
