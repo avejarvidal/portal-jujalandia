@@ -31,6 +31,12 @@
     @keyframes jj-twinkle { 0%,100% { opacity: 0.45; } 50% { opacity: 1; } }
     @keyframes jj-blimp { 0% { transform: translateX(-15vw) translateY(0); } 50% { transform: translateX(55vw) translateY(-10px); } 100% { transform: translateX(115vw) translateY(0); } }
     @keyframes jj-beacon { 0%,100% { opacity: 0.4; box-shadow: 0 0 0 0 rgba(255,90,95,0.7); } 50% { opacity: 1; box-shadow: 0 0 14px 5px rgba(255,90,95,0.85); } }
+    @keyframes jj-badge-glow { 0%,100% { transform: scale(1); box-shadow: 0 0 0 rgba(255,201,60,0); } 50% { transform: scale(1.05); box-shadow: 0 0 14px 4px rgba(255,201,60,0.85); } }
+    @keyframes jj-heart-float { 0% { transform: translateY(0) scale(0.8); opacity: 1; } 100% { transform: translateY(-40px) scale(1.3); opacity: 0; } }
+    @keyframes jj-eq1 { 0%,100% { height: 6px; } 50% { height: 26px; } }
+    @keyframes jj-eq2 { 0%,100% { height: 22px; } 50% { height: 8px; } }
+    @keyframes jj-eq3 { 0%,100% { height: 12px; } 50% { height: 30px; } }
+    @keyframes jj-stamp-appear { 0% { transform: scale(2) rotate(-15deg); opacity: 0; } 70% { transform: scale(0.9) rotate(4deg); opacity: 1; } 100% { transform: scale(1) rotate(-3deg); opacity: 1; } }
     .jj-crate { position: absolute; bottom: 0; background: #2B1B4D; border: 3px solid #140c28; border-radius: 3px 3px 0 0; animation: jj-bld-bob 7s ease-in-out infinite; }
     .jj-crate::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 10px; border-radius: 1px 1px 0 0; }
     .jj-crate::after { content: ''; position: absolute; inset: 10px 4px 4px; background-image: radial-gradient(circle, #FFC93C 1.4px, transparent 1.6px); background-size: 14px 14px; animation: jj-twinkle 3.4s ease-in-out infinite; }
@@ -525,18 +531,452 @@
           </sc-if>
 
           <sc-if value="{{ canEnter }}" hint-placeholder-val="{{ false }}">
-            <div style="display: flex; justify-content: space-between; align-items: center; background: #2B1B4D; color: #FFF6E9; border-radius: 12px; padding: 10px 16px; margin-bottom: 16px; font-size: 12px; font-weight: 800;">
-              <span>✅ CIUDADANO VERIFICADO: {{ verifiedLabel }}</span>
-              <span onClick="{{ logoutCitizen }}" style="cursor: pointer; text-decoration: underline; opacity: 0.8;">cambiar</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #2B1B4D; color: #FFF6E9; border-radius: 14px; padding: 12px 18px; margin-bottom: 16px; font-size: 13px; font-weight: 800; flex-wrap: wrap; gap: 10px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span>✅ CIUDADANO VERIFICADO: {{ verifiedLabel }}</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="background: #FFC93C; color: #2B1B4D; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 800;">🎖️ {{ stampsCount }}/6 SELLOS</div>
+                <span onClick="{{ logoutCitizen }}" style="cursor: pointer; text-decoration: underline; opacity: 0.8;">cambiar</span>
+              </div>
             </div>
 
-            <div ref="{{ sceneRef }}" style="position: relative; border: 5px solid #2B1B4D; border-radius: 22px; overflow: hidden; box-shadow: 8px 8px 0 #2B1B4D; height: 460px; perspective: 720px; perspective-origin: 50% 50%; background: linear-gradient(180deg, #58d5ea 0%, #9fe8e4 46%, #d8f2d0 62%, #cfe6b8 100%); cursor: grab; touch-action: none; user-select: none;">
-              <div ref="{{ worldRef }}" style="position: absolute; left: 50%; top: 50%; width: 0; height: 0; transform-style: preserve-3d;"></div>
-            </div>
-            <div style="margin-top: 12px; font-size: 12px; font-weight: 700; opacity: 0.7; text-align: center; line-height: 1.7;">
-              Teclado: <strong>W A S D</strong> o <strong>flechas</strong> para caminar y girar · <strong>Q</strong>/<strong>E</strong> para desplazarte de costado · <strong>Shift</strong> para correr · <strong>Enter</strong> para entrar al edificio.<br/>
-              También podés arrastrar el mouse para mirar alrededor, o usar los botones de la pantalla.
-            </div>
+            <!-- MODO CAMINAR EN LA PLAZA 3D -->
+            <sc-if value="{{ plazaModeIsWalk }}" hint-placeholder-val="{{ true }}">
+              <div ref="{{ sceneRef }}" style="position: relative; border: 5px solid #2B1B4D; border-radius: 22px; overflow: hidden; box-shadow: 8px 8px 0 #2B1B4D; height: 460px; perspective: 720px; perspective-origin: 50% 50%; background: linear-gradient(180deg, #58d5ea 0%, #9fe8e4 46%, #d8f2d0 62%, #cfe6b8 100%); cursor: grab; touch-action: none; user-select: none;">
+                <div ref="{{ worldRef }}" style="position: absolute; left: 50%; top: 50%; width: 0; height: 0; transform-style: preserve-3d;"></div>
+              </div>
+              <div style="margin-top: 12px; font-size: 12px; font-weight: 700; opacity: 0.7; text-align: center; line-height: 1.7;">
+                Teclado: <strong>W A S D</strong> o <strong>flechas</strong> para caminar y girar · <strong>Q</strong>/<strong>E</strong> para desplazarte de costado · <strong>Shift</strong> para correr · <strong>Enter</strong> o <strong>clic</strong> para interactuar / entrar.<br/>
+                Acercate a <strong>La Tía</strong>, a <strong>Roberto Musso</strong>, a <strong>El Chino</strong>, a las <strong>Jujapeludas</strong> o a la <strong>Fuente</strong> para hablar o interactuar.
+              </div>
+
+              <!-- MODAL DIÁLOGO NPC EN LA PLAZA -->
+              <sc-if value="{{ hasActiveNpc }}" hint-placeholder-val="{{ false }}">
+                <div style="position: fixed; inset: 0; background: rgba(43,27,77,0.75); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px;">
+                  <div style="background: #FFF6E9; border: 5px solid #2B1B4D; border-radius: 22px; padding: 24px; max-width: 520px; width: 100%; box-shadow: 10px 10px 0 #FFC93C; animation: jj-pop 0.3s ease-out;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                      <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="font-size: 38px; width: 54px; height: 54px; background: #FFC93C; border: 3px solid #2B1B4D; border-radius: 50%; display: flex; align-items: center; justify-content: center;">{{ activeNpcEmoji }}</div>
+                        <div>
+                          <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 20px; line-height: 1;">{{ activeNpcName }}</div>
+                          <div style="font-size: 11px; font-weight: 800; opacity: 0.65; letter-spacing: 0.05em;">{{ activeNpcRole }}</div>
+                        </div>
+                      </div>
+                      <div onClick="{{ closeNpcDialog }}" style="cursor: pointer; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 20px; padding: 2px 8px; border: 3px solid #2B1B4D; border-radius: 8px; background: #FFF6E9;">✕</div>
+                    </div>
+                    <div style="background: #2B1B4D; color: #FFF6E9; border-radius: 14px; padding: 16px 20px; font-size: 15px; font-weight: 600; line-height: 1.6; margin-bottom: 18px; border: 3px solid #2B1B4D;">
+                      "{{ activeNpcText }}"
+                    </div>
+                    <sc-if value="{{ hasNpcOptions }}" hint-placeholder-val="{{ true }}">
+                      <div style="display: grid; gap: 10px;">
+                        <sc-for list="{{ activeNpcOptions }}" as="opt" hint-placeholder-count="3">
+                          <button onClick="{{ opt.onClick }}" style="text-align: left; background: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; padding: 12px 16px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; color: #2B1B4D; cursor: pointer; transition: transform 0.1s; box-shadow: 4px 4px 0 #14C8B8;">
+                            👉 {{ opt.text }}
+                          </button>
+                        </sc-for>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ hasNpcReply }}" hint-placeholder-val="{{ false }}">
+                      <div style="background: #14C8B833; border: 3px dashed #2B1B4D; border-radius: 12px; padding: 14px; margin-bottom: 14px; font-size: 14px; font-weight: 700; line-height: 1.6;">
+                        {{ activeNpcReplyText }}
+                      </div>
+                      <button onClick="{{ closeNpcDialog }}" style="width: 100%; background: #14C8B8; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 12px; padding: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">Entendido 👍</button>
+                    </sc-if>
+                  </div>
+                </div>
+              </sc-if>
+            </sc-if>
+
+            <!-- NOTIFICACIÓN TOAST DE SELLO O LOGRO -->
+            <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+              <div style="position: fixed; bottom: 24px; right: 24px; z-index: 120; background: #FFC93C; color: #2B1B4D; border: 4px solid #2B1B4D; border-radius: 16px; padding: 14px 22px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; box-shadow: 6px 6px 0 #2B1B4D; animation: jj-stamp-appear 0.4s ease-out; display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 24px;">🌟</span>
+                <span>{{ toastMessage }}</span>
+              </div>
+            </sc-if>
+
+            <!-- INTERIOR 1: 🗞️ EL KIOSCO DE LA PLAZA -->
+            <sc-if value="{{ plazaModeIsKiosco }}" hint-placeholder-val="{{ false }}">
+              <div style="background: #FFF6E9; border: 5px solid #2B1B4D; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #FFC93C; animation: jj-pop 0.3s ease-out;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 4px solid #2B1B4D; padding-bottom: 16px; margin-bottom: 22px;">
+                  <div>
+                    <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 28px; color: #2B1B4D; line-height: 1;">🗞️ El Kiosco de la Gran Caja</div>
+                    <div style="font-size: 13px; font-weight: 700; opacity: 0.7; margin-top: 4px;">Prensa libre aprobada por La Tía · Edición Nacional</div>
+                  </div>
+                  <button onClick="{{ exitPlazaInterior }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">🏛️ ← Volver a la Plaza</button>
+                </div>
+
+                <!-- Pestañas del Kiosco -->
+                <div style="display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap;">
+                  <button onClick="{{ setKioscoTabDiario }}" style="{{ kioscoTabDiarioStyle }}">📰 Periódico del Día</button>
+                  <button onClick="{{ setKioscoTabClasificados }}" style="{{ kioscoTabClasificadosStyle }}">📢 Clasificados</button>
+                  <button onClick="{{ setKioscoTabHoroscopo }}" style="{{ kioscoTabHoroscopoStyle }}">🔮 Horóscopo del Tomate</button>
+                  <button onClick="{{ setKioscoTabChistes }}" style="{{ kioscoTabChistesStyle }}">🃏 Chistes y Refranes</button>
+                </div>
+
+                <!-- Pestaña 1: Diario -->
+                <sc-if value="{{ isKioscoDiario }}" hint-placeholder-val="{{ true }}">
+                  <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 24px; box-shadow: 6px 6px 0 #2B1B4D;">
+                    <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #2B1B4D; padding-bottom: 8px; margin-bottom: 16px; font-size: 12px; font-weight: 800; opacity: 0.7;">
+                      <span>DIARIO "LA VOZ DE LA CAJA"</span>
+                      <span>PRECIO: 0 🍅 (DISTRIBUCIÓN PATRIA)</span>
+                    </div>
+                    <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 24px; line-height: 1.2; margin-bottom: 12px; color: #2B1B4D;">
+                      {{ currentHeadline }}
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; font-size: 14px; line-height: 1.7; font-weight: 600;">
+                      <div>
+                        <p style="margin-top: 0;">Según el último parte agronómico de los Valles del Norte, el Tomate Sagrado amaneció con un color rojo institucional óptimo. El Consejo Moral emitió un comunicado recomendando regar las plantas familiares y evitar discusiones antes de las 14:00.</p>
+                        <p>La Tía declaró: <em>"Las leyes se cumplen mejor con la panza llena. Si alguien no está de acuerdo, que presente un recurso por duplicado."</em></p>
+                      </div>
+                      <div style="background: #FFF6E9; border: 3px dashed #2B1B4D; border-radius: 12px; padding: 16px;">
+                        <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; margin-bottom: 6px;">🐾 Columna de la Mascota</div>
+                        <div style="font-size: 13px; font-style: italic;">"Purrrr esponjoso... vigilancia 100% efectiva en el perímetro de la caja."</div>
+                        <div style="margin-top: 14px; font-size: 12px; font-weight: 800; color: #FF5A5F;">— Jujapeluda Oficial</div>
+                      </div>
+                    </div>
+                    <div style="margin-top: 18px; text-align: center;">
+                      <button onClick="{{ generateRandomHeadline }}" style="background: #FFC93C; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">🎲 Generar noticia de última hora</button>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <!-- Pestaña 2: Clasificados -->
+                <sc-if value="{{ isKioscoClasificados }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+                    <div style="background: #FFF; border: 3px solid #2B1B4D; border-radius: 14px; padding: 16px; box-shadow: 4px 4px 0 #14C8B8;">
+                      <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; color: #FF5A5F;">🐾 SE BUSCA</div>
+                      <div style="font-size: 13px; font-weight: 600; line-height: 1.5; margin: 8px 0;">Jujapeluda que sepa doblar sábanas con el lomo. Se ofrece remuneración en tomates cherry.</div>
+                      <div style="font-size: 11px; font-weight: 800; opacity: 0.6;">CONTACTO: VALLES DEL NORTE</div>
+                    </div>
+                    <div style="background: #FFF; border: 3px solid #2B1B4D; border-radius: 14px; padding: 16px; box-shadow: 4px 4px 0 #FFC93C;">
+                      <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; color: #2B1B4D;">📦 INMOBILIARIA</div>
+                      <div style="font-size: 13px; font-weight: 600; line-height: 1.5; margin: 8px 0;">Caja de cartón de 2x2 metros con vista al sol. Piso parquet simulado. Precio: 4 🍅.</div>
+                      <div style="font-size: 11px; font-weight: 800; opacity: 0.6;">NUEVA JUJA CENTRO</div>
+                    </div>
+                    <div style="background: #FFF; border: 3px solid #2B1B4D; border-radius: 14px; padding: 16px; box-shadow: 4px 4px 0 #FF5A5F;">
+                      <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; color: #14C8B8;">🔄 PERMUTA</div>
+                      <div style="font-size: 13px; font-weight: 600; line-height: 1.5; margin: 8px 0;">Cambio tratado firmado con Disney por dos mates amargos y una pala para la huerta.</div>
+                      <div style="font-size: 11px; font-weight: 800; opacity: 0.6;">EL CHINO DE ULTRAMAR</div>
+                    </div>
+                    <div style="background: #FFF; border: 3px solid #2B1B4D; border-radius: 14px; padding: 16px; box-shadow: 4px 4px 0 #2B1B4D;">
+                      <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; color: #FFC93C;">🎓 CLASES</div>
+                      <div style="font-size: 13px; font-weight: 600; line-height: 1.5; margin: 8px 0;">Oratoria Constituyente con La Tía. Aprendé a ganar cualquier discusión sin apelar.</div>
+                      <div style="font-size: 11px; font-weight: 800; opacity: 0.6;">DURACIÓN: HASTA QUE TENGA RAZÓN</div>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <!-- Pestaña 3: Horóscopo -->
+                <sc-if value="{{ isKioscoHoroscopo }}" hint-placeholder-val="{{ false }}">
+                  <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 22px; box-shadow: 6px 6px 0 #FFC93C;">
+                    <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; margin-bottom: 12px;">Elegí tu signo de la Huerta:</div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;">
+                      <sc-for list="{{ horoscopoSigns }}" as="sign" hint-placeholder-count="6">
+                        <button onClick="{{ sign.onClick }}" style="{{ sign.style }}">{{ sign.emoji }} {{ sign.label }}</button>
+                      </sc-for>
+                    </div>
+                    <div style="background: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 14px; padding: 18px;">
+                      <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 19px; color: #FF5A5F; margin-bottom: 8px;">{{ activeHoroscopoTitle }}</div>
+                      <div style="font-size: 15px; font-weight: 600; line-height: 1.7;">{{ activeHoroscopoPrediction }}</div>
+                      <div style="margin-top: 14px; font-size: 12px; font-weight: 800; color: #14C8B8;">CONSEJO PATRIO: {{ activeHoroscopoAdvice }}</div>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <!-- Pestaña 4: Chistes -->
+                <sc-if value="{{ isKioscoChistes }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: grid; gap: 16px;">
+                    <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 20px; box-shadow: 5px 5px 0 #14C8B8;">
+                      <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 16px; color: #FF5A5F; margin-bottom: 8px;">Chiste del Kiosquero 🃏</div>
+                      <div style="font-size: 15px; font-weight: 600; line-height: 1.6;">— ¿Qué le dijo un tomate de los Valles del Norte a una caja de cartón?<br/>— "¡Tranquila, que de acá no se escapa nadie!" 😂</div>
+                    </div>
+                    <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 20px; box-shadow: 5px 5px 0 #FFC93C;">
+                      <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 16px; color: #2B1B4D; margin-bottom: 8px;">Refrán Constituyente 📜</div>
+                      <div style="font-size: 15px; font-weight: 600; line-height: 1.6;">"Semilla que no se riega el sábado, el domingo pide explicaciones en la mesa."</div>
+                    </div>
+                    <div style="background: #FFC93C33; border: 3px dashed #2B1B4D; border-radius: 14px; padding: 18px; text-align: center;">
+                      <button onClick="{{ claimKioscoStamp }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; padding: 12px 22px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">📰 Sellar mi pasaporte en el Kiosco</button>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-if>
+
+            <!-- INTERIOR 2: ✉️ EL CORREO CENTRAL -->
+            <sc-if value="{{ plazaModeIsCorreo }}" hint-placeholder-val="{{ false }}">
+              <div style="background: #FFF6E9; border: 5px solid #2B1B4D; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #14C8B8; animation: jj-pop 0.3s ease-out;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 4px solid #2B1B4D; padding-bottom: 16px; margin-bottom: 22px;">
+                  <div>
+                    <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 28px; color: #2B1B4D; line-height: 1;">✉️ El Correo Central de Jujalandia</div>
+                    <div style="font-size: 13px; font-weight: 700; opacity: 0.7; margin-top: 4px;">Servicio Postal Oficial · Telegramas y Buzón Comunitario</div>
+                  </div>
+                  <button onClick="{{ exitPlazaInterior }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">🏛️ ← Volver a la Plaza</button>
+                </div>
+
+                <div style="display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap;">
+                  <button onClick="{{ setCorreoTabBuzon }}" style="{{ correoTabBuzonStyle }}">📬 Buzón Comunitario</button>
+                  <button onClick="{{ setCorreoTabRedactar }}" style="{{ correoTabRedactarStyle }}">✍️ Redactar Carta Oficial</button>
+                  <button onClick="{{ setCorreoTabPadron }}" style="{{ correoTabPadronStyle }}">📖 Padrón de Visitantes</button>
+                </div>
+
+                <!-- Pestaña 1: Buzón -->
+                <sc-if value="{{ isCorreoBuzon }}" hint-placeholder-val="{{ true }}">
+                  <div style="display: grid; gap: 16px;">
+                    <sc-for list="{{ lettersList }}" as="let" hint-placeholder-count="3">
+                      <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 20px; box-shadow: 5px 5px 0 #14C8B8; position: relative;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; border-bottom: 2px dashed #2B1B4D33; padding-bottom: 8px;">
+                          <div>
+                            <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 17px; color: #2B1B4D;">{{ let.recipient }}</div>
+                            <div style="font-size: 12px; font-weight: 700; opacity: 0.65;">Remitente: {{ let.author }} · {{ let.date }}</div>
+                          </div>
+                          <div style="border: 2px solid #2B1B4D; border-radius: 8px; padding: 4px 8px; background: #FFC93C; font-size: 14px; font-weight: 800;">
+                            {{ let.stampEmoji }} {{ let.stampLabel }}
+                          </div>
+                        </div>
+                        <div style="font-size: 14px; font-weight: 600; line-height: 1.6; color: #2B1B4D;">"{{ let.message }}"</div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+
+                <!-- Pestaña 2: Redactar -->
+                <sc-if value="{{ isCorreoRedactar }}" hint-placeholder-val="{{ false }}">
+                  <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 24px; box-shadow: 6px 6px 0 #2B1B4D;">
+                    <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 19px; margin-bottom: 14px;">Escribí tu carta con sello de Jujalandia</div>
+                    
+                    <div style="margin-bottom: 16px;">
+                      <label style="display: block; font-size: 13px; font-weight: 800; margin-bottom: 6px;">Destinatario Oficial:</label>
+                      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <sc-for list="{{ letterRecipients }}" as="rec" hint-placeholder-count="4">
+                          <button onClick="{{ rec.onClick }}" style="{{ rec.style }}">{{ rec.label }}</button>
+                        </sc-for>
+                      </div>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                      <label style="display: block; font-size: 13px; font-weight: 800; margin-bottom: 6px;">Estampilla Oficial:</label>
+                      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <sc-for list="{{ letterStamps }}" as="st" hint-placeholder-count="3">
+                          <button onClick="{{ st.onClick }}" style="{{ st.style }}">{{ st.emoji }} {{ st.label }}</button>
+                        </sc-for>
+                      </div>
+                    </div>
+
+                    <div style="margin-bottom: 18px;">
+                      <label style="display: block; font-size: 13px; font-weight: 800; margin-bottom: 6px;">Mensaje / Petición:</label>
+                      <input type="text" placeholder="Escribí tu mensaje para el Consejo o la comunidad..." value="{{ letterTextVal }}" onChange="{{ onLetterTextInput }}" style="width: 100%; box-sizing: border-box; padding: 12px 14px; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 600; border: 3px solid #2B1B4D; border-radius: 10px;"/>
+                    </div>
+
+                    <button onClick="{{ sendOfficialLetter }}" style="background: #14C8B8; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 16px; padding: 13px 26px; cursor: pointer; box-shadow: 5px 5px 0 #2B1B4D;">📮 Enviar con Matasellos Oficial</button>
+                  </div>
+                </sc-if>
+
+                <!-- Modal respuesta de autoridad -->
+                <sc-if value="{{ hasLetterReplyModal }}" hint-placeholder-val="{{ false }}">
+                  <div style="position: fixed; inset: 0; background: rgba(43,27,77,0.75); display: flex; align-items: center; justify-content: center; z-index: 110; padding: 20px;">
+                    <div style="background: #FFF6E9; border: 5px solid #2B1B4D; border-radius: 22px; padding: 26px; max-width: 480px; width: 100%; box-shadow: 10px 10px 0 #FF5A5F; animation: jj-pop 0.3s ease-out;">
+                      <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 20px; color: #2B1B4D; margin-bottom: 12px;">{{ letterReplySender }} ha respondido:</div>
+                      <div style="background: #2B1B4D; color: #FFC93C; border-radius: 14px; padding: 18px; font-size: 15px; font-weight: 600; line-height: 1.6; margin-bottom: 18px;">
+                        "{{ letterReplyBody }}"
+                      </div>
+                      <button onClick="{{ closeLetterReplyModal }}" style="width: 100%; background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; padding: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">Recibido 📜</button>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <!-- Pestaña 3: Padrón -->
+                <sc-if value="{{ isCorreoPadron }}" hint-placeholder-val="{{ false }}">
+                  <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 20px; box-shadow: 6px 6px 0 #2B1B4D;">
+                    <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; margin-bottom: 14px;">Ciudadanos Registrados en la Plaza:</div>
+                    <div style="display: grid; gap: 10px;">
+                      <sc-for list="{{ padronVisitors }}" as="vis" hint-placeholder-count="4">
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; padding: 10px 16px; font-size: 13px; font-weight: 700;">
+                          <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 20px;">{{ vis.avatar }}</span>
+                            <span>{{ vis.nickname }} ({{ vis.id }})</span>
+                          </div>
+                          <span style="color: #FF5A5F; font-weight: 800;">{{ vis.status }}</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-if>
+
+            <!-- INTERIOR 3: 🎭 CENTRO CULTURAL -->
+            <sc-if value="{{ plazaModeIsCultural }}" hint-placeholder-val="{{ false }}">
+              <div style="background: #2B1B4D; color: #FFF6E9; border: 5px solid #FF5A5F; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #FFC93C; animation: jj-pop 0.3s ease-out;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 4px solid #FFF6E9; padding-bottom: 16px; margin-bottom: 22px;">
+                  <div>
+                    <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 28px; color: #FFC93C; line-height: 1;">🎭 Centro Cultural de Jujalandia</div>
+                    <div style="font-size: 13px; font-weight: 700; opacity: 0.8; margin-top: 4px;">Artes, Música de Jujavisión y Mural Comunitario</div>
+                  </div>
+                  <button onClick="{{ exitPlazaInterior }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #FFF6E9; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #FFC93C;">🏛️ ← Volver a la Plaza</button>
+                </div>
+
+                <div style="display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap;">
+                  <button onClick="{{ setCulturalTabRockola }}" style="{{ culturalTabRockolaStyle }}">📻 La Rockola de Jujavisión</button>
+                  <button onClick="{{ setCulturalTabMural }}" style="{{ culturalTabMuralStyle }}">🎨 Mural de Sellos</button>
+                  <button onClick="{{ setCulturalTabComics }}" style="{{ culturalTabComicsStyle }}">📚 Historietas y Cómics</button>
+                </div>
+
+                <!-- Pestaña 1: Rockola -->
+                <sc-if value="{{ isCulturalRockola }}" hint-placeholder-val="{{ true }}">
+                  <div style="background: #140c28; border: 4px solid #FFC93C; border-radius: 18px; padding: 24px; box-shadow: 6px 6px 0 #FF5A5F;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 2px solid #FFC93C44; padding-bottom: 10px;">
+                      <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; color: #FFC93C;">📻 SINTETIZADOR DE JUJAVISIÓN 90s</div>
+                      <div style="display: flex; gap: 4px; align-items: flex-end; height: 30px;">
+                        <div style="width: 6px; background: #FF5A5F; border-radius: 2px; animation: jj-eq1 0.8s infinite;"></div>
+                        <div style="width: 6px; background: #FFC93C; border-radius: 2px; animation: jj-eq2 0.7s infinite;"></div>
+                        <div style="width: 6px; background: #14C8B8; border-radius: 2px; animation: jj-eq3 0.9s infinite;"></div>
+                      </div>
+                    </div>
+
+                    <div style="display: grid; gap: 12px; margin-bottom: 18px;">
+                      <sc-for list="{{ rockolaTracks }}" as="trk" hint-placeholder-count="4">
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: #2B1B4D; border: 3px solid #FFC93C; border-radius: 12px; padding: 12px 16px;">
+                          <div>
+                            <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 16px; color: #FFF6E9;">{{ trk.title }}</div>
+                            <div style="font-size: 12px; opacity: 0.7;">{{ trk.desc }}</div>
+                          </div>
+                          <button onClick="{{ trk.onPlay }}" style="background: #14C8B8; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 13px; padding: 8px 14px; cursor: pointer;">▶ Sonar</button>
+                        </div>
+                      </sc-for>
+                    </div>
+
+                    <div style="text-align: center;">
+                      <button onClick="{{ stopRockola }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #FFF6E9; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 13px; padding: 8px 16px; cursor: pointer;">⏹ Silenciar</button>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <!-- Pestaña 2: Mural -->
+                <sc-if value="{{ isCulturalMural }}" hint-placeholder-val="{{ false }}">
+                  <div style="background: #FFF6E9; color: #2B1B4D; border: 4px solid #FFC93C; border-radius: 18px; padding: 22px;">
+                    <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; margin-bottom: 6px;">Mural Colectivo de la Plaza</div>
+                    <div style="font-size: 13px; font-weight: 600; opacity: 0.75; margin-bottom: 14px;">Elegí un sello y hacé clic en la pared para estampar tu marca patriótica:</div>
+
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;">
+                      <sc-for list="{{ muralStampOptions }}" as="ms" hint-placeholder-count="8">
+                        <button onClick="{{ ms.onClick }}" style="{{ ms.style }}">{{ ms.emoji }}</button>
+                      </sc-for>
+                    </div>
+
+                    <div onClick="{{ onMuralClick }}" style="height: 240px; background: #ffe9cb; border: 4px dashed #2B1B4D; border-radius: 14px; position: relative; overflow: hidden; cursor: crosshair;">
+                      <sc-for list="{{ muralPlacedStamps }}" as="st" hint-placeholder-count="6">
+                        <div style="{{ st.style }}">{{ st.emoji }}<div style="font-size: 9px; font-weight: 800; color: #2B1B4D;">{{ st.author }}</div></div>
+                      </sc-for>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <!-- Pestaña 3: Cómics -->
+                <sc-if value="{{ isCulturalComics }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+                    <sc-for list="{{ comics }}" as="c" hint-placeholder-count="2">
+                      <div onClick="{{ c.onOpen }}" style="background: #FFF6E9; color: #2B1B4D; border: 4px solid #FFC93C; border-radius: 16px; overflow: hidden; cursor: pointer; box-shadow: 5px 5px 0 #14C8B8;">
+                        <div style="height: 120px; background: linear-gradient(135deg, #FFC93C, #FF5A5F); display: flex; align-items: center; justify-content: center; font-size: 44px; border-bottom: 3px solid #2B1B4D;">{{ c.cover_caption }}</div>
+                        <div style="padding: 14px;">
+                          <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; margin-bottom: 4px;">{{ c.title }}</div>
+                          <div style="font-size: 12px; font-weight: 600; opacity: 0.8; margin-bottom: 10px;">{{ c.summary }}</div>
+                          <div style="display: inline-block; background: #14C8B8; border: 2px solid #2B1B4D; border-radius: 999px; padding: 3px 10px; font-size: 11px; font-weight: 800;">📖 Leer</div>
+                        </div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-if>
+
+            <!-- INTERIOR 4: 🏛️ MUSEO DE LA GRAN CAJA -->
+            <sc-if value="{{ plazaModeIsMuseo }}" hint-placeholder-val="{{ false }}">
+              <div style="background: #FFF6E9; border: 5px solid #2B1B4D; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #2B1B4D; animation: jj-pop 0.3s ease-out;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 4px solid #2B1B4D; padding-bottom: 16px; margin-bottom: 22px;">
+                  <div>
+                    <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 28px; color: #2B1B4D; line-height: 1;">🏛️ Museo de la Caja Dorada</div>
+                    <div style="font-size: 13px; font-weight: 700; opacity: 0.7; margin-top: 4px;">Patrimonio Nacional, Reliquias y Trivia Histórica</div>
+                  </div>
+                  <button onClick="{{ exitPlazaInterior }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">🏛️ ← Volver a la Plaza</button>
+                </div>
+
+                <div style="display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap;">
+                  <button onClick="{{ setMuseoTabReliquias }}" style="{{ museoTabReliquiasStyle }}">🏺 Sala de Reliquias</button>
+                  <button onClick="{{ setMuseoTabTrivia }}" style="{{ museoTabTriviaStyle }}">🎓 Trivia Histórica</button>
+                  <button onClick="{{ setMuseoTabConstitucion }}" style="{{ museoTabConstitucionStyle }}">📜 Notas de la Constitución</button>
+                </div>
+
+                <!-- Pestaña 1: Reliquias -->
+                <sc-if value="{{ isMuseoReliquias }}" hint-placeholder-val="{{ true }}">
+                  <div>
+                    <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
+                      <sc-for list="{{ museumRelicsList }}" as="rel" hint-placeholder-count="5">
+                        <button onClick="{{ rel.onClick }}" style="{{ rel.style }}">{{ rel.emoji }} {{ rel.name }}</button>
+                      </sc-for>
+                    </div>
+
+                    <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 22px; box-shadow: 6px 6px 0 #FFC93C; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; align-items: center;">
+                      <div style="text-align: center; background: #FFC93C33; border: 3px dashed #2B1B4D; border-radius: 14px; padding: 24px;">
+                        <div style="font-size: 72px; margin-bottom: 10px;">{{ activeRelicEmoji }}</div>
+                        <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 20px;">{{ activeRelicName }}</div>
+                        <div style="font-size: 12px; font-weight: 800; color: #FF5A5F; margin-top: 4px;">NIVEL DE DEVOCIÓN: {{ activeRelicDevotion }}</div>
+                      </div>
+                      <div>
+                        <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 17px; margin-bottom: 8px;">Ficha Histórica Oficial:</div>
+                        <div style="font-size: 14px; font-weight: 600; line-height: 1.7; margin-bottom: 14px;">{{ activeRelicDesc }}</div>
+                        <div style="background: #14C8B822; border-radius: 10px; padding: 12px; font-size: 13px; font-weight: 700; line-height: 1.5;">
+                          🎙️ <strong>Audio-guía:</strong> "{{ activeRelicAudio }}"
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <!-- Pestaña 2: Trivia -->
+                <sc-if value="{{ isMuseoTrivia }}" hint-placeholder-val="{{ false }}">
+                  <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 22px; box-shadow: 6px 6px 0 #14C8B8;">
+                    <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 20px; margin-bottom: 6px;">Desafío Histórico del Museo</div>
+                    <div style="font-size: 13px; font-weight: 600; opacity: 0.75; margin-bottom: 16px;">Demostrá cuánto sabés sobre los orígenes de Jujalandia:</div>
+
+                    <div style="display: grid; gap: 16px; margin-bottom: 20px;">
+                      <sc-for list="{{ triviaQuestionsList }}" as="tq" hint-placeholder-count="3">
+                        <div style="background: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 14px; padding: 16px;">
+                          <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; margin-bottom: 10px;">{{ tq.num }}. {{ tq.question }}</div>
+                          <div style="display: grid; gap: 8px;">
+                            <sc-for list="{{ tq.options }}" as="opt" hint-placeholder-count="3">
+                              <button onClick="{{ opt.onClick }}" style="{{ opt.style }}">{{ opt.text }}</button>
+                            </sc-for>
+                          </div>
+                        </div>
+                      </sc-for>
+                    </div>
+
+                    <sc-if value="{{ hasTriviaResult }}" hint-placeholder-val="{{ false }}">
+                      <div style="background: #FFC93C; border: 4px solid #2B1B4D; border-radius: 14px; padding: 18px; text-align: center; margin-top: 14px;">
+                        <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 22px; margin-bottom: 4px;">🎉 ¡Completaste la Trivia!</div>
+                        <div style="font-size: 15px; font-weight: 700;">Obtuviste {{ triviaScore }}/3 respuestas correctas y el Diploma de Historiador Oficial.</div>
+                      </div>
+                    </sc-if>
+                  </div>
+                </sc-if>
+
+                <!-- Pestaña 3: Notas Constitución -->
+                <sc-if value="{{ isMuseoConstitucion }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: grid; gap: 14px;">
+                    <div style="background: #FFF; border: 3px solid #2B1B4D; border-radius: 14px; padding: 18px; box-shadow: 4px 4px 0 #FF5A5F;">
+                      <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 16px; color: #FF5A5F;">Art. 1 bis — La Primacía del Mate</div>
+                      <div style="font-size: 14px; font-weight: 600; line-height: 1.6; margin-top: 6px;">"El agua del termo no se recalienta dos veces. El que deja hervir el agua, pierde el turno de hablar en el Consejo."</div>
+                    </div>
+                    <div style="background: #FFF; border: 3px solid #2B1B4D; border-radius: 14px; padding: 18px; box-shadow: 4px 4px 0 #FFC93C;">
+                      <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 16px; color: #2B1B4D;">Art. 8 — El Misterio de la Caja</div>
+                      <div style="font-size: 14px; font-weight: 600; line-height: 1.6; margin-top: 6px;">"Queda estrictamente prohibido investigar de dónde salió la Caja Dorada. La intriga mantiene unida a la familia."</div>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-if>
           </sc-if>
         </div>
       </div>
@@ -749,7 +1189,15 @@
           <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: #FFC93C; border: 4px dashed #2B1B4D; border-radius: 22px; padding: 24px; min-height: 300px;">
             <sc-if value="{{ hasPassport }}" hint-placeholder-val="{{ false }}">
               <img ref="{{ passportImgRef }}" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Pasaporte generado" style="max-width: 100%; border-radius: 12px; border: 4px solid #2B1B4D; margin-bottom: 16px; animation: jj-pop 0.4s ease-out;"/>
-              <a ref="{{ passportLinkRef }}" href="#" download="pasaporte-jujalandia.png" style="background: #FF5A5F; color: #FFF6E9; text-decoration: none; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 16px; padding: 13px 26px; border-radius: 10px; border: 4px solid #2B1B4D; box-shadow: 5px 5px 0 #2B1B4D;">⬇ Descargar pasaporte</a>
+              <a ref="{{ passportLinkRef }}" href="#" download="pasaporte-jujalandia.png" style="background: #FF5A5F; color: #FFF6E9; text-decoration: none; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 16px; padding: 13px 26px; border-radius: 10px; border: 4px solid #2B1B4D; box-shadow: 5px 5px 0 #2B1B4D; margin-bottom: 14px;">⬇ Descargar pasaporte</a>
+              <div style="background: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 14px; padding: 12px 16px; width: 100%; box-sizing: border-box; text-align: center;">
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; margin-bottom: 8px;">🎖️ Sellos de la Plaza obtenidos: {{ stampsCount }}/6</div>
+                <div style="display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;">
+                  <sc-for list="{{ passportStampsBadges }}" as="badge" hint-placeholder-count="6">
+                    <div style="{{ badge.style }}">{{ badge.emoji }} {{ badge.name }}</div>
+                  </sc-for>
+                </div>
+              </div>
             </sc-if>
             <sc-if value="{{ noPassportYet }}">
               <div style="text-align: center; font-size: 15px; font-weight: 800; opacity: 0.75;">Tu pasaporte oficial va a aparecer acá 🛂</div>
@@ -816,33 +1264,64 @@ const JJ_SUFFIXES = ['del Tomate Sagrado', 'de los Valles del Norte', 'de la Gra
 
 const HOLE_COLORS = ['#FFF6E9', '#FFC93C33', '#14C8B833', '#FF5A5F33'];
 
+const STAMPS_DEF = [
+  { id: 'kiosco', name: 'Prensa Libre', emoji: '🗞️', color: '#FFC93C' },
+  { id: 'correo', name: 'Correo Postal', emoji: '✉️', color: '#14C8B8' },
+  { id: 'cultural', name: 'Mérito Artístico', emoji: '🎭', color: '#FF5A5F' },
+  { id: 'museo', name: 'Custodio Histórico', emoji: '🏛️', color: '#2B1B4D' },
+  { id: 'jujapeluda', name: 'Amigo Jujapeluda', emoji: '🐾', color: '#FFC93C' },
+  { id: 'fuente', name: 'Devoto del Tomate', emoji: '⛲', color: '#14C8B8' }
+];
+
 // ===== Motor 3D de "La Plaza" =====
-// Inspirada en "La Plaza" (Proyecto Enlaces, Mineduc Chile, 1992-95): un software
-// educativo que usaba una plaza con edificios (Kiosco, Centro Cultural, Correo, Museo)
-// como metáfora de navegación entre secciones. Acá es un mundo 3D recorrible en
-// primera persona, construido sólo con transformaciones CSS 3D (sin librerías).
 const W3D = {
-  persp: 720,      // distancia focal de la cámara
-  eye: 168,        // altura de los ojos sobre el suelo
-  bound: 1500,     // límite del mundo caminable
-  speed: 8,        // px por frame
-  turn: 2.6,       // grados por frame
+  persp: 720,
+  eye: 168,
+  bound: 1500,
+  speed: 8,
+  turn: 2.6,
   ground: 6000,
   fountainR: 200
 };
 
 const W3D_BUILDINGS = [
-  { id: 'kiosco', label: 'El Kiosco', desc: 'Las noticias del día', emoji: '🗞️', goTo: 'hero',
+  { id: 'kiosco', label: 'El Kiosco', desc: 'Periódico y clasificados', emoji: '🗞️',
     x: -680, z: -620, w: 300, d: 240, h: 235, wall: '#FFC93C', roof: '#FF5A5F', ink: '#2B1B4D' },
-  { id: 'cultural', label: 'Centro Cultural', desc: 'Cómics y Jujavisión', emoji: '🎭', goTo: 'comics',
+  { id: 'cultural', label: 'Centro Cultural', desc: 'Rockola, mural y cómics', emoji: '🎭',
     x: 680, z: -620, w: 350, d: 265, h: 340, wall: '#FF5A5F', roof: '#2B1B4D', ink: '#FFF6E9' },
-  { id: 'correo', label: 'El Correo', desc: 'Ciudadanía y pasaportes', emoji: '✉️', goTo: 'inmigracion',
+  { id: 'correo', label: 'El Correo', desc: 'Buzón postal y telegramas', emoji: '✉️',
     x: -680, z: 620, w: 320, d: 245, h: 255, wall: '#14C8B8', roof: '#2B1B4D', ink: '#2B1B4D' },
-  { id: 'museo', label: 'El Museo', desc: 'Historia y gobierno', emoji: '🏛️', goTo: 'historia',
+  { id: 'museo', label: 'El Museo', desc: 'Reliquias y trivia histórica', emoji: '🏛️',
     x: 680, z: 620, w: 365, d: 285, h: 310, wall: '#FFF6E9', roof: '#FFC93C', ink: '#2B1B4D' }
 ];
 
-// Decorados fijos: cada uno es un sprite que siempre mira a la cámara.
+const W3D_NPCS = [
+  { id: 'tia', name: 'La Tía Constituyente', role: 'Poder Constituyente', emoji: '👵', x: -280, z: -100, s: 130,
+    text: '¿Qué andás corriendo tan apurado por la Plaza? En Jujalandia caminamos despacio para no marear a los tomates. Tomate un mate amargo y repasá la Constitución.',
+    options: [
+      { text: 'Disculpe, Tía. ¿Me convida un mate?', reply: 'Tomá, pero no toques la bombilla que la Constitución lo prohíbe taxativamente.' },
+      { text: '¿Quién escribió el Artículo 1 de la Ley?', reply: 'Yo sola, de noche y con la tele apagada. Nadie se quejó, así que quedó perfecto.' },
+      { text: '¿Cuándo sesiona el Consejo Moral?', reply: 'A la hora del almuerzo, entre la ensalada y el postre.' }
+    ]
+  },
+  { id: 'musso', name: 'Roberto Musso', role: 'Ministro de Cultura', emoji: '🎸', x: 280, z: -100, s: 130,
+    text: 'Estoy componiendo una rima con "caja", "ventaja" y "jujapeluda". Raro, pero no tanto. ¿Querés una dosis de poesía institucional?',
+    options: [
+      { text: 'Recitame un verso patrio, Roberto.', reply: '"Somos doce, somos caja, somos tomate en el sol. Si la Tía dice que sí, ya está firmado el gol."' },
+      { text: '¿Por qué Jujavisión transmite gatos 24/7?', reply: 'Porque intentamos poner noticias y los gatos tenían mejor rating moral.' },
+      { text: '¡Aguante el Tomat-Gol!', reply: '¡Esa es la actitud! Pelota de semillas y corazón de cartón.' }
+    ]
+  },
+  { id: 'chino', name: 'El Chino de Ultramar', role: 'Comercio Exterior y Aduana', emoji: '🛂', x: -450, z: 450, s: 130,
+    text: 'Todo lo que entre desde el Principado Comercial de Disney pasa por mi mesita de inspección. Hoy decomisé tres varitas mágicas y dos orejas con purpurina no autorizada.',
+    options: [
+      { text: '¿Llegó algún paquete para mí?', reply: 'Llegó una encomienda de semillas de tomate cherry. Está sanitizada y lista.' },
+      { text: '¿Cómo está la frontera con Disney?', reply: 'Tranquila. Ellos quieren vendernos castillos y nosotros les ofrecemos tomates.' },
+      { text: 'Le traigo un mate de regalo.', reply: '¡Aceptado sin aranceles de importación!' }
+    ]
+  }
+];
+
 const W3D_PROPS = [
   { e: '🌳', x: -1180, z: -180, s: 190 }, { e: '🌳', x: 1180, z: -180, s: 190 },
   { e: '🌳', x: -1180, z: 900, s: 165 },  { e: '🌳', x: 1180, z: 900, s: 165 },
@@ -856,7 +1335,6 @@ const W3D_PROPS = [
   { e: '🦋', x: -200, z: 520, s: 50 },    { e: '🦋', x: 250, z: -430, s: 50 }
 ];
 
-// Cielo: sol y nubes, muy lejos y bien alto.
 const W3D_SKY = [
   { e: '☀️', x: -1500, y: 1250, z: -3200, s: 320 },
   { e: '☁️', x: 900, y: 1000, z: -2900, s: 420 },
@@ -865,18 +1343,17 @@ const W3D_SKY = [
   { e: '☁️', x: -1900, y: 950, z: -1500, s: 280 }
 ];
 
-// Farolas: poste 3D + halo luminoso.
 const W3D_LAMPS = [
   { x: -420, z: -420 }, { x: 420, z: -420 }, { x: -420, z: 420 }, { x: 420, z: 420 },
   { x: -1000, z: 1000 }, { x: 1000, z: 1000 }
 ];
 
-// Jujapeludas que pasean solas y globos-tomate que flotan.
 const W3D_WALKERS = [
   { cx: -480, cz: 120, r: 300, sp: 0.0055, ph: 0, s: 108 },
   { cx: 520, cz: 200, r: 360, sp: -0.0042, ph: 2.1, s: 96 },
   { cx: 60, cz: -780, r: 260, sp: 0.0068, ph: 4.3, s: 86 }
 ];
+
 const W3D_BALLOONS = [
   { e: '🎈', x: -540, z: -160, y: 430, s: 110, ph: 0 },
   { e: '🍅', x: 600, z: 260, y: 500, s: 95, ph: 2.4 },
@@ -889,6 +1366,148 @@ const W3D_KEYMAP = {
   q: 'strafeL', e: 'strafeR', shift: 'run'
 };
 
+const HEADLINES_POOL = [
+  'El Tomate Gigante supera la prueba del sol y La Tía decreta siesta cívica.',
+  'Censo revela que hay más jujapeludas que habitantes en Nueva Juja.',
+  'Nueva Juja gana premio internacional a "Caja de Cartón más Prolija".',
+  'Jujavisión bate récord de audiencia con transmisión ininterrumpida de siestas felinas.',
+  'El Chino intercepta cargamento de orejas de ratón no homologadas por el Consejo Moral.',
+  'Tomat-Gol: Nueva Juja golea 4-0 con pelota de semillas seleccionadas.',
+  'Se declara el martes como día opcional para quejarse del clima.'
+];
+
+const HOROSCOPO_DATA = [
+  { emoji: '🍅', label: 'Tomate Perita', title: 'Tomate Perita (21 Mar - 20 Abr)', pred: 'Semana de crecimiento acelerado. Tu cáscara resistirá críticas infundadas en la mesa familiar.', advice: 'Regá con abundancia y no discutas con La Tía.' },
+  { emoji: '🍒', label: 'Tomate Cherry', title: 'Tomate Cherry (21 Abr - 20 May)', pred: 'Brillo y esponjosidad en alza. Una jujapeluda te mirará con devoción patriótica.', advice: 'Mantené la humildad en el huerto.' },
+  { emoji: '🌻', label: 'Semilla Rebelde', title: 'Semilla Rebelde (21 May - 21 Jun)', pred: 'Tendencia a germinar fuera de la Gran Caja. Cuidado con las inspecciones aduaneras.', advice: 'Pedí autorización al Consejo Moral.' },
+  { emoji: '📦', label: 'Caja Dorada', title: 'Caja Dorada (22 Jun - 22 Jul)', pred: 'Tu estructura es sólida como cartón corrugado. Las discusiones domésticas rebotarán en tus solapas.', advice: 'Ventilá la caja una vez por día.' },
+  { emoji: '🐾', label: 'Jujapeluda de Agua', title: 'Jujapeluda de Agua (23 Jul - 22 Ago)', pred: 'Docilidad 100%. Te ganarás el cariño de todos sin pronunciar una sola palabra.', advice: 'Aceptá caricias con dignidad institucional.' },
+  { emoji: '🧉', label: 'Mate Sagrado', title: 'Mate Sagrado (23 Ago - 22 Sep)', pred: 'Temperatura ideal de 82°C. Tu palabra será ley en cualquier sobremesa.', advice: 'Nunca toques la bombilla.' }
+];
+
+const DEFAULT_LETTERS = [
+  { id: '1', author: 'La Tía Constituyente', recipient: 'A todos los Ciudadanos', stampEmoji: '📜', stampLabel: 'Ley', date: '21/08/2026', message: 'Recuerden que lavar los platos después de comer es un deber supremo para la armonía de la Gran Caja.' },
+  { id: '2', author: 'Roberto Musso', recipient: 'Al Consejo Moral', stampEmoji: '🎸', stampLabel: 'Cultura', date: '20/08/2026', message: 'Propongo que el himno nacional tenga un solo de guitarra de 4 minutos antes del desayuno.' },
+  { id: '3', author: 'El Chino', recipient: 'Aduana de Ultramar', stampEmoji: '🛂', stampLabel: 'Comercio', date: '19/08/2026', message: 'Frontera con Disney despejada. Cero contrabando de varitas mágicas detectado hoy.' }
+];
+
+const REPUBLIC_REPLIES = {
+  consejo: { sender: 'Consejo Moral (Papá y Mamá)', text: 'Hemos deliberado durante el almuerzo dominical. Tu misiva fue aprobada con la condición de cuidar una planta de tomate por una semana.' },
+  tia: { sender: 'La Tía Constituyente', text: 'Leí tu carta mientras calentaba el agua del mate. Me parece muy razonable, pero la próxima escribí más prolijo y sin apuro.' },
+  musso: { sender: 'Roberto Musso (Cultura)', text: 'Tu carta me inspiró una cuarteta en tono menor. Raro, pero no tanto. ¡Gracias por la dosis de surrealismo!' },
+  chino: { sender: 'El Chino (Aduana)', text: 'Inspeccioné tu mensaje en la aduana de ultramar. Cero purpurina de Disney detectada. Pasa con sello verde.' },
+  publico: { sender: 'Buzón Comunitario', text: 'Tu carta ya está colgada en el buzón público de la Plaza para que todos los ciudadanos la lean.' }
+};
+
+const MUSEUM_RELICS = [
+  { emoji: '⛏️', name: 'La Pala Fundacional', devotion: 'Máxima', desc: 'La herramienta con la que los Abuelos golpearon la Caja Dorada en el Año 0. Todavía conserva partículas de tierra sagrada.', audio: 'Esta pala es el testimonio del inicio. Quien la mira con fe, siente ganas de cavar en el patio.' },
+  { emoji: '🧉', name: 'El Mate Constituyente', devotion: 'Suprema', desc: 'El mate que acompañó a La Tía durante la noche en que redactó la Ley Suprema sin consultar a nadie.', audio: 'Mantiene el agua a exactamente 82 grados por decreto del Artículo 1 bis.' },
+  { emoji: '🍅', name: 'Fósil de la Semilla Original', devotion: 'Sagrada', desc: 'La semilla ancestral de la cual brotó el primer Tomate Gigante de los Valles del Norte.', audio: 'Si te acercás en silencio, podés escuchar un suave murmullo de fotosíntesis.' },
+  { emoji: '📜', name: 'Tratado Anulado de Disney', devotion: 'Histórica', desc: 'Documento donde el Principado de Disney intentó cambiar un castillo por tres cajones de tomates.', audio: 'La Tía vetó el tratado con un tachón en tinta roja que aún hoy intimida a los diplomáticos.' },
+  { emoji: '📦', name: 'Réplica de la Caja Dorada', devotion: 'Patria', desc: 'Modelo a escala exacta que reproduce la caja donde se fundó Nueva Juja.', audio: 'Espaciosa, abrigada y con aroma a cartón nuevo de primera calidad.' }
+];
+
+const TRIVIA_QUESTIONS = [
+  {
+    num: 1,
+    question: '¿Cómo nació la República de Jujalandia?',
+    options: [
+      { text: 'Tras una guerra civil de 10 años', correct: false },
+      { text: 'Los Abuelos hallaron la Caja Dorada con el Tomate Gigante', correct: true },
+      { text: 'Se compró por catálogo en Disney', correct: false }
+    ]
+  },
+  {
+    num: 2,
+    question: '¿Quién redactó la Constitución Nacional?',
+    options: [
+      { text: 'Una asamblea constituyente de 100 sabios', correct: false },
+      { text: 'La Tía, de noche, sola y con un mate', correct: true },
+      { text: 'Un comité de jujapeludas', correct: false }
+    ]
+  },
+  {
+    num: 3,
+    question: '¿Qué transmite Jujavisión la mayor parte del tiempo?',
+    options: [
+      { text: 'Debates políticos intensos', correct: false },
+      { text: 'Transmisión ininterrumpida de gatitos 24/7', correct: true },
+      { text: 'Telenovelas de ultramar', correct: false }
+    ]
+  }
+];
+
+const ROCKOLA_TRACKS_DEF = [
+  { id: 'himno', title: '1. Himno Nacional de Jujalandia', desc: 'Marcial, festivo y solemne' },
+  { id: 'marcha', title: '2. Marcha del Tomate Sagrado', desc: 'Ritmo 8-bit enérgico de desfile' },
+  { id: 'jingle', title: '3. Jingle Oficial de Jujavisión', desc: 'Cortina alegre de televisión retro' },
+  { id: 'balada', title: '4. Balada de la Jujapeluda', desc: 'Melodía dulce y esponjosa' }
+];
+
+let activeAudioCtx = null;
+let synthTimeouts = [];
+
+function stopChiptune() {
+  synthTimeouts.forEach((t) => clearTimeout(t));
+  synthTimeouts = [];
+  if (activeAudioCtx) {
+    try { activeAudioCtx.close(); } catch (e) {}
+    activeAudioCtx = null;
+  }
+}
+
+function playChiptune(trackId) {
+  stopChiptune();
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    activeAudioCtx = ctx;
+    if (ctx.state === 'suspended') ctx.resume();
+
+    const N = {
+      C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23, G4: 392.00, A4: 440.00, B4: 493.88,
+      C5: 523.25, D5: 587.33, E5: 659.25, F5: 698.46, G5: 783.99, A5: 880.00
+    };
+
+    let melody = [];
+    if (trackId === 'himno') {
+      melody = [
+        [N.C4, 0.22], [N.E4, 0.22], [N.G4, 0.32], [N.G4, 0.18], [N.A4, 0.22], [N.G4, 0.32],
+        [N.E4, 0.22], [N.F4, 0.22], [N.G4, 0.40], [N.C5, 0.45], [N.G4, 0.25], [N.E4, 0.35]
+      ];
+    } else if (trackId === 'marcha') {
+      melody = [
+        [N.G4, 0.16], [N.G4, 0.16], [N.C5, 0.30], [N.G4, 0.16], [N.C5, 0.30],
+        [N.D5, 0.16], [N.E5, 0.30], [N.D5, 0.18], [N.C5, 0.35]
+      ];
+    } else if (trackId === 'jingle') {
+      melody = [
+        [N.C5, 0.14], [N.E5, 0.14], [N.G5, 0.18], [N.E5, 0.14], [N.C5, 0.25], [N.G4, 0.35]
+      ];
+    } else {
+      melody = [
+        [N.E4, 0.28], [N.G4, 0.28], [N.A4, 0.35], [N.G4, 0.28], [N.E4, 0.35], [N.D4, 0.45]
+      ];
+    }
+
+    let time = ctx.currentTime + 0.05;
+    melody.forEach(([freq, dur]) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(freq, time);
+      gain.gain.setValueAtTime(0.08, time);
+      gain.gain.exponentialRampToValueAtTime(0.001, time + dur - 0.03);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(time);
+      osc.stop(time + dur);
+      time += dur;
+    });
+  } catch (e) {}
+}
+
 function shuffle(arr) {
   const a = arr.slice();
   for (let i = a.length - 1; i > 0; i--) {
@@ -899,11 +1518,7 @@ function shuffle(arr) {
 }
 
 function getScores() {
-  try {
-    return JSON.parse(localStorage.getItem('jj-scores') || '{}');
-  } catch (e) {
-    return {};
-  }
+  try { return JSON.parse(localStorage.getItem('jj-scores') || '{}'); } catch (e) { return {}; }
 }
 
 function saveScore(id, nickname, field, value) {
@@ -932,8 +1547,6 @@ function crc32(bytes) {
   return (crc ^ 0xffffffff) >>> 0;
 }
 
-// Embeds the citizen id + nickname as a PNG tEXt chunk right after IHDR, so an
-// uploaded passport file can be read back without OCR or a server.
 function embedPassportId(dataUrl, citizenId, nickname) {
   const base64 = dataUrl.split(',')[1];
   const bin = atob(base64);
@@ -957,7 +1570,7 @@ function embedPassportId(dataUrl, citizenId, nickname) {
   chunk.set(payloadBytes, 8);
   view.setUint32(8 + payloadBytes.length, crc);
 
-  const insertAt = 33; // PNG signature (8 bytes) + IHDR chunk (25 bytes)
+  const insertAt = 33;
   const result = new Uint8Array(bytes.length + chunk.length);
   result.set(bytes.subarray(0, insertAt), 0);
   result.set(chunk, insertAt);
@@ -1051,7 +1664,44 @@ class Component extends DCLogic {
     memMoves: 0,
     memMatched: [],
     memBestMoves: 0,
-    memPlaying: false
+    memPlaying: false,
+
+    // Plaza & Enlaces 90s State
+    plazaView: 'walk', // 'walk' | 'kiosco' | 'correo' | 'cultural' | 'museo'
+    stamps: [],
+    toastMessage: null,
+    activeNpc: null,
+    npcReply: null,
+    patCount: 0,
+
+    // Kiosco state
+    kioscoTab: 'diario', // 'diario' | 'clasificados' | 'horoscopo' | 'chistes'
+    currentHeadline: HEADLINES_POOL[0],
+    selectedHoroscopo: 0,
+
+    // Correo state
+    correoTab: 'buzon', // 'buzon' | 'redactar' | 'padron'
+    letters: DEFAULT_LETTERS,
+    letterRecipient: 'consejo',
+    letterStamp: 'tomate',
+    letterText: '',
+    letterReplyModal: null,
+
+    // Cultural state
+    culturalTab: 'rockola', // 'rockola' | 'mural' | 'comics'
+    rockolaPlaying: null,
+    muralStamps: [
+      { emoji: '🍅', x: 20, y: 30, author: 'JJ-100001' },
+      { emoji: '🐾', x: 65, y: 55, author: 'JJ-200402' },
+      { emoji: '👑', x: 45, y: 15, author: 'JJ-999999' }
+    ],
+    selectedMuralStamp: '🍅',
+
+    // Museo state
+    museoTab: 'reliquias', // 'reliquias' | 'trivia' | 'constitucion'
+    selectedRelicIndex: 0,
+    triviaAnswers: {},
+    triviaScore: null
   };
 
   constructor(props) {
@@ -1063,12 +1713,12 @@ class Component extends DCLogic {
     this.passportFileInputRef = React.createRef();
     this.sceneRef = React.createRef();
     this.worldRef = React.createRef();
-    // Estado del motor 3D: vive fuera de React para poder correr a 60fps
-    // sin disparar un re-render por frame.
     this.cam = { x: 0, z: 1180, yaw: 0, pitch: 0, bob: 0, t: 0 };
     this.keys = {};
     this.focus3d = false;
     this.near3d = null;
+    this.nearTargetType = null; // 'building' | 'npc' | 'walker' | 'fountain'
+    this.nearTargetData = null;
     this.billboards = [];
     this.drag = null;
   }
@@ -1091,8 +1741,18 @@ class Component extends DCLogic {
       const saved = JSON.parse(localStorage.getItem('jj-verified-citizen') || 'null');
       if (saved && saved.id) {
         const scores = getScores()[saved.id] || {};
-        this.setState({ verifiedCitizen: saved, gameBestScore: scores.best || 0, memBestMoves: scores.bestMoves || 0 });
+        const stamps = JSON.parse(localStorage.getItem('jj-stamps-' + saved.id) || '[]');
+        this.setState({ verifiedCitizen: saved, gameBestScore: scores.best || 0, memBestMoves: scores.bestMoves || 0, stamps });
       }
+    } catch (e) {}
+
+    try {
+      const savedLetters = JSON.parse(localStorage.getItem('jj-letters') || 'null');
+      if (Array.isArray(savedLetters) && savedLetters.length) this.setState({ letters: savedLetters });
+      const savedMural = JSON.parse(localStorage.getItem('jj-mural-stamps') || 'null');
+      if (Array.isArray(savedMural) && savedMural.length) this.setState({ muralStamps: savedMural });
+      const savedPats = parseInt(localStorage.getItem('jj-pats') || '0', 10);
+      if (savedPats) this.setState({ patCount: savedPats });
     } catch (e) {}
 
     window.addEventListener('keydown', this.onKey3D);
@@ -1100,12 +1760,45 @@ class Component extends DCLogic {
     this.raf3d = requestAnimationFrame(this.tick3D);
   }
 
+  showToast = (msg) => {
+    this.setState({ toastMessage: msg });
+    if (this.toastTimer) clearTimeout(this.toastTimer);
+    this.toastTimer = setTimeout(() => this.setState({ toastMessage: null }), 3500);
+  };
+
+  unlockStamp = (stampId) => {
+    const { stamps, verifiedCitizen } = this.state;
+    if (stamps.includes(stampId)) return;
+    const updated = [...stamps, stampId];
+    this.setState({ stamps: updated });
+    if (verifiedCitizen && verifiedCitizen.id) {
+      try { localStorage.setItem('jj-stamps-' + verifiedCitizen.id, JSON.stringify(updated)); } catch (e) {}
+    }
+    const def = STAMPS_DEF.find((s) => s.id === stampId);
+    if (def) {
+      this.showToast('¡Nuevo sello conseguido: ' + def.emoji + ' ' + def.name + '!');
+      if (this.state.avatar && this.state.nickname) {
+        setTimeout(() => this.generatePassport(), 100);
+      }
+    }
+  };
+
   pickPassportFile = () => { if (this.passportFileInputRef.current) this.passportFileInputRef.current.click(); };
 
   applyVerifiedCitizen = (id, nickname) => {
     const scores = getScores()[id] || {};
-    try { localStorage.setItem('jj-verified-citizen', JSON.stringify({ id, nickname })); } catch (e) {}
-    this.setState({ verifiedCitizen: { id, nickname }, gameBestScore: scores.best || 0, memBestMoves: scores.bestMoves || 0, passportFileError: null });
+    let stamps = [];
+    try {
+      localStorage.setItem('jj-verified-citizen', JSON.stringify({ id, nickname }));
+      stamps = JSON.parse(localStorage.getItem('jj-stamps-' + id) || '[]');
+    } catch (e) {}
+    this.setState({
+      verifiedCitizen: { id, nickname },
+      gameBestScore: scores.best || 0,
+      memBestMoves: scores.bestMoves || 0,
+      stamps,
+      passportFileError: null
+    });
   };
 
   useCurrentPassport = () => {
@@ -1135,13 +1828,11 @@ class Component extends DCLogic {
 
   logoutCitizen = () => {
     try { localStorage.removeItem('jj-verified-citizen'); } catch (e) {}
-    this.setState({ verifiedCitizen: null, gamePlaying: false, memPlaying: false });
+    this.setState({ verifiedCitizen: null, gamePlaying: false, memPlaying: false, plazaView: 'walk' });
   };
 
   // ============ MOTOR 3D DE LA PLAZA ============
 
-  // Un panel plano posicionado en el espacio 3D. Se centra en su propio origen
-  // (con márgenes negativos) para que el transform lo ubique por su centro.
   make3DPanel = (w, h, transform, css) => {
     const el = document.createElement('div');
     el.style.cssText =
@@ -1151,7 +1842,6 @@ class Component extends DCLogic {
     return el;
   };
 
-  // Sprite que siempre encara a la cámara (se contra-rota cada frame).
   make3DSprite = (x, y, z, size, content, css) => {
     const el = document.createElement('div');
     el.className = 'jj-bb';
@@ -1176,11 +1866,12 @@ class Component extends DCLogic {
     this.walkerEls = [];
     this.balloonEls = [];
     this.signEls = [];
+    this.npcEls = [];
 
     const P = this.make3DPanel;
     const S = this.make3DSprite;
 
-    // ---- Suelo: plaza empedrada con anillo central y senderos ----
+    // Suelo
     const g = W3D.ground;
     world.appendChild(P(g, g, 'translate3d(0,0,0) rotateX(90deg)',
       'background:' +
@@ -1191,7 +1882,7 @@ class Component extends DCLogic {
         'repeating-linear-gradient(90deg, rgba(43,27,77,.10) 0 2px, rgba(0,0,0,0) 2px 120px),' +
         'radial-gradient(circle at 50% 50%, #efe3c6 0 26%, #d9e8c0 26% 44%, #cfe0b4 100%);'));
 
-    // ---- Fuente central: agua, borde octogonal de piedra y chorro ----
+    // Fuente central
     world.appendChild(P(300, 300, 'translate3d(0,-46px,0) rotateX(90deg)',
       'background:radial-gradient(circle, #bff0fb 0 40%, #7fd8ea 40% 100%);border-radius:50%;'));
     const fn = 18, fr = 158;
@@ -1206,95 +1897,82 @@ class Component extends DCLogic {
       'background:radial-gradient(circle, rgba(0,0,0,0) 0 90%, #2B1B4D 90% 100%);border-radius:50%;'));
     world.appendChild(S(0, -46, 0, 130, '⛲'));
 
-    // ---- Cielo ----
+    // Cielo
     W3D_SKY.forEach((s) => world.appendChild(S(s.x, -s.y, s.z, s.s, s.e, 'filter:none;opacity:.95;')));
 
-    // ---- Edificios: cajas 3D con paredes, techo, puerta, ventanas y cartel ----
+    // Edificios
     W3D_BUILDINGS.forEach((b) => {
       const hw = b.w / 2, hd = b.d / 2, cy = -b.h / 2;
       const wallCss = 'background:' + b.wall + ';border:4px solid #2B1B4D;box-sizing:border-box;';
 
-      // Cuatro paredes, con brillo distinto por orientación para dar volumen.
-      world.appendChild(P(b.w, b.h, 'translate3d(' + b.x + 'px,' + cy + 'px,' + (b.z + hd) + 'px)',
-        wallCss + 'filter:brightness(1.06);'));
-      world.appendChild(P(b.w, b.h, 'translate3d(' + b.x + 'px,' + cy + 'px,' + (b.z - hd) + 'px) rotateY(180deg)',
-        wallCss + 'filter:brightness(.82);'));
-      world.appendChild(P(b.d, b.h, 'translate3d(' + (b.x - hw) + 'px,' + cy + 'px,' + b.z + 'px) rotateY(-90deg)',
-        wallCss + 'filter:brightness(.9);'));
-      world.appendChild(P(b.d, b.h, 'translate3d(' + (b.x + hw) + 'px,' + cy + 'px,' + b.z + 'px) rotateY(90deg)',
-        wallCss + 'filter:brightness(.95);'));
-      // Techo
-      world.appendChild(P(b.w, b.d, 'translate3d(' + b.x + 'px,' + (-b.h) + 'px,' + b.z + 'px) rotateX(90deg)',
-        'background:' + b.roof + ';border:4px solid #2B1B4D;box-sizing:border-box;'));
+      world.appendChild(P(b.w, b.h, 'translate3d(' + b.x + 'px,' + cy + 'px,' + (b.z + hd) + 'px)', wallCss + 'filter:brightness(1.06);'));
+      world.appendChild(P(b.w, b.h, 'translate3d(' + b.x + 'px,' + cy + 'px,' + (b.z - hd) + 'px) rotateY(180deg)', wallCss + 'filter:brightness(.82);'));
+      world.appendChild(P(b.d, b.h, 'translate3d(' + (b.x - hw) + 'px,' + cy + 'px,' + b.z + 'px) rotateY(-90deg)', wallCss + 'filter:brightness(.9);'));
+      world.appendChild(P(b.d, b.h, 'translate3d(' + (b.x + hw) + 'px,' + cy + 'px,' + b.z + 'px) rotateY(90deg)', wallCss + 'filter:brightness(.95);'));
+      world.appendChild(P(b.w, b.d, 'translate3d(' + b.x + 'px,' + (-b.h) + 'px,' + b.z + 'px) rotateX(90deg)', 'background:' + b.roof + ';border:4px solid #2B1B4D;box-sizing:border-box;'));
 
-      // La fachada mira siempre hacia el centro de la plaza.
       const front = b.z < 0 ? 1 : -1;
       const fz = b.z + front * (hd + 2);
       const rot = front === 1 ? '' : ' rotateY(180deg)';
 
-      // Puerta
-      world.appendChild(P(92, 130, 'translate3d(' + b.x + 'px,-65px,' + fz + 'px)' + rot,
-        'background:#2B1B4D;border:4px solid #2B1B4D;box-sizing:border-box;border-radius:46px 46px 0 0;'));
-      world.appendChild(P(70, 108, 'translate3d(' + b.x + 'px,-58px,' + (fz + front * 1) + 'px)' + rot,
-        'background:linear-gradient(180deg,#FFF6E9,#FFC93C);border-radius:35px 35px 0 0;'));
+      world.appendChild(P(92, 130, 'translate3d(' + b.x + 'px,-65px,' + fz + 'px)' + rot, 'background:#2B1B4D;border:4px solid #2B1B4D;box-sizing:border-box;border-radius:46px 46px 0 0;'));
+      world.appendChild(P(70, 108, 'translate3d(' + b.x + 'px,-58px,' + (fz + front * 1) + 'px)' + rot, 'background:linear-gradient(180deg,#FFF6E9,#FFC93C);border-radius:35px 35px 0 0;'));
 
-      // Ventanas a los costados de la puerta
       [-1, 1].forEach((side) => {
         world.appendChild(P(64, 64, 'translate3d(' + (b.x + side * (hw * 0.55)) + 'px,' + (-b.h + 78) + 'px,' + fz + 'px)' + rot,
-          'background:#9fe8f5;border:4px solid #2B1B4D;box-sizing:border-box;border-radius:8px;' +
-          'background-image:linear-gradient(135deg, rgba(255,255,255,.85) 0 40%, rgba(0,0,0,0) 40%);'));
+          'background:#9fe8f5;border:4px solid #2B1B4D;box-sizing:border-box;border-radius:8px;background-image:linear-gradient(135deg, rgba(255,255,255,.85) 0 40%, rgba(0,0,0,0) 40%);'));
       });
 
-      // Cartel con el emoji y el nombre, colgado sobre la puerta
       const sign = P(b.w * 0.82, 54, 'translate3d(' + b.x + 'px,' + (-b.h - 6) + 'px,' + fz + 'px)' + rot,
-        'background:#FFF6E9;border:4px solid #2B1B4D;box-sizing:border-box;border-radius:12px;' +
-        'display:flex;align-items:center;justify-content:center;gap:8px;' +
-        'font-family:\'Baloo 2\',sans-serif;font-weight:800;font-size:19px;color:#2B1B4D;' +
-        'box-shadow:0 0 0 rgba(255,201,60,0);transition:box-shadow .25s,background .25s;');
+        'background:#FFF6E9;border:4px solid #2B1B4D;box-sizing:border-box;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:8px;font-family:\'Baloo 2\',sans-serif;font-weight:800;font-size:19px;color:#2B1B4D;transition:box-shadow .25s,background .25s;');
       sign.textContent = b.emoji + ' ' + b.label;
       sign.dataset.id = b.id;
       world.appendChild(sign);
       this.signEls.push(sign);
 
-      // Toda la fachada es clickeable, además de la tecla Enter.
-      const hit = P(b.w, b.h, 'translate3d(' + b.x + 'px,' + cy + 'px,' + (fz + front * 2) + 'px)' + rot,
-        'background:rgba(0,0,0,0);cursor:pointer;');
-      hit.addEventListener('click', () => this.setPage(b.goTo));
+      const hit = P(b.w, b.h, 'translate3d(' + b.x + 'px,' + cy + 'px,' + (fz + front * 2) + 'px)' + rot, 'background:rgba(0,0,0,0);cursor:pointer;');
+      hit.addEventListener('click', () => this.openPlazaBuilding(b.id));
       world.appendChild(hit);
     });
 
-    // ---- Farolas ----
+    // Farolas
     W3D_LAMPS.forEach((l) => {
       world.appendChild(P(12, 210, 'translate3d(' + l.x + 'px,-105px,' + l.z + 'px)', 'background:#2B1B4D;'));
       world.appendChild(P(12, 210, 'translate3d(' + l.x + 'px,-105px,' + l.z + 'px) rotateY(90deg)', 'background:#3d2a63;'));
       world.appendChild(S(l.x, -210, l.z, 54, '💡', 'filter:drop-shadow(0 0 16px rgba(255,201,60,.95));'));
     });
 
-    // ---- Muro perimetral de cajas (la Gran Caja que rodea Nueva Juja) ----
+    // Muro perimetral
     for (let i = -6; i <= 6; i++) {
       [-1, 1].forEach((sgn) => {
         const h = 150 + ((i + 7) % 3) * 60;
         world.appendChild(P(240, h, 'translate3d(' + (i * 250) + 'px,' + (-h / 2) + 'px,' + (sgn * 1650) + 'px)' + (sgn === 1 ? ' rotateY(180deg)' : ''),
-          'background:#c39a63;border:4px solid #2B1B4D;box-sizing:border-box;' +
-          'background-image:repeating-linear-gradient(90deg, rgba(43,27,77,.18) 0 3px, rgba(0,0,0,0) 3px 40px);'));
+          'background:#c39a63;border:4px solid #2B1B4D;box-sizing:border-box;background-image:repeating-linear-gradient(90deg, rgba(43,27,77,.18) 0 3px, rgba(0,0,0,0) 3px 40px);'));
         world.appendChild(P(240, h, 'translate3d(' + (sgn * 1650) + 'px,' + (-h / 2) + 'px,' + (i * 250) + 'px) rotateY(' + (sgn * 90) + 'deg)',
-          'background:#b98d57;border:4px solid #2B1B4D;box-sizing:border-box;' +
-          'background-image:repeating-linear-gradient(90deg, rgba(43,27,77,.18) 0 3px, rgba(0,0,0,0) 3px 40px);'));
+          'background:#b98d57;border:4px solid #2B1B4D;box-sizing:border-box;background-image:repeating-linear-gradient(90deg, rgba(43,27,77,.18) 0 3px, rgba(0,0,0,0) 3px 40px);'));
       });
     }
 
-    // ---- Decorados, paseantes y globos ----
+    // Decorados
     W3D_PROPS.forEach((p) => world.appendChild(S(p.x, 0, p.z, p.s, p.e)));
 
-    // Jujapeludas de carne y hueso paseando por la plaza: la mascota real,
-    // recortada en redondo, siempre encarando a la cámara.
+    // NPCs en la Plaza
+    W3D_NPCS.forEach((npc) => {
+      const el = S(npc.x, 0, npc.z, npc.s, npc.emoji, 'cursor:pointer;');
+      el.addEventListener('click', () => this.talkToNpc(npc.id));
+      this.npcEls.push({ el, cfg: npc });
+      world.appendChild(el);
+    });
+
+    // Jujapeludas paseantes
     W3D_WALKERS.forEach((w) => {
       const el = S(w.cx, 0, w.cz, w.s, '',
-        'border-radius:50%;overflow:hidden;border:4px solid #FFC93C;box-sizing:border-box;' +
-        'background:#FFF6E9 url(uploads/jujapeluda.jpeg) center/cover no-repeat;');
+        'border-radius:50%;overflow:hidden;border:4px solid #FFC93C;box-sizing:border-box;background:#FFF6E9 url(uploads/jujapeluda.jpeg) center/cover no-repeat;cursor:pointer;');
+      el.addEventListener('click', () => this.petJujapeluda());
       this.walkerEls.push({ el: el, cfg: w });
       world.appendChild(el);
     });
+
     W3D_BALLOONS.forEach((b) => {
       const el = S(b.x, -b.y, b.z, b.s, b.e);
       this.balloonEls.push({ el: el, cfg: b });
@@ -1318,12 +1996,10 @@ class Component extends DCLogic {
       return el;
     };
 
-    // Cartel de ubicación
     this.locEl = mk('top:12px;left:12px;background:#2B1B4Dd9;color:#FFF6E9;padding:7px 14px;' +
       'border-radius:999px;font-family:\'Baloo 2\',sans-serif;font-weight:800;font-size:13px;pointer-events:none;');
     this.locEl.textContent = '📍 Plaza de Jujalandia';
 
-    // Minimapa
     const mini = mk('top:12px;right:12px;width:104px;height:104px;background:#FFF6E9d9;' +
       'border:3px solid #2B1B4D;border-radius:12px;pointer-events:none;overflow:hidden;');
     W3D_BUILDINGS.forEach((b) => {
@@ -1342,14 +2018,11 @@ class Component extends DCLogic {
       'border-right:6px solid transparent;border-bottom:14px solid #FF5A5F;';
     mini.appendChild(this.miniDot);
 
-    // Aviso de "entrar"
     this.promptEl = mk('bottom:88px;left:50%;transform:translateX(-50%);background:#FFC93C;color:#2B1B4D;' +
       'border:4px solid #2B1B4D;border-radius:14px;padding:10px 20px;font-family:\'Baloo 2\',sans-serif;' +
-      'font-weight:800;font-size:15px;box-shadow:5px 5px 0 #2B1B4D;cursor:pointer;display:none;' +
-      'white-space:nowrap;');
-    this.promptEl.addEventListener('click', () => this.enter3DBuilding());
+      'font-weight:800;font-size:15px;box-shadow:5px 5px 0 #2B1B4D;cursor:pointer;display:none;white-space:nowrap;');
+    this.promptEl.addEventListener('click', () => this.handlePlazaPromptAction());
 
-    // Controles en pantalla (funcionan con mouse y con dedo)
     const pad = mk('bottom:14px;left:14px;display:grid;grid-template-columns:repeat(3,42px);' +
       'grid-template-rows:repeat(2,42px);gap:6px;');
     const btn = (label, act, col, row) => {
@@ -1369,7 +2042,6 @@ class Component extends DCLogic {
     btn('▼', 'back', 2, 2);
     btn('▶', 'turnR', 3, 2);
 
-    // Mirar alrededor arrastrando
     const down = (e) => {
       const p = e.touches ? e.touches[0] : e;
       this.drag = { x: p.clientX, y: p.clientY };
@@ -1394,16 +2066,68 @@ class Component extends DCLogic {
     scene.addEventListener('mouseenter', () => { this.focus3d = true; });
   };
 
-  enter3DBuilding = () => {
-    const b = W3D_BUILDINGS.find((x) => x.id === this.near3d);
-    if (b) this.setPage(b.goTo);
+  handlePlazaPromptAction = () => {
+    if (this.nearTargetType === 'building' && this.near3d) {
+      this.openPlazaBuilding(this.near3d);
+    } else if (this.nearTargetType === 'npc' && this.nearTargetData) {
+      this.talkToNpc(this.nearTargetData.id);
+    } else if (this.nearTargetType === 'walker') {
+      this.petJujapeluda();
+    } else if (this.nearTargetType === 'fountain') {
+      this.useFountain();
+    }
+  };
+
+  openPlazaBuilding = (buildingId) => {
+    stopChiptune();
+    this.setState({ plazaView: buildingId });
+    this.unlockStamp(buildingId);
+  };
+
+  exitPlazaInterior = () => {
+    stopChiptune();
+    this.setState({ plazaView: 'walk' });
+  };
+
+  talkToNpc = (npcId) => {
+    const npc = W3D_NPCS.find((n) => n.id === npcId);
+    if (!npc) return;
+    this.setState({ activeNpc: npc, npcReply: null });
+  };
+
+  selectNpcOption = (opt) => {
+    this.setState({ npcReply: opt.reply });
+  };
+
+  closeNpcDialog = () => {
+    this.setState({ activeNpc: null, npcReply: null });
+  };
+
+  petJujapeluda = () => {
+    const newPats = this.state.patCount + 1;
+    this.setState({ patCount: newPats });
+    try { localStorage.setItem('jj-pats', newPats.toString()); } catch (e) {}
+    this.unlockStamp('jujapeluda');
+    this.showToast('¡Acariciaste a la Jujapeluda! 🐾 Caricias nacionales: ' + newPats);
+  };
+
+  useFountain = () => {
+    const fortunes = [
+      'El Tomate Gigante bendice tu huerto con abundancia de semillas.',
+      'El agua de la fuente susurra: "No dejes hervir el termo de La Tía".',
+      'Tu pasaporte brilla con aprobación moral suprema.',
+      'Quien riega en silencio los sábados, festeja los domingos.'
+    ];
+    const fortune = fortunes[Math.floor(Math.random() * fortunes.length)];
+    this.unlockStamp('fuente');
+    this.showToast('⛲ Oráculo del Tomate: "' + fortune + '"');
   };
 
   onKey3D = (e) => {
-    if (!this.focus3d || !this.worldRef.current) return;
+    if (!this.focus3d || !this.worldRef.current || this.state.plazaView !== 'walk') return;
     const k = (e.key || '').toLowerCase();
     if (k === 'enter' || k === ' ') {
-      if (e.type === 'keydown') this.enter3DBuilding();
+      if (e.type === 'keydown') this.handlePlazaPromptAction();
       e.preventDefault();
       return;
     }
@@ -1413,7 +2137,6 @@ class Component extends DCLogic {
     e.preventDefault();
   };
 
-  // ¿La posición choca contra un edificio o la fuente?
   blocked3D = (x, z) => {
     if (Math.abs(x) > W3D.bound || Math.abs(z) > W3D.bound) return true;
     if (Math.sqrt(x * x + z * z) < W3D.fountainR + 40) return true;
@@ -1426,6 +2149,7 @@ class Component extends DCLogic {
 
   tick3D = () => {
     this.raf3d = requestAnimationFrame(this.tick3D);
+    if (this.state.plazaView !== 'walk') return;
     const world = this.worldRef.current;
     if (!world) { this.built3d = false; return; }
     if (!this.built3d || !world.firstChild) { this.build3DWorld(); this.built3d = true; }
@@ -1439,7 +2163,6 @@ class Component extends DCLogic {
     if (k.turnR) cam.yaw -= W3D.turn * boost;
 
     const rad = cam.yaw * Math.PI / 180;
-    // Con world = rotateY(-yaw), la cámara mira hacia (-sin yaw, 0, -cos yaw).
     const fx = -Math.sin(rad), fz = -Math.cos(rad);
     const rx = Math.cos(rad), rz = -Math.sin(rad);
 
@@ -1455,7 +2178,6 @@ class Component extends DCLogic {
       const step = W3D.speed * boost;
       const nx = cam.x + (dx / len) * step;
       const nz = cam.z + (dz / len) * step;
-      // Se resuelve eje por eje para poder "deslizarse" contra las paredes.
       if (!this.blocked3D(nx, cam.z)) cam.x = nx;
       if (!this.blocked3D(cam.x, nz)) cam.z = nz;
       cam.bob += 0.28 * boost;
@@ -1469,14 +2191,12 @@ class Component extends DCLogic {
       'translateZ(' + W3D.persp + 'px) rotateX(' + (-cam.pitch) + 'deg) rotateY(' + (-cam.yaw) + 'deg) ' +
       'translate3d(' + (-cam.x) + 'px,' + eye + 'px,' + (-cam.z) + 'px)';
 
-    // Los sprites se contra-rotan para encarar siempre a la cámara.
     const face = 'rotateY(' + cam.yaw + 'deg)';
     for (let i = 0; i < this.billboards.length; i++) {
       const el = this.billboards[i];
       el.style.transform = 'translate3d(' + el.dataset.x + 'px,' + el.dataset.y + 'px,' + el.dataset.z + 'px) ' + face;
     }
 
-    // Jujapeludas paseando en círculos y globos flotando.
     for (let i = 0; i < this.walkerEls.length; i++) {
       const w = this.walkerEls[i], c = w.cfg;
       const a = c.ph + cam.t * c.sp;
@@ -1490,7 +2210,6 @@ class Component extends DCLogic {
       b.el.dataset.x = c.x + Math.sin(c.ph + cam.t * 0.005) * 70;
     }
 
-    // Minimapa
     if (this.miniDot) {
       const s = 104 / (W3D.bound * 2.4);
       this.miniDot.style.left = (52 + cam.x * s - 6) + 'px';
@@ -1498,9 +2217,15 @@ class Component extends DCLogic {
       this.miniDot.style.transform = 'rotate(' + (180 - cam.yaw) + 'deg)';
     }
 
-    // ¿Estamos cerca de una puerta Y mirándola? Sin el segundo chequeo, el aviso
-    // ofrecería entrar a un edificio que quedó a nuestras espaldas.
-    let near = null, bestD = 520;
+    // Check interaction targets: Building door, NPC, Walker, Fountain
+    let targetType = null;
+    let targetId = null;
+    let targetData = null;
+    let promptText = '';
+    let locText = '📍 Plaza de Jujalandia';
+
+    // 1. Buildings
+    let bestD = 520;
     for (let i = 0; i < W3D_BUILDINGS.length; i++) {
       const b = W3D_BUILDINGS[i];
       const front = b.z < 0 ? 1 : -1;
@@ -1508,37 +2233,180 @@ class Component extends DCLogic {
       const vx = doorX - cam.x, vz = doorZ - cam.z;
       const d = Math.sqrt(vx * vx + vz * vz);
       if (d >= bestD || d < 1) continue;
-      if ((vx / d) * fx + (vz / d) * fz < 0.4) continue; // fuera del cono de visión
+      if ((vx / d) * fx + (vz / d) * fz < 0.4) continue;
       bestD = d;
-      near = b;
+      targetType = 'building';
+      targetId = b.id;
+      promptText = b.emoji + '  Entrar a ' + b.label + ' — ' + b.desc + '  ⏎';
+      locText = '📍 ' + b.label;
     }
-    const nearId = near ? near.id : null;
-    if (nearId !== this.near3d) {
-      this.near3d = nearId;
-      if (this.promptEl) {
-        this.promptEl.style.display = near ? 'block' : 'none';
-        if (near) this.promptEl.textContent = near.emoji + '  Entrar a ' + near.label + ' — ' + near.desc + '  ⏎';
+
+    // 2. NPCs (if no closer building door)
+    if (!targetType) {
+      let bestNpcD = 380;
+      for (let i = 0; i < W3D_NPCS.length; i++) {
+        const npc = W3D_NPCS[i];
+        const vx = npc.x - cam.x, vz = npc.z - cam.z;
+        const d = Math.sqrt(vx * vx + vz * vz);
+        if (d < bestNpcD && (vx / (d || 1)) * fx + (vz / (d || 1)) * fz > 0.4) {
+          bestNpcD = d;
+          targetType = 'npc';
+          targetData = npc;
+          promptText = npc.emoji + '  Hablar con ' + npc.name + ' (' + npc.role + ')  ⏎';
+          locText = '📍 ' + npc.name;
+        }
       }
-      if (this.locEl) this.locEl.textContent = near ? ('📍 ' + near.label) : '📍 Plaza de Jujalandia';
-      for (let i = 0; i < this.signEls.length; i++) {
-        const s = this.signEls[i];
-        const on = s.dataset.id === nearId;
-        s.style.background = on ? '#FFC93C' : '#FFF6E9';
-        s.style.boxShadow = on ? '0 0 26px 8px rgba(255,201,60,.9)' : '0 0 0 rgba(255,201,60,0)';
+    }
+
+    // 3. Walkers (Jujapeludas)
+    if (!targetType) {
+      for (let i = 0; i < this.walkerEls.length; i++) {
+        const w = this.walkerEls[i];
+        const wx = parseFloat(w.el.dataset.x) || 0, wz = parseFloat(w.el.dataset.z) || 0;
+        const vx = wx - cam.x, vz = wz - cam.z;
+        const d = Math.sqrt(vx * vx + vz * vz);
+        if (d < 260) {
+          targetType = 'walker';
+          promptText = '🐾  Acariciar a la Jujapeluda  ⏎';
+          locText = '📍 Jujapeluda en paseo';
+          break;
+        }
       }
+    }
+
+    // 4. Central Fountain
+    if (!targetType) {
+      const fd = Math.sqrt(cam.x * cam.x + cam.z * cam.z);
+      if (fd < 360) {
+        targetType = 'fountain';
+        promptText = '⛲  Tirar semilla sagrada a la Fuente  ⏎';
+        locText = '📍 Fuente del Tomate Gigante';
+      }
+    }
+
+    this.near3d = targetType === 'building' ? targetId : null;
+    this.nearTargetType = targetType;
+    this.nearTargetData = targetData;
+
+    if (this.promptEl) {
+      this.promptEl.style.display = targetType ? 'block' : 'none';
+      if (targetType) this.promptEl.textContent = promptText;
+    }
+    if (this.locEl) this.locEl.textContent = locText;
+
+    for (let i = 0; i < this.signEls.length; i++) {
+      const s = this.signEls[i];
+      const on = s.dataset.id === this.near3d;
+      s.style.background = on ? '#FFC93C' : '#FFF6E9';
+      s.style.boxShadow = on ? '0 0 26px 8px rgba(255,201,60,.9)' : '0 0 0 rgba(255,201,60,0)';
     }
   };
 
+  // Kiosco Handlers
+  setKioscoTab = (tab) => this.setState({ kioscoTab: tab });
+  generateRandomHeadline = () => {
+    const next = HEADLINES_POOL[Math.floor(Math.random() * HEADLINES_POOL.length)];
+    this.setState({ currentHeadline: next });
+    this.unlockStamp('kiosco');
+  };
+  selectHoroscopo = (idx) => {
+    this.setState({ selectedHoroscopo: idx });
+    this.unlockStamp('kiosco');
+  };
+  claimKioscoStamp = () => {
+    this.unlockStamp('kiosco');
+    this.showToast('📰 ¡Sello de Prensa Libre estampado en tu pasaporte!');
+  };
+
+  // Correo Handlers
+  setCorreoTab = (tab) => this.setState({ correoTab: tab });
+  selectLetterRecipient = (r) => this.setState({ letterRecipient: r });
+  selectLetterStamp = (s) => this.setState({ letterStamp: s });
+  onLetterTextInput = (e) => this.setState({ letterText: e.target.value });
+  sendOfficialLetter = () => {
+    const { letterText, letterRecipient, letterStamp, verifiedCitizen, letters } = this.state;
+    if (!letterText.trim()) return;
+    const authorName = verifiedCitizen ? verifiedCitizen.nickname + ' (' + verifiedCitizen.id + ')' : 'Ciudadano Anónimo';
+    const stampObj = { tomate: { e: '🍅', l: 'Tomate' }, jujapeluda: { e: '🐾', l: 'Jujapeluda' }, caja: { e: '📦', l: 'Gran Caja' } }[letterStamp] || { e: '✉️', l: 'Oficial' };
+    const recName = { consejo: 'Al Consejo Moral', tia: 'A La Tía Constituyente', musso: 'A Roberto Musso', chino: 'Al Chino de Ultramar', publico: 'Al Buzón de la Plaza' }[letterRecipient] || 'Oficial';
+
+    const newLetter = {
+      id: Date.now().toString(),
+      author: authorName,
+      recipient: recName,
+      stampEmoji: stampObj.e,
+      stampLabel: stampObj.l,
+      date: '25/08/2026',
+      message: letterText
+    };
+
+    const updated = [newLetter, ...letters];
+    this.setState({ letters: updated, letterText: '' });
+    try { localStorage.setItem('jj-letters', JSON.stringify(updated)); } catch (e) {}
+    this.unlockStamp('correo');
+
+    const reply = REPUBLIC_REPLIES[letterRecipient];
+    if (reply) {
+      this.setState({ letterReplyModal: reply });
+    } else {
+      this.showToast('📮 ¡Carta oficial depositada con éxito!');
+    }
+  };
+  closeLetterReplyModal = () => this.setState({ letterReplyModal: null });
+
+  // Cultural Handlers
+  setCulturalTab = (tab) => {
+    if (tab !== 'rockola') stopChiptune();
+    this.setState({ culturalTab: tab, rockolaPlaying: tab === 'rockola' ? this.state.rockolaPlaying : null });
+  };
+  playRockolaTrack = (trackId) => {
+    playChiptune(trackId);
+    this.setState({ rockolaPlaying: trackId });
+    this.unlockStamp('cultural');
+    this.showToast('🎵 Sonando en Jujavisión: ' + (ROCKOLA_TRACKS_DEF.find((t) => t.id === trackId) || {}).title);
+  };
+  stopRockola = () => {
+    stopChiptune();
+    this.setState({ rockolaPlaying: null });
+  };
+  selectMuralStamp = (emoji) => this.setState({ selectedMuralStamp: emoji });
+  onMuralClick = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = Math.max(5, Math.min(92, Math.round(((e.clientX - rect.left) / rect.width) * 100)));
+    const y = Math.max(5, Math.min(85, Math.round(((e.clientY - rect.top) / rect.height) * 100)));
+    const author = this.state.verifiedCitizen ? this.state.verifiedCitizen.id : 'JJ-CIUDAD';
+    const stamp = { emoji: this.state.selectedMuralStamp, x, y, author };
+    const updated = [...this.state.muralStamps, stamp];
+    this.setState({ muralStamps: updated });
+    try { localStorage.setItem('jj-mural-stamps', JSON.stringify(updated)); } catch (err) {}
+    this.unlockStamp('cultural');
+    this.showToast('🎨 ¡Estampaste tu marca en el Mural Colectivo!');
+  };
+
+  // Museo Handlers
+  setMuseoTab = (tab) => this.setState({ museoTab: tab });
+  selectRelic = (index) => {
+    this.setState({ selectedRelicIndex: index });
+    this.unlockStamp('museo');
+  };
+  answerTrivia = (qIndex, isCorrect) => {
+    const updated = { ...this.state.triviaAnswers, [qIndex]: isCorrect };
+    let score = null;
+    if (Object.keys(updated).length === TRIVIA_QUESTIONS.length) {
+      score = Object.values(updated).filter(Boolean).length;
+      this.unlockStamp('museo');
+      this.showToast('🎓 ¡Trivia completada con ' + score + '/3 correctas!');
+    }
+    this.setState({ triviaAnswers: updated, triviaScore: score });
+  };
+
   openComicReader = (id) => this.setState({ readerComicId: id, readerPage: 0 }, this.syncReaderImage);
-
   closeComicReader = () => this.setState({ readerComicId: null });
-
   nextComicPage = () => {
     const comic = this.state.comics.find((c) => c.id === this.state.readerComicId);
     if (!comic) return;
     this.setState({ readerPage: Math.min(this.state.readerPage + 1, comic.pages.length - 1) }, this.syncReaderImage);
   };
-
   prevComicPage = () => {
     this.setState({ readerPage: Math.max(this.state.readerPage - 1, 0) }, this.syncReaderImage);
   };
@@ -1547,6 +2415,7 @@ class Component extends DCLogic {
     clearInterval(this.moleTimer);
     clearInterval(this.countdownTimer);
     cancelAnimationFrame(this.raf3d);
+    stopChiptune();
     window.removeEventListener('keydown', this.onKey3D);
     window.removeEventListener('keyup', this.onKey3D);
   }
@@ -1620,12 +2489,12 @@ class Component extends DCLogic {
   };
 
   setPage = (p) => {
+    stopChiptune();
     this.setState({ page: p });
     if (typeof window !== 'undefined') window.scrollTo(0, 0);
   };
 
   pickAvatar = (a) => this.setState({ avatar: a, showError: false });
-
   pickGender = (g) => this.setState({ gender: g, showError: false });
 
   generateNickname = () => {
@@ -1641,6 +2510,7 @@ class Component extends DCLogic {
       return;
     }
     const canvas = this.canvasRef.current;
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
     const W = canvas.width, H = canvas.height;
 
@@ -1730,7 +2600,7 @@ class Component extends DCLogic {
     ctx.textAlign = 'left';
     ctx.restore();
 
-    const citizenId = Math.floor(100000 + Math.random() * 900000);
+    const citizenIdNum = this.state.citizenId ? this.state.citizenId.replace('JJ-', '') : Math.floor(100000 + Math.random() * 900000);
     const tx = px + pw + 42;
     const maxLabelWidth = card.x + card.w - 20 - tx;
     ctx.fillStyle = '#2B1B4D';
@@ -1749,7 +2619,7 @@ class Component extends DCLogic {
     ctx.fillText('N° DE CIUDADANO', tx, 220);
     ctx.fillStyle = '#14C8B8';
     ctx.font = 'bold 21px "Baloo 2", sans-serif';
-    ctx.fillText('JJ-' + citizenId, tx, 246);
+    ctx.fillText('JJ-' + citizenIdNum, tx, 246);
 
     ctx.fillStyle = '#2B1B4D';
     ctx.font = 'bold 13px "Nunito", sans-serif';
@@ -1766,6 +2636,33 @@ class Component extends DCLogic {
 
     drawStar(card.x + card.w - 52, 302, 12, '#FFC93C');
     drawStar(card.x + card.w - 30, 342, 8, '#14C8B8');
+
+    // Sellos oficiales de la Plaza en el Pasaporte
+    const unlockedStamps = this.state.stamps || [];
+    if (unlockedStamps.length > 0) {
+      const stampStartX = card.x + card.w - 240;
+      const stampStartY = 422;
+      unlockedStamps.slice(0, 6).forEach((stId, sIdx) => {
+        const sDef = STAMPS_DEF.find((x) => x.id === stId);
+        if (!sDef) return;
+        const col = sIdx % 3;
+        const row = Math.floor(sIdx / 3);
+        const sx = stampStartX + col * 76;
+        const sy = stampStartY + row * 46;
+
+        ctx.save();
+        ctx.translate(sx, sy);
+        ctx.rotate((sIdx % 2 === 0 ? -0.08 : 0.08));
+        ctx.strokeStyle = sDef.color;
+        ctx.lineWidth = 3;
+        ctx.strokeRect(-32, -18, 68, 36);
+        ctx.fillStyle = sDef.color;
+        ctx.font = '16px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(sDef.emoji, 2, 6);
+        ctx.restore();
+      });
+    }
 
     ctx.strokeStyle = '#2B1B4D55';
     ctx.setLineDash([6, 6]);
@@ -1784,11 +2681,9 @@ class Component extends DCLogic {
     ctx.fillText('Emitido bajo la protección del Consejo Moral — Papá y Mamá 🐾', card.x + 24, 468);
     ctx.fillText('Válido en toda la Gran Caja y los Valles del Norte', card.x + 24, 488);
 
-    const fullId = 'JJ-' + citizenId;
+    const fullId = 'JJ-' + citizenIdNum;
     let dataUrl = canvas.toDataURL('image/png');
-    try {
-      dataUrl = embedPassportId(dataUrl, fullId, this.state.nickname);
-    } catch (e) {}
+    try { dataUrl = embedPassportId(dataUrl, fullId, this.state.nickname); } catch (e) {}
     this.setState({ passportUrl: dataUrl, citizenId: fullId, showError: false }, () => {
       if (this.passportImgRef.current) this.passportImgRef.current.src = dataUrl;
       if (this.passportLinkRef.current) this.passportLinkRef.current.href = dataUrl;
@@ -1797,6 +2692,7 @@ class Component extends DCLogic {
 
   renderVals() {
     const page = this.state.page;
+    const plazaView = this.state.plazaView;
     const navDefs = [
       ['hero', 'Inicio'], ['historia', 'Historia'], ['gobierno', 'Gobierno'],
       ['cultura', 'Cultura'], ['naturaleza', 'Naturaleza'], ['exterior', 'Exterior'],
@@ -1892,6 +2788,194 @@ class Component extends DCLogic {
     });
     const memWon = this.state.memCards.length > 0 && this.state.memMatched.length === this.state.memCards.length;
 
+    // Stamps badges for passport view
+    const passportStampsBadges = STAMPS_DEF.map((s) => {
+      const unlocked = this.state.stamps.includes(s.id);
+      return {
+        emoji: s.emoji,
+        name: s.name,
+        style: {
+          border: '2px solid #2B1B4D',
+          borderRadius: '8px',
+          padding: '4px 8px',
+          background: unlocked ? s.color : '#e0e0e0',
+          color: unlocked ? '#2B1B4D' : '#888',
+          fontSize: '11px',
+          fontWeight: 800,
+          opacity: unlocked ? 1 : 0.45
+        }
+      };
+    });
+
+    // NPC Dialog options
+    const activeNpc = this.state.activeNpc;
+    const activeNpcOptions = (activeNpc && activeNpc.options || []).map((opt) => ({
+      text: opt.text,
+      onClick: () => this.selectNpcOption(opt)
+    }));
+
+    // Kiosco Tab buttons & Horóscopo signs
+    const tabBtnStyle = (active, bg) => ({
+      background: active ? bg : '#FFF6E9',
+      color: '#2B1B4D',
+      border: '3px solid #2B1B4D',
+      borderRadius: '10px',
+      fontFamily: "'Baloo 2', sans-serif",
+      fontWeight: 800,
+      fontSize: '14px',
+      padding: '8px 14px',
+      cursor: 'pointer',
+      boxShadow: active ? '3px 3px 0 #2B1B4D' : 'none'
+    });
+
+    const horoscopoSigns = HOROSCOPO_DATA.map((h, i) => ({
+      emoji: h.emoji,
+      label: h.label,
+      onClick: () => this.selectHoroscopo(i),
+      style: {
+        background: this.state.selectedHoroscopo === i ? '#FFC93C' : '#FFF6E9',
+        border: '3px solid #2B1B4D',
+        borderRadius: '10px',
+        fontFamily: "'Baloo 2', sans-serif",
+        fontWeight: 800,
+        fontSize: '13px',
+        padding: '6px 12px',
+        cursor: 'pointer'
+      }
+    }));
+    const activeHoroscopo = HOROSCOPO_DATA[this.state.selectedHoroscopo] || HOROSCOPO_DATA[0];
+
+    // Correo Tab buttons & lists
+    const letterRecipients = [
+      { id: 'consejo', label: '👑 Consejo Moral' },
+      { id: 'tia', label: '👵 La Tía' },
+      { id: 'musso', label: '🎸 Roberto Musso' },
+      { id: 'chino', label: '🛂 El Chino' },
+      { id: 'publico', label: '📬 Buzón de la Plaza' }
+    ].map((r) => ({
+      label: r.label,
+      onClick: () => this.selectLetterRecipient(r.id),
+      style: {
+        background: this.state.letterRecipient === r.id ? '#14C8B8' : '#FFF6E9',
+        border: '3px solid #2B1B4D',
+        borderRadius: '8px',
+        padding: '6px 12px',
+        fontFamily: "'Baloo 2', sans-serif",
+        fontWeight: 800,
+        fontSize: '13px',
+        cursor: 'pointer'
+      }
+    }));
+
+    const letterStamps = [
+      { id: 'tomate', emoji: '🍅', label: 'Tomate (1 🍅)' },
+      { id: 'jujapeluda', emoji: '🐾', label: 'Jujapeluda (2 🍅)' },
+      { id: 'caja', emoji: '📦', label: 'Gran Caja (3 🍅)' }
+    ].map((s) => ({
+      emoji: s.emoji,
+      label: s.label,
+      onClick: () => this.selectLetterStamp(s.id),
+      style: {
+        background: this.state.letterStamp === s.id ? '#FFC93C' : '#FFF6E9',
+        border: '3px solid #2B1B4D',
+        borderRadius: '8px',
+        padding: '6px 12px',
+        fontFamily: "'Baloo 2', sans-serif",
+        fontWeight: 800,
+        fontSize: '13px',
+        cursor: 'pointer'
+      }
+    }));
+
+    const padronVisitors = [
+      { avatar: '🍅', nickname: 'Guardián Valiente del Tomate', id: 'JJ-100201', status: 'Ciudadano Pleno' },
+      { avatar: '🐾', nickname: 'Duquesa Estelar de la Gran Caja', id: 'JJ-450912', status: 'Ciudadana Plena' },
+      { avatar: '👑', nickname: 'Comandante Gigante de Jujavisión', id: 'JJ-883100', status: 'Ciudadano Pleno' },
+      { avatar: '⭐', nickname: 'Astro Ilustre de los Valles', id: 'JJ-330192', status: 'Ciudadanía Plena' }
+    ];
+
+    // Cultural Rockola & Mural
+    const rockolaTracks = ROCKOLA_TRACKS_DEF.map((t) => ({
+      title: t.title,
+      desc: t.desc,
+      onPlay: () => this.playRockolaTrack(t.id)
+    }));
+
+    const muralStampOptions = ['🍅', '🐾', '📦', '⭐', '👑', '🧉', '🎸', '🎨', '🌷'].map((emoji) => ({
+      emoji,
+      onClick: () => this.selectMuralStamp(emoji),
+      style: {
+        fontSize: '22px',
+        width: '42px',
+        height: '42px',
+        border: '3px solid #2B1B4D',
+        borderRadius: '10px',
+        background: this.state.selectedMuralStamp === emoji ? '#FFC93C' : '#FFF6E9',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }
+    }));
+
+    const muralPlacedStamps = this.state.muralStamps.map((st) => ({
+      emoji: st.emoji,
+      author: st.author,
+      style: {
+        position: 'absolute',
+        left: st.x + '%',
+        top: st.y + '%',
+        fontSize: '28px',
+        lineHeight: '1',
+        textAlign: 'center',
+        userSelect: 'none',
+        pointerEvents: 'none',
+        animation: 'jj-stamp-appear 0.3s ease-out'
+      }
+    }));
+
+    // Museo Relics & Trivia
+    const museumRelicsList = MUSEUM_RELICS.map((r, i) => ({
+      emoji: r.emoji,
+      name: r.name,
+      onClick: () => this.selectRelic(i),
+      style: {
+        background: this.state.selectedRelicIndex === i ? '#FF5A5F' : '#FFF6E9',
+        color: this.state.selectedRelicIndex === i ? '#FFF6E9' : '#2B1B4D',
+        border: '3px solid #2B1B4D',
+        borderRadius: '10px',
+        fontFamily: "'Baloo 2', sans-serif",
+        fontWeight: 800,
+        fontSize: '13px',
+        padding: '8px 12px',
+        cursor: 'pointer'
+      }
+    }));
+    const activeRelic = MUSEUM_RELICS[this.state.selectedRelicIndex] || MUSEUM_RELICS[0];
+
+    const triviaQuestionsList = TRIVIA_QUESTIONS.map((tq, qIdx) => ({
+      num: tq.num,
+      question: tq.question,
+      options: tq.options.map((opt) => {
+        const answered = this.state.triviaAnswers[qIdx] !== undefined;
+        return {
+          text: opt.text,
+          onClick: () => this.answerTrivia(qIdx, opt.correct),
+          style: {
+            textAlign: 'left',
+            background: answered ? (opt.correct ? '#14C8B8' : '#FFF6E9') : '#FFF6E9',
+            border: '2px solid #2B1B4D',
+            borderRadius: '8px',
+            padding: '8px 12px',
+            fontFamily: "'Nunito', sans-serif",
+            fontWeight: 700,
+            fontSize: '13px',
+            cursor: answered ? 'default' : 'pointer'
+          }
+        };
+      })
+    }));
+
     return {
       navItems,
       state: this.state,
@@ -1908,6 +2992,113 @@ class Component extends DCLogic {
       handlePassportUpload: this.handlePassportUpload,
       useCurrentPassport: this.useCurrentPassport,
       logoutCitizen: this.logoutCitizen,
+
+      // Plaza 3D & Modes
+      plazaModeIsWalk: plazaView === 'walk',
+      plazaModeIsKiosco: plazaView === 'kiosco',
+      plazaModeIsCorreo: plazaView === 'correo',
+      plazaModeIsCultural: plazaView === 'cultural',
+      plazaModeIsMuseo: plazaView === 'museo',
+      exitPlazaInterior: this.exitPlazaInterior,
+      stampsCount: this.state.stamps.length,
+      passportStampsBadges,
+
+      // NPC Dialogs
+      hasActiveNpc: !!activeNpc,
+      activeNpcEmoji: activeNpc ? activeNpc.emoji : '',
+      activeNpcName: activeNpc ? activeNpc.name : '',
+      activeNpcRole: activeNpc ? activeNpc.role : '',
+      activeNpcText: activeNpc ? activeNpc.text : '',
+      hasNpcOptions: !!activeNpc && !this.state.npcReply,
+      activeNpcOptions,
+      hasNpcReply: !!this.state.npcReply,
+      activeNpcReplyText: this.state.npcReply || '',
+      closeNpcDialog: this.closeNpcDialog,
+
+      // Toast
+      hasToast: !!this.state.toastMessage,
+      toastMessage: this.state.toastMessage || '',
+
+      // Kiosco
+      kioscoTabDiarioStyle: tabBtnStyle(this.state.kioscoTab === 'diario', '#FFC93C'),
+      kioscoTabClasificadosStyle: tabBtnStyle(this.state.kioscoTab === 'clasificados', '#14C8B8'),
+      kioscoTabHoroscopoStyle: tabBtnStyle(this.state.kioscoTab === 'horoscopo', '#FF5A5F'),
+      kioscoTabChistesStyle: tabBtnStyle(this.state.kioscoTab === 'chistes', '#FFC93C'),
+      setKioscoTabDiario: () => this.setKioscoTab('diario'),
+      setKioscoTabClasificados: () => this.setKioscoTab('clasificados'),
+      setKioscoTabHoroscopo: () => this.setKioscoTab('horoscopo'),
+      setKioscoTabChistes: () => this.setKioscoTab('chistes'),
+      isKioscoDiario: this.state.kioscoTab === 'diario',
+      isKioscoClasificados: this.state.kioscoTab === 'clasificados',
+      isKioscoHoroscopo: this.state.kioscoTab === 'horoscopo',
+      isKioscoChistes: this.state.kioscoTab === 'chistes',
+      currentHeadline: this.state.currentHeadline,
+      generateRandomHeadline: this.generateRandomHeadline,
+      horoscopoSigns,
+      activeHoroscopoTitle: activeHoroscopo.title,
+      activeHoroscopoPrediction: activeHoroscopo.pred,
+      activeHoroscopoAdvice: activeHoroscopo.advice,
+      claimKioscoStamp: this.claimKioscoStamp,
+
+      // Correo
+      correoTabBuzonStyle: tabBtnStyle(this.state.correoTab === 'buzon', '#14C8B8'),
+      correoTabRedactarStyle: tabBtnStyle(this.state.correoTab === 'redactar', '#FFC93C'),
+      correoTabPadronStyle: tabBtnStyle(this.state.correoTab === 'padron', '#FF5A5F'),
+      setCorreoTabBuzon: () => this.setCorreoTab('buzon'),
+      setCorreoTabRedactar: () => this.setCorreoTab('redactar'),
+      setCorreoTabPadron: () => this.setCorreoTab('padron'),
+      isCorreoBuzon: this.state.correoTab === 'buzon',
+      isCorreoRedactar: this.state.correoTab === 'redactar',
+      isCorreoPadron: this.state.correoTab === 'padron',
+      lettersList: this.state.letters,
+      letterRecipients,
+      letterStamps,
+      letterTextVal: this.state.letterText,
+      onLetterTextInput: this.onLetterTextInput,
+      sendOfficialLetter: this.sendOfficialLetter,
+      hasLetterReplyModal: !!this.state.letterReplyModal,
+      letterReplySender: this.state.letterReplyModal ? this.state.letterReplyModal.sender : '',
+      letterReplyBody: this.state.letterReplyModal ? this.state.letterReplyModal.text : '',
+      closeLetterReplyModal: this.closeLetterReplyModal,
+      padronVisitors,
+
+      // Cultural
+      culturalTabRockolaStyle: tabBtnStyle(this.state.culturalTab === 'rockola', '#FFC93C'),
+      culturalTabMuralStyle: tabBtnStyle(this.state.culturalTab === 'mural', '#14C8B8'),
+      culturalTabComicsStyle: tabBtnStyle(this.state.culturalTab === 'comics', '#FF5A5F'),
+      setCulturalTabRockola: () => this.setCulturalTab('rockola'),
+      setCulturalTabMural: () => this.setCulturalTab('mural'),
+      setCulturalTabComics: () => this.setCulturalTab('comics'),
+      isCulturalRockola: this.state.culturalTab === 'rockola',
+      isCulturalMural: this.state.culturalTab === 'mural',
+      isCulturalComics: this.state.culturalTab === 'comics',
+      rockolaTracks,
+      stopRockola: this.stopRockola,
+      muralStampOptions,
+      muralPlacedStamps,
+      onMuralClick: this.onMuralClick,
+
+      // Museo
+      museoTabReliquiasStyle: tabBtnStyle(this.state.museoTab === 'reliquias', '#FFC93C'),
+      museoTabTriviaStyle: tabBtnStyle(this.state.museoTab === 'trivia', '#14C8B8'),
+      museoTabConstitucionStyle: tabBtnStyle(this.state.museoTab === 'constitucion', '#FF5A5F'),
+      setMuseoTabReliquias: () => this.setMuseoTab('reliquias'),
+      setMuseoTabTrivia: () => this.setMuseoTab('trivia'),
+      setMuseoTabConstitucion: () => this.setMuseoTab('constitucion'),
+      isMuseoReliquias: this.state.museoTab === 'reliquias',
+      isMuseoTrivia: this.state.museoTab === 'trivia',
+      isMuseoConstitucion: this.state.museoTab === 'constitucion',
+      museumRelicsList,
+      activeRelicEmoji: activeRelic.emoji,
+      activeRelicName: activeRelic.name,
+      activeRelicDevotion: activeRelic.devotion,
+      activeRelicDesc: activeRelic.desc,
+      activeRelicAudio: activeRelic.audio,
+      triviaQuestionsList,
+      hasTriviaResult: this.state.triviaScore !== null,
+      triviaScore: this.state.triviaScore !== null ? this.state.triviaScore : 0,
+
+      // Games & Passport
       gamePlaying: this.state.gamePlaying,
       gameNotPlaying: !this.state.gamePlaying,
       gameScore: this.state.gameScore,
@@ -1967,7 +3158,6 @@ class Component extends DCLogic {
     };
   }
 }
-
 </script>
 </body>
 </html>
