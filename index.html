@@ -647,14 +647,14 @@
 
         <!-- MODO CAMINAR EN LA CIUDAD 3D (PANTALLA COMPLETA 580PX) -->
         <sc-if value="{{ plazaModeIsWalk }}" hint-placeholder-val="{{ true }}">
-          <div ref="{{ sceneRef }}" style="position: relative; border: 5px solid #2B1B4D; border-radius: 22px; overflow: hidden; box-shadow: 10px 10px 0 #2B1B4D; height: 580px; perspective: 720px; perspective-origin: 50% 50%; background: {{ plazaSkyBackground }}; cursor: grab; touch-action: none; user-select: none;">
+          <div ref="{{ sceneRef }}" style="position: relative; border: 5px solid #2B1B4D; border-radius: 22px; overflow: hidden; box-shadow: 10px 10px 0 #2B1B4D; height: 580px; perspective: 720px; perspective-origin: 50% 50%; background: {{ plazaSkyBackground }}; cursor: grab; touch-action: none; user-select: none; contain: paint;">
             <!-- BURBUJA DE DIÁLOGO FLOTANTE 3D -->
             <sc-if value="{{ hasSpeechBubble }}" hint-placeholder-val="{{ false }}">
               <div style="position: absolute; top: 18px; left: 50%; transform: translateX(-50%); z-index: 20; background: #FFF6E9; border: 4px solid #2B1B4D; border-radius: 18px; padding: 10px 20px; box-shadow: 5px 5px 0 #FFC93C; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; color: #2B1B4D; animation: jj-pop 0.25s ease-out; pointer-events: none; max-width: 85%; text-align: center;">
                 💬 {{ speechBubbleText }}
               </div>
             </sc-if>
-            <div ref="{{ worldRef }}" style="position: absolute; left: 50%; top: 50%; width: 0; height: 0; transform-style: preserve-3d;"></div>
+            <div ref="{{ worldRef }}" style="position: absolute; left: 50%; top: 50%; width: 0; height: 0; transform-style: preserve-3d; will-change: transform;"></div>
           </div>
 
           <!-- CHAT CÍVICO DE LA CIUDAD -->
@@ -1744,10 +1744,10 @@ const STAMPS_DEF = [
 const W3D = {
   persp: 720,
   eye: 168,
-  bound: 3800,
+  bound: 3000,
   speed: 9.5,
   turn: 2.8,
-  ground: 14000,
+  ground: 6400,
   fountainR: 240
 };
 
@@ -2581,7 +2581,23 @@ function getChileTime() {
 }
 
 let activeAudioCtx = null;
+let sharedSfxAudioCtx = null;
 let synthTimeouts = [];
+
+function getSharedAudioCtx() {
+  try {
+    if (!sharedSfxAudioCtx) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) sharedSfxAudioCtx = new AudioCtx();
+    }
+    if (sharedSfxAudioCtx && sharedSfxAudioCtx.state === 'suspended') {
+      sharedSfxAudioCtx.resume().catch(() => {});
+    }
+    return sharedSfxAudioCtx;
+  } catch (e) {
+    return null;
+  }
+}
 
 function stopChiptune() {
   synthTimeouts.forEach((t) => clearTimeout(t));
@@ -2595,10 +2611,8 @@ function stopChiptune() {
 function playSfx(type) {
   if (soundMutedGlobal) return;
   try {
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtx) return;
-    const ctx = new AudioCtx();
-    if (ctx.state === 'suspended') ctx.resume();
+    const ctx = getSharedAudioCtx();
+    if (!ctx) return;
     const t = ctx.currentTime;
 
     if (type === 'npc_tia') {
@@ -2916,10 +2930,8 @@ function playSpatialAmbient(type, volume) {
   if (soundMutedGlobal) return;
   const v = Math.max(0.01, Math.min(0.2, volume || 0.08));
   try {
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtx) return;
-    const ctx = new AudioCtx();
-    if (ctx.state === 'suspended') ctx.resume();
+    const ctx = getSharedAudioCtx();
+    if (!ctx) return;
     const t = ctx.currentTime;
 
     if (type === 'school') {
@@ -3819,42 +3831,17 @@ class Component extends DCLogic {
       'background:radial-gradient(circle, rgba(0,0,0,0) 0 90%, #2B1B4D 90% 100%);border-radius:50%;'));
     world.appendChild(S(0, -46, 0, 130, '⛲'));
 
-    // Cielo según ciclo día/atardecer/noche
-    const skyProps = effTime === 'night'
-      ? [
-          { e: '🌙', x: -1600, y: 1350, z: -3500, s: 360, css: 'filter:drop-shadow(0 0 50px #E0F2FE);' },
-          { e: '✨', x: 1200, y: 1500, z: -3200, s: 150, css: 'filter:drop-shadow(0 0 14px #FFD700);' },
-          { e: '⭐', x: -800, y: 1450, z: -2900, s: 130, css: 'filter:drop-shadow(0 0 16px #FFD700);' },
-          { e: '✨', x: 2000, y: 1250, z: -2400, s: 150, css: 'filter:drop-shadow(0 0 12px #FFD700);' },
-          { e: '⭐', x: -2200, y: 1300, z: -2000, s: 130, css: 'filter:drop-shadow(0 0 14px #FFD700);' }
-        ]
-      : (effTime === 'sunset'
-        ? [
-            { e: '🌅', x: -1500, y: 800, z: -3400, s: 420, css: 'filter:drop-shadow(0 0 50px #F97316);' },
-            { e: '⛅', x: 1000, y: 1150, z: -3100, s: 440, css: 'filter:sepia(0.5) hue-rotate(-20deg);' },
-            { e: '☁️', x: -500, y: 1300, z: -2800, s: 360, css: 'filter:sepia(0.4) hue-rotate(-25deg);' },
-            { e: '✨', x: 1600, y: 1400, z: -2500, s: 120, css: 'filter:drop-shadow(0 0 12px #FFD700);' }
-          ]
-        : [
-            { e: '☀️', x: -1800, y: 1450, z: -3600, s: 360, css: 'filter:drop-shadow(0 0 40px #FFD700);' },
-            { e: '☁️', x: 1100, y: 1200, z: -3300, s: 460, css: '' },
-            { e: '☁️', x: -700, y: 1350, z: -3000, s: 380, css: '' },
-            { e: '☁️', x: 1900, y: 1100, z: -2200, s: 340, css: '' }
-          ]);
-
-    skyProps.forEach((s) => world.appendChild(S(s.x, -s.y, s.z, s.s, s.e, 'opacity:.95;' + (s.css || ''))));
-
-    // Renderizar los 18 Edificios
+    // Renderizar los 19 Edificios con paneles sólidos estables
     W3D_BUILDINGS.forEach((b) => {
       const hw = b.w / 2, hd = b.d / 2, cy = -b.h / 2;
       const bFilter = effTime === 'night' ? 'brightness(.75);' : (effTime === 'sunset' ? 'brightness(.95) sepia(.2);' : '');
-      const wallCss = 'background:' + b.wall + ';border:4px solid #2B1B4D;box-sizing:border-box;' + bFilter;
+      const wallCss = 'background:' + b.wall + ';border:4px solid #2B1B4D;box-sizing:border-box;backface-visibility:hidden;' + bFilter;
 
       world.appendChild(P(b.w, b.h, 'translate3d(' + b.x + 'px,' + cy + 'px,' + (b.z + hd) + 'px)', wallCss));
       world.appendChild(P(b.w, b.h, 'translate3d(' + b.x + 'px,' + cy + 'px,' + (b.z - hd) + 'px) rotateY(180deg)', wallCss));
       world.appendChild(P(b.d, b.h, 'translate3d(' + (b.x - hw) + 'px,' + cy + 'px,' + b.z + 'px) rotateY(-90deg)', wallCss));
       world.appendChild(P(b.d, b.h, 'translate3d(' + (b.x + hw) + 'px,' + cy + 'px,' + b.z + 'px) rotateY(90deg)', wallCss));
-      world.appendChild(P(b.w, b.d, 'translate3d(' + b.x + 'px,' + (-b.h) + 'px,' + b.z + 'px) rotateX(90deg)', 'background:' + b.roof + ';border:4px solid #2B1B4D;box-sizing:border-box;' + bFilter));
+      world.appendChild(P(b.w, b.d, 'translate3d(' + b.x + 'px,' + (-b.h) + 'px,' + b.z + 'px) rotateX(90deg)', 'background:' + b.roof + ';border:4px solid #2B1B4D;box-sizing:border-box;backface-visibility:hidden;' + bFilter));
 
       const front = b.z < 0 ? 1 : -1;
       const fz = b.z + front * (hd + 2);
@@ -4205,10 +4192,10 @@ class Component extends DCLogic {
 
   blocked3D = (x, z) => {
     if (Math.abs(x) > W3D.bound || Math.abs(z) > W3D.bound) return true;
-    if (Math.sqrt(x * x + z * z) < W3D.fountainR + 40) return true;
+    if (Math.sqrt(x * x + z * z) < W3D.fountainR + 35) return true;
     for (let i = 0; i < W3D_BUILDINGS.length; i++) {
       const b = W3D_BUILDINGS[i];
-      if (Math.abs(x - b.x) < b.w / 2 + 95 && Math.abs(z - b.z) < b.d / 2 + 95) return true;
+      if (Math.abs(x - b.x) < b.w / 2 + 110 && Math.abs(z - b.z) < b.d / 2 + 110) return true;
     }
     return false;
   };
@@ -4260,7 +4247,16 @@ class Component extends DCLogic {
     const face = 'rotateY(' + cam.yaw + 'deg)';
     for (let i = 0; i < this.billboards.length; i++) {
       const el = this.billboards[i];
-      el.style.transform = 'translate3d(' + el.dataset.x + 'px,' + el.dataset.y + 'px,' + el.dataset.z + 'px) ' + face;
+      const bx = parseFloat(el.dataset.x) || 0;
+      const bz = parseFloat(el.dataset.z) || 0;
+      const vx = bx - cam.x, vz = bz - cam.z;
+      const fwd = vx * fx + vz * fz;
+      if (fwd < 20) {
+        el.style.display = 'none';
+      } else {
+        el.style.display = 'block';
+        el.style.transform = 'translate3d(' + bx + 'px,' + el.dataset.y + 'px,' + bz + 'px) ' + face;
+      }
     }
 
     // Tráfico de vehículos continuo y fluido en las 4 avenidas perimetrales amplias (19200 px)
