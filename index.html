@@ -579,530 +579,701 @@
             </div>
             <div style="background: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 14px; padding: 18px;">
               <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; color: #FF5A5F;">DOMINGO</div>
-              <div style="font-size: 14px; font-weight: 600; line-height: 1.6;">Tomat-Gol en la Cancha Nacional y cierre en el Museo.</div>
+        <div style="font-size: 14px; font-weight: 600; line-height: 1.6;">Tomat-Gol en la Cancha Nacional y cierre en el Museo.</div>
             </div>
           </div>
         </div>
 
-        <div style="margin-top: 44px;">
-          <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 26px; margin-bottom: 6px;">🏛️ La Plaza de Jujalandia</div>
-          <div style="font-size: 14px; opacity: 0.75; margin-bottom: 16px; font-weight: 600;">Un mundo 3D recorrible en primera persona, inspirado en "La Plaza" (Enlaces, años 90). Caminá hasta un edificio y entrá a esa parte del país.</div>
-
-          <sc-if value="{{ needsVerification }}" hint-placeholder-val="{{ true }}">
-            <div style="background: #FFF6E9; border: 4px dashed #2B1B4D; border-radius: 20px; padding: 30px 24px; text-align: center;">
-              <div style="font-size: 40px; margin-bottom: 10px;">🔒</div>
-              <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; margin-bottom: 10px;">Presentá tu pasaporte para entrar a la Plaza</div>
-              <div style="font-size: 14px; font-weight: 600; opacity: 0.8; margin-bottom: 18px; max-width: 420px; margin-left: auto; margin-right: auto;">Subí el archivo del pasaporte que descargaste. El sistema lee tu número de ciudadano automáticamente.</div>
-              <sc-if value="{{ hasCurrentPassportShortcut }}" hint-placeholder-val="{{ false }}">
-                <button onClick="{{ useCurrentPassport }}" style="display: block; width: 100%; max-width: 340px; margin: 0 auto 10px; background: #FFC93C; color: #2B1B4D; border: 3px solid #2B1B4D; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 11px 16px; border-radius: 10px; cursor: pointer;">Usar el pasaporte que acabo de generar</button>
-              </sc-if>
-              <button onClick="{{ pickPassportFile }}" style="display: block; width: 100%; max-width: 340px; margin: 0 auto; background: #14C8B8; color: #2B1B4D; border: 3px solid #2B1B4D; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 11px 16px; border-radius: 10px; cursor: pointer;">📁 Subir mi pasaporte (.png)</button>
-              <sc-if value="{{ hasPassportFileError }}" hint-placeholder-val="{{ false }}">
-                <div style="color: #FF5A5F; font-weight: 700; font-size: 13px; margin-top: 10px;">{{ passportFileError }}</div>
-              </sc-if>
-              <div style="margin-top: 14px; font-size: 12px; opacity: 0.6;">¿No tenés pasaporte? <span onClick="{{ goInmigracion }}" style="text-decoration: underline; cursor: pointer;">Sacá uno en Ciudadanía</span>.</div>
-            </div>
-          </sc-if>
-
-          <sc-if value="{{ canEnter }}" hint-placeholder-val="{{ false }}">
-            <div style="display: flex; justify-content: space-between; align-items: center; background: #2B1B4D; color: #FFF6E9; border-radius: 14px; padding: 12px 18px; margin-bottom: 16px; font-size: 13px; font-weight: 800; flex-wrap: wrap; gap: 10px;">
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span>✅ CIUDADANO VERIFICADO: {{ verifiedLabel }}</span>
-              </div>
-              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                <button onClick="{{ togglePlazaChat }}" style="background: #14C8B8; color: #2B1B4D; border: 2px solid #FFF6E9; border-radius: 8px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 12px; padding: 5px 12px; cursor: pointer;">💬 Chat ({{ chatMessagesCount }})</button>
-                <button onClick="{{ cycleTimeMode }}" style="background: #FFC93C; color: #2B1B4D; border: 2px solid #FFF6E9; border-radius: 8px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 12px; padding: 5px 12px; cursor: pointer;" title="Cambiar hora o seguir hora de Chile">{{ plazaTimeLabel }}</button>
-                <button onClick="{{ toggleSound }}" style="background: {{ soundBtnBg }}; color: #2B1B4D; border: 2px solid #FFF6E9; border-radius: 8px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 12px; padding: 5px 12px; cursor: pointer;">{{ soundBtnLabel }}</button>
-                <div style="background: #FF5A5F; color: #FFF6E9; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 800;">🎖️ {{ stampsCount }}/6 SELLOS</div>
-                <span onClick="{{ logoutCitizen }}" style="cursor: pointer; text-decoration: underline; opacity: 0.8;">cambiar</span>
-              </div>
-            </div>
-
-            <!-- MODO CAMINAR EN LA PLAZA 3D -->
-            <sc-if value="{{ plazaModeIsWalk }}" hint-placeholder-val="{{ true }}">
-              <div ref="{{ sceneRef }}" style="position: relative; border: 5px solid #2B1B4D; border-radius: 22px; overflow: hidden; box-shadow: 8px 8px 0 #2B1B4D; height: 460px; perspective: 720px; perspective-origin: 50% 50%; background: {{ plazaSkyBackground }}; cursor: grab; touch-action: none; user-select: none;">
-                <!-- BURBUJA DE DIÁLOGO FLOTANTE 3D -->
-                <sc-if value="{{ hasSpeechBubble }}" hint-placeholder-val="{{ false }}">
-                  <div style="position: absolute; top: 18px; left: 50%; transform: translateX(-50%); z-index: 20; background: #FFF6E9; border: 4px solid #2B1B4D; border-radius: 18px; padding: 10px 20px; box-shadow: 5px 5px 0 #FFC93C; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; color: #2B1B4D; animation: jj-pop 0.25s ease-out; pointer-events: none; max-width: 85%; text-align: center;">
-                    💬 {{ speechBubbleText }}
-                  </div>
-                </sc-if>
-                <div ref="{{ worldRef }}" style="position: absolute; left: 50%; top: 50%; width: 0; height: 0; transform-style: preserve-3d;"></div>
-              </div>
-
-              <!-- CHAT CÍVICO DE LA PLAZA -->
-              <sc-if value="{{ isPlazaChatOpen }}" hint-placeholder-val="{{ true }}">
-                <div style="margin-top: 14px; background: #FFF6E9; border: 4px solid #2B1B4D; border-radius: 18px; padding: 16px; box-shadow: 5px 5px 0 #14C8B8;">
-                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-                    <div style="display: flex; align-items: center; gap: 8px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 16px; color: #2B1B4D;">
-                      <span>💬 Chat Cívico de la Plaza</span>
-                      <span style="font-size: 11px; background: #14C8B8; color: #2B1B4D; padding: 2px 8px; border-radius: 999px; font-weight: 800;">{{ activeCitizensCount }} ciudadanos paseando</span>
-                    </div>
-                    <button onClick="{{ togglePlazaChat }}" style="background: #2B1B4D; color: #FFF6E9; border: none; border-radius: 6px; font-size: 12px; font-weight: 800; padding: 2px 8px; cursor: pointer;">Ocultar ✕</button>
-                  </div>
-
-                  <!-- Mensajes del Chat -->
-                  <div style="max-height: 140px; overflow-y: auto; background: #2B1B4D; border-radius: 12px; padding: 10px 14px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 6px; border: 3px solid #2B1B4D;">
-                    <sc-for list="{{ plazaChatMessagesList }}" as="msg" hint-placeholder-count="3">
-                      <div style="font-size: 13px; line-height: 1.4; color: #FFF6E9;">
-                        <span style="opacity: 0.55; font-size: 11px; margin-right: 6px;">[{{ msg.time }}]</span>
-                        <span style="font-weight: 800; color: {{ msg.color }}; margin-right: 6px;">{{ msg.avatar }} {{ msg.sender }}:</span>
-                        <span style="font-weight: 600;">{{ msg.text }}</span>
-                      </div>
-                    </sc-for>
-                  </div>
-
-                  <!-- Emojis rápidos y barra de entrada -->
-                  <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
-                    <div style="display: flex; gap: 6px;">
-                      <sc-for list="{{ quickChatEmojis }}" as="em" hint-placeholder-count="6">
-                        <button onClick="{{ em.onClick }}" style="background: #FFF6E9; border: 2px solid #2B1B4D; border-radius: 8px; font-size: 15px; padding: 3px 8px; cursor: pointer;">{{ em.emoji }}</button>
-                      </sc-for>
-                    </div>
-                    <div style="font-size: 11px; opacity: 0.65; font-weight: 700;">Tip: Los amigos en la plaza te responden en tiempo real</div>
-                  </div>
-
-                  <div style="display: flex; gap: 8px;">
-                    <input type="text" value="{{ plazaChatInputVal }}" onInput="{{ onPlazaChatInput }}" onKeyDown="{{ onPlazaChatKeyDown }}" placeholder="Escribí un mensaje para los ciudadanos en la Plaza... (Enter)" style="flex: 1; padding: 9px 14px; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 14px; background: #FFF; outline: none;" />
-                    <button onClick="{{ sendPlazaChatMessage }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 0 16px; cursor: pointer; box-shadow: 3px 3px 0 #2B1B4D;">Enviar ✉️</button>
-                  </div>
-                </div>
-              </sc-if>
-
-              <div style="margin-top: 12px; font-size: 12px; font-weight: 700; opacity: 0.7; text-align: center; line-height: 1.7;">
-                Teclado: <strong>W A S D</strong> o <strong>flechas</strong> para caminar y girar · <strong>Q</strong>/<strong>E</strong> para desplazarte de costado · <strong>Shift</strong> para correr · <strong>Enter</strong> o <strong>clic</strong> para interactuar / entrar.<br/>
-                Acercate a <strong>tus amigos y amigas en la plaza</strong>, a <strong>La Tía</strong>, <strong>Musso</strong>, <strong>El Chino</strong>, <strong>Papá</strong>, <strong>Mamá</strong>, a las <strong>Jujapeludas</strong> o a la <strong>Fuente</strong>.
-              </div>
-
-              <!-- MODAL DIÁLOGO NPC EN LA PLAZA -->
-              <sc-if value="{{ hasActiveNpc }}" hint-placeholder-val="{{ false }}">
-                <div style="position: fixed; inset: 0; background: rgba(43,27,77,0.75); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px;">
-                  <div style="background: #FFF6E9; border: 5px solid #2B1B4D; border-radius: 22px; padding: 24px; max-width: 520px; width: 100%; box-shadow: 10px 10px 0 #FFC93C; animation: jj-pop 0.3s ease-out;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
-                      <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="font-size: 38px; width: 54px; height: 54px; background: #FFC93C; border: 3px solid #2B1B4D; border-radius: 50%; display: flex; align-items: center; justify-content: center;">{{ activeNpcEmoji }}</div>
-                        <div>
-                          <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 20px; line-height: 1;">{{ activeNpcName }}</div>
-                          <div style="font-size: 11px; font-weight: 800; opacity: 0.65; letter-spacing: 0.05em;">{{ activeNpcRole }}</div>
-                        </div>
-                      </div>
-                      <div onClick="{{ closeNpcDialog }}" style="cursor: pointer; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 20px; padding: 2px 8px; border: 3px solid #2B1B4D; border-radius: 8px; background: #FFF6E9;">✕</div>
-                    </div>
-                    <div style="background: #2B1B4D; color: #FFF6E9; border-radius: 14px; padding: 16px 20px; font-size: 15px; font-weight: 600; line-height: 1.6; margin-bottom: 18px; border: 3px solid #2B1B4D;">
-                      "{{ activeNpcText }}"
-                    </div>
-                    <sc-if value="{{ hasNpcOptions }}" hint-placeholder-val="{{ true }}">
-                      <div style="display: grid; gap: 10px;">
-                        <sc-for list="{{ activeNpcOptions }}" as="opt" hint-placeholder-count="3">
-                          <button onClick="{{ opt.onClick }}" style="text-align: left; background: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; padding: 12px 16px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; color: #2B1B4D; cursor: pointer; transition: transform 0.1s; box-shadow: 4px 4px 0 #14C8B8;">
-                            👉 {{ opt.text }}
-                          </button>
-                        </sc-for>
-                      </div>
-                    </sc-if>
-                    <sc-if value="{{ hasNpcReply }}" hint-placeholder-val="{{ false }}">
-                      <div style="background: #14C8B833; border: 3px dashed #2B1B4D; border-radius: 12px; padding: 14px; margin-bottom: 14px; font-size: 14px; font-weight: 700; line-height: 1.6;">
-                        {{ activeNpcReplyText }}
-                      </div>
-                      <button onClick="{{ closeNpcDialog }}" style="width: 100%; background: #14C8B8; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 12px; padding: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">Entendido 👍</button>
-                    </sc-if>
-                  </div>
-                </div>
-              </sc-if>
-            </sc-if>
-
-            <!-- NOTIFICACIÓN TOAST DE SELLO O LOGRO -->
-            <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
-              <div style="position: fixed; bottom: 24px; right: 24px; z-index: 120; background: #FFC93C; color: #2B1B4D; border: 4px solid #2B1B4D; border-radius: 16px; padding: 14px 22px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; box-shadow: 6px 6px 0 #2B1B4D; animation: jj-stamp-appear 0.4s ease-out; display: flex; align-items: center; gap: 10px;">
-                <span style="font-size: 24px;">🌟</span>
-                <span>{{ toastMessage }}</span>
-              </div>
-            </sc-if>
-
-            <!-- INTERIOR 1: 🗞️ EL KIOSCO DE LA PLAZA -->
-            <sc-if value="{{ plazaModeIsKiosco }}" hint-placeholder-val="{{ false }}">
-              <div style="background: #FFF6E9; border: 5px solid #2B1B4D; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #FFC93C; animation: jj-pop 0.3s ease-out;">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 4px solid #2B1B4D; padding-bottom: 16px; margin-bottom: 22px;">
-                  <div>
-                    <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 28px; color: #2B1B4D; line-height: 1;">🗞️ El Kiosco de la Gran Caja</div>
-                    <div style="font-size: 13px; font-weight: 700; opacity: 0.7; margin-top: 4px;">Prensa libre aprobada por La Tía · Edición Nacional</div>
-                  </div>
-                  <button onClick="{{ exitPlazaInterior }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">🏛️ ← Volver a la Plaza</button>
-                </div>
-
-                <!-- Pestañas del Kiosco -->
-                <div style="display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap;">
-                  <button onClick="{{ setKioscoTabDiario }}" style="{{ kioscoTabDiarioStyle }}">📰 Periódico del Día</button>
-                  <button onClick="{{ setKioscoTabClasificados }}" style="{{ kioscoTabClasificadosStyle }}">📢 Clasificados</button>
-                  <button onClick="{{ setKioscoTabHoroscopo }}" style="{{ kioscoTabHoroscopoStyle }}">🔮 Horóscopo del Tomate</button>
-                  <button onClick="{{ setKioscoTabChistes }}" style="{{ kioscoTabChistesStyle }}">🃏 Chistes y Refranes</button>
-                </div>
-
-                <!-- Pestaña 1: Diario -->
-                <sc-if value="{{ isKioscoDiario }}" hint-placeholder-val="{{ true }}">
-                  <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 24px; box-shadow: 6px 6px 0 #2B1B4D;">
-                    <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #2B1B4D; padding-bottom: 8px; margin-bottom: 16px; font-size: 12px; font-weight: 800; opacity: 0.7;">
-                      <span>DIARIO "LA VOZ DE LA CAJA"</span>
-                      <span>PRECIO: 0 🍅 (DISTRIBUCIÓN PATRIA)</span>
-                    </div>
-                    <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 24px; line-height: 1.2; margin-bottom: 12px; color: #2B1B4D;">
-                      {{ currentHeadline }}
-                    </div>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; font-size: 14px; line-height: 1.7; font-weight: 600;">
-                      <div>
-                        <p style="margin-top: 0;">Según el último parte agronómico de los Valles del Norte, el Tomate Sagrado amaneció con un color rojo institucional óptimo. El Consejo Moral emitió un comunicado recomendando regar las plantas familiares y evitar discusiones antes de las 14:00.</p>
-                        <p>La Tía declaró: <em>"Las leyes se cumplen mejor con la panza llena. Si alguien no está de acuerdo, que presente un recurso por duplicado."</em></p>
-                      </div>
-                      <div style="background: #FFF6E9; border: 3px dashed #2B1B4D; border-radius: 12px; padding: 16px;">
-                        <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; margin-bottom: 6px;">🐾 Columna de la Mascota</div>
-                        <div style="font-size: 13px; font-style: italic;">"Purrrr esponjoso... vigilancia 100% efectiva en el perímetro de la caja."</div>
-                        <div style="margin-top: 14px; font-size: 12px; font-weight: 800; color: #FF5A5F;">— Jujapeluda Oficial</div>
-                      </div>
-                    </div>
-                    <div style="margin-top: 18px; text-align: center;">
-                      <button onClick="{{ generateRandomHeadline }}" style="background: #FFC93C; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">🎲 Generar noticia de última hora</button>
-                    </div>
-                  </div>
-                </sc-if>
-
-                <!-- Pestaña 2: Clasificados -->
-                <sc-if value="{{ isKioscoClasificados }}" hint-placeholder-val="{{ false }}">
-                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
-                    <div style="background: #FFF; border: 3px solid #2B1B4D; border-radius: 14px; padding: 16px; box-shadow: 4px 4px 0 #14C8B8;">
-                      <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; color: #FF5A5F;">🐾 SE BUSCA</div>
-                      <div style="font-size: 13px; font-weight: 600; line-height: 1.5; margin: 8px 0;">Jujapeluda que sepa doblar sábanas con el lomo. Se ofrece remuneración en tomates cherry.</div>
-                      <div style="font-size: 11px; font-weight: 800; opacity: 0.6;">CONTACTO: VALLES DEL NORTE</div>
-                    </div>
-                    <div style="background: #FFF; border: 3px solid #2B1B4D; border-radius: 14px; padding: 16px; box-shadow: 4px 4px 0 #FFC93C;">
-                      <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; color: #2B1B4D;">📦 INMOBILIARIA</div>
-                      <div style="font-size: 13px; font-weight: 600; line-height: 1.5; margin: 8px 0;">Caja de cartón de 2x2 metros con vista al sol. Piso parquet simulado. Precio: 4 🍅.</div>
-                      <div style="font-size: 11px; font-weight: 800; opacity: 0.6;">NUEVA JUJA CENTRO</div>
-                    </div>
-                    <div style="background: #FFF; border: 3px solid #2B1B4D; border-radius: 14px; padding: 16px; box-shadow: 4px 4px 0 #FF5A5F;">
-                      <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; color: #14C8B8;">🔄 PERMUTA</div>
-                      <div style="font-size: 13px; font-weight: 600; line-height: 1.5; margin: 8px 0;">Cambio tratado firmado con Disney por dos mates amargos y una pala para la huerta.</div>
-                      <div style="font-size: 11px; font-weight: 800; opacity: 0.6;">EL CHINO DE ULTRAMAR</div>
-                    </div>
-                    <div style="background: #FFF; border: 3px solid #2B1B4D; border-radius: 14px; padding: 16px; box-shadow: 4px 4px 0 #2B1B4D;">
-                      <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; color: #FFC93C;">🎓 CLASES</div>
-                      <div style="font-size: 13px; font-weight: 600; line-height: 1.5; margin: 8px 0;">Oratoria Constituyente con La Tía. Aprendé a ganar cualquier discusión sin apelar.</div>
-                      <div style="font-size: 11px; font-weight: 800; opacity: 0.6;">DURACIÓN: HASTA QUE TENGA RAZÓN</div>
-                    </div>
-                  </div>
-                </sc-if>
-
-                <!-- Pestaña 3: Horóscopo -->
-                <sc-if value="{{ isKioscoHoroscopo }}" hint-placeholder-val="{{ false }}">
-                  <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 22px; box-shadow: 6px 6px 0 #FFC93C;">
-                    <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; margin-bottom: 12px;">Elegí tu signo de la Huerta:</div>
-                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;">
-                      <sc-for list="{{ horoscopoSigns }}" as="sign" hint-placeholder-count="6">
-                        <button onClick="{{ sign.onClick }}" style="{{ sign.style }}">{{ sign.emoji }} {{ sign.label }}</button>
-                      </sc-for>
-                    </div>
-                    <div style="background: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 14px; padding: 18px;">
-                      <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 19px; color: #FF5A5F; margin-bottom: 8px;">{{ activeHoroscopoTitle }}</div>
-                      <div style="font-size: 15px; font-weight: 600; line-height: 1.7;">{{ activeHoroscopoPrediction }}</div>
-                      <div style="margin-top: 14px; font-size: 12px; font-weight: 800; color: #14C8B8;">CONSEJO PATRIO: {{ activeHoroscopoAdvice }}</div>
-                    </div>
-                  </div>
-                </sc-if>
-
-                <!-- Pestaña 4: Chistes -->
-                <sc-if value="{{ isKioscoChistes }}" hint-placeholder-val="{{ false }}">
-                  <div style="display: grid; gap: 16px;">
-                    <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 20px; box-shadow: 5px 5px 0 #14C8B8;">
-                      <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 16px; color: #FF5A5F; margin-bottom: 8px;">Chiste del Kiosquero 🃏</div>
-                      <div style="font-size: 15px; font-weight: 600; line-height: 1.6;">— ¿Qué le dijo un tomate de los Valles del Norte a una caja de cartón?<br/>— "¡Tranquila, que de acá no se escapa nadie!" 😂</div>
-                    </div>
-                    <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 20px; box-shadow: 5px 5px 0 #FFC93C;">
-                      <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 16px; color: #2B1B4D; margin-bottom: 8px;">Refrán Constituyente 📜</div>
-                      <div style="font-size: 15px; font-weight: 600; line-height: 1.6;">"Semilla que no se riega el sábado, el domingo pide explicaciones en la mesa."</div>
-                    </div>
-                    <div style="background: #FFC93C33; border: 3px dashed #2B1B4D; border-radius: 14px; padding: 18px; text-align: center;">
-                      <button onClick="{{ claimKioscoStamp }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; padding: 12px 22px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">📰 Sellar mi pasaporte en el Kiosco</button>
-                    </div>
-                  </div>
-                </sc-if>
-              </div>
-            </sc-if>
-
-            <!-- INTERIOR 2: ✉️ EL CORREO CENTRAL -->
-            <sc-if value="{{ plazaModeIsCorreo }}" hint-placeholder-val="{{ false }}">
-              <div style="background: #FFF6E9; border: 5px solid #2B1B4D; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #14C8B8; animation: jj-pop 0.3s ease-out;">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 4px solid #2B1B4D; padding-bottom: 16px; margin-bottom: 22px;">
-                  <div>
-                    <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 28px; color: #2B1B4D; line-height: 1;">✉️ El Correo Central de Jujalandia</div>
-                    <div style="font-size: 13px; font-weight: 700; opacity: 0.7; margin-top: 4px;">Servicio Postal Oficial · Telegramas y Buzón Comunitario</div>
-                  </div>
-                  <button onClick="{{ exitPlazaInterior }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">🏛️ ← Volver a la Plaza</button>
-                </div>
-
-                <div style="display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap;">
-                  <button onClick="{{ setCorreoTabBuzon }}" style="{{ correoTabBuzonStyle }}">📬 Buzón Comunitario</button>
-                  <button onClick="{{ setCorreoTabRedactar }}" style="{{ correoTabRedactarStyle }}">✍️ Redactar Carta Oficial</button>
-                  <button onClick="{{ setCorreoTabPadron }}" style="{{ correoTabPadronStyle }}">📖 Padrón de Visitantes</button>
-                </div>
-
-                <!-- Pestaña 1: Buzón -->
-                <sc-if value="{{ isCorreoBuzon }}" hint-placeholder-val="{{ true }}">
-                  <div style="display: grid; gap: 16px;">
-                    <sc-for list="{{ lettersList }}" as="let" hint-placeholder-count="3">
-                      <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 20px; box-shadow: 5px 5px 0 #14C8B8; position: relative;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; border-bottom: 2px dashed #2B1B4D33; padding-bottom: 8px;">
-                          <div>
-                            <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 17px; color: #2B1B4D;">{{ let.recipient }}</div>
-                            <div style="font-size: 12px; font-weight: 700; opacity: 0.65;">Remitente: {{ let.author }} · {{ let.date }}</div>
-                          </div>
-                          <div style="border: 2px solid #2B1B4D; border-radius: 8px; padding: 4px 8px; background: #FFC93C; font-size: 14px; font-weight: 800;">
-                            {{ let.stampEmoji }} {{ let.stampLabel }}
-                          </div>
-                        </div>
-                        <div style="font-size: 14px; font-weight: 600; line-height: 1.6; color: #2B1B4D;">"{{ let.message }}"</div>
-                      </div>
-                    </sc-for>
-                  </div>
-                </sc-if>
-
-                <!-- Pestaña 2: Redactar -->
-                <sc-if value="{{ isCorreoRedactar }}" hint-placeholder-val="{{ false }}">
-                  <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 24px; box-shadow: 6px 6px 0 #2B1B4D;">
-                    <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 19px; margin-bottom: 14px;">Escribí tu carta con sello de Jujalandia</div>
-                    
-                    <div style="margin-bottom: 16px;">
-                      <label style="display: block; font-size: 13px; font-weight: 800; margin-bottom: 6px;">Destinatario Oficial:</label>
-                      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                        <sc-for list="{{ letterRecipients }}" as="rec" hint-placeholder-count="4">
-                          <button onClick="{{ rec.onClick }}" style="{{ rec.style }}">{{ rec.label }}</button>
-                        </sc-for>
-                      </div>
-                    </div>
-
-                    <div style="margin-bottom: 16px;">
-                      <label style="display: block; font-size: 13px; font-weight: 800; margin-bottom: 6px;">Estampilla Oficial:</label>
-                      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                        <sc-for list="{{ letterStamps }}" as="st" hint-placeholder-count="3">
-                          <button onClick="{{ st.onClick }}" style="{{ st.style }}">{{ st.emoji }} {{ st.label }}</button>
-                        </sc-for>
-                      </div>
-                    </div>
-
-                    <div style="margin-bottom: 18px;">
-                      <label style="display: block; font-size: 13px; font-weight: 800; margin-bottom: 6px;">Mensaje / Petición:</label>
-                      <input type="text" placeholder="Escribí tu mensaje para el Consejo o la comunidad..." value="{{ letterTextVal }}" onChange="{{ onLetterTextInput }}" style="width: 100%; box-sizing: border-box; padding: 12px 14px; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 600; border: 3px solid #2B1B4D; border-radius: 10px;"/>
-                    </div>
-
-                    <button onClick="{{ sendOfficialLetter }}" style="background: #14C8B8; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 16px; padding: 13px 26px; cursor: pointer; box-shadow: 5px 5px 0 #2B1B4D;">📮 Enviar con Matasellos Oficial</button>
-                  </div>
-                </sc-if>
-
-                <!-- Modal respuesta de autoridad -->
-                <sc-if value="{{ hasLetterReplyModal }}" hint-placeholder-val="{{ false }}">
-                  <div style="position: fixed; inset: 0; background: rgba(43,27,77,0.75); display: flex; align-items: center; justify-content: center; z-index: 110; padding: 20px;">
-                    <div style="background: #FFF6E9; border: 5px solid #2B1B4D; border-radius: 22px; padding: 26px; max-width: 480px; width: 100%; box-shadow: 10px 10px 0 #FF5A5F; animation: jj-pop 0.3s ease-out;">
-                      <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 20px; color: #2B1B4D; margin-bottom: 12px;">{{ letterReplySender }} ha respondido:</div>
-                      <div style="background: #2B1B4D; color: #FFC93C; border-radius: 14px; padding: 18px; font-size: 15px; font-weight: 600; line-height: 1.6; margin-bottom: 18px;">
-                        "{{ letterReplyBody }}"
-                      </div>
-                      <button onClick="{{ closeLetterReplyModal }}" style="width: 100%; background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; padding: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">Recibido 📜</button>
-                    </div>
-                  </div>
-                </sc-if>
-
-                <!-- Pestaña 3: Padrón -->
-                <sc-if value="{{ isCorreoPadron }}" hint-placeholder-val="{{ false }}">
-                  <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 20px; box-shadow: 6px 6px 0 #2B1B4D;">
-                    <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; margin-bottom: 14px;">Ciudadanos Registrados en la Plaza:</div>
-                    <div style="display: grid; gap: 10px;">
-                      <sc-for list="{{ padronVisitors }}" as="vis" hint-placeholder-count="4">
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; padding: 10px 16px; font-size: 13px; font-weight: 700;">
-                          <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="font-size: 20px;">{{ vis.avatar }}</span>
-                            <span>{{ vis.nickname }} ({{ vis.id }})</span>
-                          </div>
-                          <span style="color: #FF5A5F; font-weight: 800;">{{ vis.status }}</span>
-                        </div>
-                      </sc-for>
-                    </div>
-                  </div>
-                </sc-if>
-              </div>
-            </sc-if>
-
-            <!-- INTERIOR 3: 🎭 CENTRO CULTURAL -->
-            <sc-if value="{{ plazaModeIsCultural }}" hint-placeholder-val="{{ false }}">
-              <div style="background: #2B1B4D; color: #FFF6E9; border: 5px solid #FF5A5F; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #FFC93C; animation: jj-pop 0.3s ease-out;">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 4px solid #FFF6E9; padding-bottom: 16px; margin-bottom: 22px;">
-                  <div>
-                    <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 28px; color: #FFC93C; line-height: 1;">🎭 Centro Cultural de Jujalandia</div>
-                    <div style="font-size: 13px; font-weight: 700; opacity: 0.8; margin-top: 4px;">Artes, Música de Jujavisión y Mural Comunitario</div>
-                  </div>
-                  <button onClick="{{ exitPlazaInterior }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #FFF6E9; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #FFC93C;">🏛️ ← Volver a la Plaza</button>
-                </div>
-
-                <div style="display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap;">
-                  <button onClick="{{ setCulturalTabRockola }}" style="{{ culturalTabRockolaStyle }}">📻 La Rockola de Jujavisión</button>
-                  <button onClick="{{ setCulturalTabMural }}" style="{{ culturalTabMuralStyle }}">🎨 Mural de Sellos</button>
-                  <button onClick="{{ setCulturalTabComics }}" style="{{ culturalTabComicsStyle }}">📚 Historietas y Cómics</button>
-                </div>
-
-                <!-- Pestaña 1: Rockola -->
-                <sc-if value="{{ isCulturalRockola }}" hint-placeholder-val="{{ true }}">
-                  <div style="background: #140c28; border: 4px solid #FFC93C; border-radius: 18px; padding: 24px; box-shadow: 6px 6px 0 #FF5A5F;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 2px solid #FFC93C44; padding-bottom: 10px;">
-                      <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; color: #FFC93C;">📻 SINTETIZADOR DE JUJAVISIÓN 90s</div>
-                      <div style="display: flex; gap: 4px; align-items: flex-end; height: 30px;">
-                        <div style="width: 6px; background: #FF5A5F; border-radius: 2px; animation: jj-eq1 0.8s infinite;"></div>
-                        <div style="width: 6px; background: #FFC93C; border-radius: 2px; animation: jj-eq2 0.7s infinite;"></div>
-                        <div style="width: 6px; background: #14C8B8; border-radius: 2px; animation: jj-eq3 0.9s infinite;"></div>
-                      </div>
-                    </div>
-
-                    <div style="display: grid; gap: 12px; margin-bottom: 18px;">
-                      <sc-for list="{{ rockolaTracks }}" as="trk" hint-placeholder-count="4">
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: #2B1B4D; border: 3px solid #FFC93C; border-radius: 12px; padding: 12px 16px;">
-                          <div>
-                            <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 16px; color: #FFF6E9;">{{ trk.title }}</div>
-                            <div style="font-size: 12px; opacity: 0.7;">{{ trk.desc }}</div>
-                          </div>
-                          <button onClick="{{ trk.onPlay }}" style="background: #14C8B8; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 13px; padding: 8px 14px; cursor: pointer;">▶ Sonar</button>
-                        </div>
-                      </sc-for>
-                    </div>
-
-                    <div style="text-align: center;">
-                      <button onClick="{{ stopRockola }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #FFF6E9; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 13px; padding: 8px 16px; cursor: pointer;">⏹ Silenciar</button>
-                    </div>
-                  </div>
-                </sc-if>
-
-                <!-- Pestaña 2: Mural -->
-                <sc-if value="{{ isCulturalMural }}" hint-placeholder-val="{{ false }}">
-                  <div style="background: #FFF6E9; color: #2B1B4D; border: 4px solid #FFC93C; border-radius: 18px; padding: 22px;">
-                    <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; margin-bottom: 6px;">Mural Colectivo de la Plaza</div>
-                    <div style="font-size: 13px; font-weight: 600; opacity: 0.75; margin-bottom: 14px;">Elegí un sello y hacé clic en la pared para estampar tu marca patriótica:</div>
-
-                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;">
-                      <sc-for list="{{ muralStampOptions }}" as="ms" hint-placeholder-count="8">
-                        <button onClick="{{ ms.onClick }}" style="{{ ms.style }}">{{ ms.emoji }}</button>
-                      </sc-for>
-                    </div>
-
-                    <div onClick="{{ onMuralClick }}" style="height: 240px; background: #ffe9cb; border: 4px dashed #2B1B4D; border-radius: 14px; position: relative; overflow: hidden; cursor: crosshair;">
-                      <sc-for list="{{ muralPlacedStamps }}" as="st" hint-placeholder-count="6">
-                        <div style="{{ st.style }}">{{ st.emoji }}<div style="font-size: 9px; font-weight: 800; color: #2B1B4D;">{{ st.author }}</div></div>
-                      </sc-for>
-                    </div>
-                  </div>
-                </sc-if>
-
-                <!-- Pestaña 3: Cómics -->
-                <sc-if value="{{ isCulturalComics }}" hint-placeholder-val="{{ false }}">
-                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
-                    <sc-for list="{{ comics }}" as="c" hint-placeholder-count="2">
-                      <div onClick="{{ c.onOpen }}" style="background: #FFF6E9; color: #2B1B4D; border: 4px solid #FFC93C; border-radius: 16px; overflow: hidden; cursor: pointer; box-shadow: 5px 5px 0 #14C8B8;">
-                        <div style="height: 120px; background: linear-gradient(135deg, #FFC93C, #FF5A5F); display: flex; align-items: center; justify-content: center; font-size: 44px; border-bottom: 3px solid #2B1B4D;">{{ c.cover_caption }}</div>
-                        <div style="padding: 14px;">
-                          <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; margin-bottom: 4px;">{{ c.title }}</div>
-                          <div style="font-size: 12px; font-weight: 600; opacity: 0.8; margin-bottom: 10px;">{{ c.summary }}</div>
-                          <div style="display: inline-block; background: #14C8B8; border: 2px solid #2B1B4D; border-radius: 999px; padding: 3px 10px; font-size: 11px; font-weight: 800;">📖 Leer</div>
-                        </div>
-                      </div>
-                    </sc-for>
-                  </div>
-                </sc-if>
-              </div>
-            </sc-if>
-
-            <!-- INTERIOR 4: 🏛️ MUSEO DE LA GRAN CAJA -->
-            <sc-if value="{{ plazaModeIsMuseo }}" hint-placeholder-val="{{ false }}">
-              <div style="background: #FFF6E9; border: 5px solid #2B1B4D; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #2B1B4D; animation: jj-pop 0.3s ease-out;">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 4px solid #2B1B4D; padding-bottom: 16px; margin-bottom: 22px;">
-                  <div>
-                    <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 28px; color: #2B1B4D; line-height: 1;">🏛️ Museo de la Caja Dorada</div>
-                    <div style="font-size: 13px; font-weight: 700; opacity: 0.7; margin-top: 4px;">Patrimonio Nacional, Reliquias y Trivia Histórica</div>
-                  </div>
-                  <button onClick="{{ exitPlazaInterior }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">🏛️ ← Volver a la Plaza</button>
-                </div>
-
-                <div style="display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap;">
-                  <button onClick="{{ setMuseoTabReliquias }}" style="{{ museoTabReliquiasStyle }}">🏺 Sala de Reliquias</button>
-                  <button onClick="{{ setMuseoTabTrivia }}" style="{{ museoTabTriviaStyle }}">🎓 Trivia Histórica</button>
-                  <button onClick="{{ setMuseoTabConstitucion }}" style="{{ museoTabConstitucionStyle }}">📜 Notas de la Constitución</button>
-                </div>
-
-                <!-- Pestaña 1: Reliquias -->
-                <sc-if value="{{ isMuseoReliquias }}" hint-placeholder-val="{{ true }}">
-                  <div>
-                    <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
-                      <sc-for list="{{ museumRelicsList }}" as="rel" hint-placeholder-count="5">
-                        <button onClick="{{ rel.onClick }}" style="{{ rel.style }}">{{ rel.emoji }} {{ rel.name }}</button>
-                      </sc-for>
-                    </div>
-
-                    <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 22px; box-shadow: 6px 6px 0 #FFC93C; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; align-items: center;">
-                      <div style="text-align: center; background: #FFC93C33; border: 3px dashed #2B1B4D; border-radius: 14px; padding: 24px;">
-                        <div style="font-size: 72px; margin-bottom: 10px;">{{ activeRelicEmoji }}</div>
-                        <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 20px;">{{ activeRelicName }}</div>
-                        <div style="font-size: 12px; font-weight: 800; color: #FF5A5F; margin-top: 4px;">NIVEL DE DEVOCIÓN: {{ activeRelicDevotion }}</div>
-                      </div>
-                      <div>
-                        <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 17px; margin-bottom: 8px;">Ficha Histórica Oficial:</div>
-                        <div style="font-size: 14px; font-weight: 600; line-height: 1.7; margin-bottom: 14px;">{{ activeRelicDesc }}</div>
-                        <div style="background: #14C8B822; border-radius: 10px; padding: 12px; font-size: 13px; font-weight: 700; line-height: 1.5;">
-                          🎙️ <strong>Audio-guía:</strong> "{{ activeRelicAudio }}"
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </sc-if>
-
-                <!-- Pestaña 2: Trivia -->
-                <sc-if value="{{ isMuseoTrivia }}" hint-placeholder-val="{{ false }}">
-                  <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 22px; box-shadow: 6px 6px 0 #14C8B8;">
-                    <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 20px; margin-bottom: 6px;">Desafío Histórico del Museo</div>
-                    <div style="font-size: 13px; font-weight: 600; opacity: 0.75; margin-bottom: 16px;">Demostrá cuánto sabés sobre los orígenes de Jujalandia:</div>
-
-                    <div style="display: grid; gap: 16px; margin-bottom: 20px;">
-                      <sc-for list="{{ triviaQuestionsList }}" as="tq" hint-placeholder-count="3">
-                        <div style="background: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 14px; padding: 16px;">
-                          <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; margin-bottom: 10px;">{{ tq.num }}. {{ tq.question }}</div>
-                          <div style="display: grid; gap: 8px;">
-                            <sc-for list="{{ tq.options }}" as="opt" hint-placeholder-count="3">
-                              <button onClick="{{ opt.onClick }}" style="{{ opt.style }}">{{ opt.text }}</button>
-                            </sc-for>
-                          </div>
-                        </div>
-                      </sc-for>
-                    </div>
-
-                    <sc-if value="{{ hasTriviaResult }}" hint-placeholder-val="{{ false }}">
-                      <div style="background: #FFC93C; border: 4px solid #2B1B4D; border-radius: 14px; padding: 18px; text-align: center; margin-top: 14px;">
-                        <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 22px; margin-bottom: 4px;">🎉 ¡Completaste la Trivia!</div>
-                        <div style="font-size: 15px; font-weight: 700;">Obtuviste {{ triviaScore }}/3 respuestas correctas y el Diploma de Historiador Oficial.</div>
-                      </div>
-                    </sc-if>
-                  </div>
-                </sc-if>
-
-                <!-- Pestaña 3: Notas Constitución -->
-                <sc-if value="{{ isMuseoConstitucion }}" hint-placeholder-val="{{ false }}">
-                  <div style="display: grid; gap: 14px;">
-                    <div style="background: #FFF; border: 3px solid #2B1B4D; border-radius: 14px; padding: 18px; box-shadow: 4px 4px 0 #FF5A5F;">
-                      <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 16px; color: #FF5A5F;">Art. 1 bis — La Primacía del Mate</div>
-                      <div style="font-size: 14px; font-weight: 600; line-height: 1.6; margin-top: 6px;">"El agua del termo no se recalienta dos veces. El que deja hervir el agua, pierde el turno de hablar en el Consejo."</div>
-                    </div>
-                    <div style="background: #FFF; border: 3px solid #2B1B4D; border-radius: 14px; padding: 18px; box-shadow: 4px 4px 0 #FFC93C;">
-                      <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 16px; color: #2B1B4D;">Art. 8 — El Misterio de la Caja</div>
-                      <div style="font-size: 14px; font-weight: 600; line-height: 1.6; margin-top: 6px;">"Queda estrictamente prohibido investigar de dónde salió la Caja Dorada. La intriga mantiene unida a la familia."</div>
-                    </div>
-                  </div>
-                </sc-if>
-              </div>
-            </sc-if>
-          </sc-if>
+        <!-- BANNER DE ENTRADA A LA GRAN CIUDAD 3D -->
+        <div style="margin-top: 48px; background: linear-gradient(135deg, #14C8B8 0%, #2B1B4D 100%); border: 5px solid #2B1B4D; border-radius: 24px; padding: 36px 28px; box-shadow: 10px 10px 0 #FFC93C; color: #FFF6E9; text-align: center; position: relative; overflow: hidden;">
+          <div style="font-size: 54px; margin-bottom: 10px; animation: jj-float 6s ease-in-out infinite;">🏙️ 🚁 ✈️ 🚗</div>
+          <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: clamp(26px, 4.5vw, 38px); line-height: 1.1; margin-bottom: 10px;">¡Explorá la Gran Metrópolis 3D de Jujalandia!</div>
+          <div style="font-size: 16px; font-weight: 600; opacity: 0.9; max-width: 680px; margin: 0 auto 22px; line-height: 1.6;">
+            18 instituciones interactivas, aeropuerto internacional con vuelos, helicóptero patrullando, 7 vehículos en las calles, teatro municipal, banco central, hospital y las visitas secretas de Disney.
+          </div>
+          <button onClick="{{ goPlaza }}" style="background: #FFC93C; color: #2B1B4D; border: 4px solid #2B1B4D; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 20px; padding: 16px 36px; border-radius: 14px; cursor: pointer; box-shadow: 6px 6px 0 #2B1B4D; transform: scale(1.02); transition: transform 0.2s;">
+            🏙️ Entrar a la Ciudad en Pantalla Completa →
+          </button>
         </div>
       </div>
+    </div>
+  </sc-if>
+
+  <!-- ===== LA CIUDAD 3D: PANTALLA COMPLETA ===== -->
+  <sc-if value="{{ isPlaza }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="La Ciudad" style="padding: 30px 20px 60px; max-width: 1200px; margin: 0 auto;">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 20px;">
+        <div>
+          <div style="display: inline-block; background: #FFC93C; color: #2B1B4D; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 12px; padding: 6px 14px; border-radius: 999px; margin-bottom: 6px; border: 2px solid #2B1B4D;">🏙️ METRÓPOLIS DE NUEVA JUJA · 18 INSTITUCIONES</div>
+          <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: clamp(28px, 4vw, 38px); line-height: 1; color: #2B1B4D;">La Ciudad en 3D</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <button onClick="{{ togglePlazaChat }}" style="background: #14C8B8; color: #2B1B4D; border: 2px solid #FFF6E9; border-radius: 8px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 12px; padding: 6px 12px; cursor: pointer;">💬 Chat ({{ chatMessagesCount }})</button>
+          <button onClick="{{ cycleTimeMode }}" style="background: #FFC93C; color: #2B1B4D; border: 2px solid #FFF6E9; border-radius: 8px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 12px; padding: 6px 12px; cursor: pointer;" title="Cambiar hora o seguir hora de Chile">{{ plazaTimeLabel }}</button>
+          <button onClick="{{ toggleSound }}" style="background: {{ soundBtnBg }}; color: #2B1B4D; border: 2px solid #FFF6E9; border-radius: 8px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 12px; padding: 6px 12px; cursor: pointer;">{{ soundBtnLabel }}</button>
+          <div style="background: #FF5A5F; color: #FFF6E9; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 800;">🎖️ {{ stampsCount }}/18 SELLOS</div>
+        </div>
+      </div>
+
+      <!-- REQUERIMIENTO DE PASAPORTE -->
+      <sc-if value="{{ needsVerification }}" hint-placeholder-val="{{ true }}">
+        <div style="background: #FFF6E9; border: 5px dashed #2B1B4D; border-radius: 24px; padding: 40px 24px; text-align: center; box-shadow: 8px 8px 0 #FFC93C;">
+          <div style="font-size: 48px; margin-bottom: 12px;">🔒</div>
+          <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 22px; margin-bottom: 10px;">Presentá tu pasaporte para ingresar a la Ciudad</div>
+          <div style="font-size: 15px; font-weight: 600; opacity: 0.85; margin-bottom: 22px; max-width: 480px; margin-left: auto; margin-right: auto;">
+            Subí el archivo de pasaporte que descargaste en la sección Ciudadanía para recorrer libremente los 18 edificios y calles.
+          </div>
+          <sc-if value="{{ hasCurrentPassportShortcut }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ useCurrentPassport }}" style="display: block; width: 100%; max-width: 360px; margin: 0 auto 12px; background: #FFC93C; color: #2B1B4D; border: 3px solid #2B1B4D; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; padding: 12px 18px; border-radius: 12px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">Usar el pasaporte que acabo de generar</button>
+          </sc-if>
+          <button onClick="{{ pickPassportFile }}" style="display: block; width: 100%; max-width: 360px; margin: 0 auto; background: #14C8B8; color: #2B1B4D; border: 3px solid #2B1B4D; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; padding: 12px 18px; border-radius: 12px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">📁 Subir mi pasaporte (.png)</button>
+          <sc-if value="{{ hasPassportFileError }}" hint-placeholder-val="{{ false }}">
+            <div style="color: #FF5A5F; font-weight: 700; font-size: 14px; margin-top: 12px;">{{ passportFileError }}</div>
+          </sc-if>
+          <div style="margin-top: 18px; font-size: 13px; opacity: 0.7; font-weight: 700;">¿Aún no tenés pasaporte? <span onClick="{{ goInmigracion }}" style="text-decoration: underline; cursor: pointer; color: #FF5A5F;">Sacá uno en Ciudadanía</span>.</div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ canEnter }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; justify-content: space-between; align-items: center; background: #2B1B4D; color: #FFF6E9; border-radius: 14px; padding: 12px 18px; margin-bottom: 16px; font-size: 13px; font-weight: 800; flex-wrap: wrap; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span>✅ CIUDADANO: {{ verifiedLabel }}</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="opacity: 0.8;">📍 18 Edificios · 7 Autos · 3 Vuelos Aéreos · 🐭 Disney</span>
+            <span onClick="{{ logoutCitizen }}" style="cursor: pointer; text-decoration: underline; opacity: 0.85; color: #FFC93C;">cambiar</span>
+          </div>
+        </div>
+
+        <!-- MODO CAMINAR EN LA CIUDAD 3D (PANTALLA COMPLETA 580PX) -->
+        <sc-if value="{{ plazaModeIsWalk }}" hint-placeholder-val="{{ true }}">
+          <div ref="{{ sceneRef }}" style="position: relative; border: 5px solid #2B1B4D; border-radius: 22px; overflow: hidden; box-shadow: 10px 10px 0 #2B1B4D; height: 580px; perspective: 720px; perspective-origin: 50% 50%; background: {{ plazaSkyBackground }}; cursor: grab; touch-action: none; user-select: none;">
+            <!-- BURBUJA DE DIÁLOGO FLOTANTE 3D -->
+            <sc-if value="{{ hasSpeechBubble }}" hint-placeholder-val="{{ false }}">
+              <div style="position: absolute; top: 18px; left: 50%; transform: translateX(-50%); z-index: 20; background: #FFF6E9; border: 4px solid #2B1B4D; border-radius: 18px; padding: 10px 20px; box-shadow: 5px 5px 0 #FFC93C; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; color: #2B1B4D; animation: jj-pop 0.25s ease-out; pointer-events: none; max-width: 85%; text-align: center;">
+                💬 {{ speechBubbleText }}
+              </div>
+            </sc-if>
+            <div ref="{{ worldRef }}" style="position: absolute; left: 50%; top: 50%; width: 0; height: 0; transform-style: preserve-3d;"></div>
+          </div>
+
+          <!-- CHAT CÍVICO DE LA CIUDAD -->
+          <sc-if value="{{ isPlazaChatOpen }}" hint-placeholder-val="{{ true }}">
+            <div style="margin-top: 14px; background: #FFF6E9; border: 4px solid #2B1B4D; border-radius: 18px; padding: 16px; box-shadow: 5px 5px 0 #14C8B8;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                <div style="display: flex; align-items: center; gap: 8px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 16px; color: #2B1B4D;">
+                  <span>💬 Chat Cívico de la Metrópolis</span>
+                  <span style="font-size: 11px; background: #14C8B8; color: #2B1B4D; padding: 2px 8px; border-radius: 999px; font-weight: 800;">{{ activeCitizensCount }} ciudadanos paseando</span>
+                </div>
+                <button onClick="{{ togglePlazaChat }}" style="background: #2B1B4D; color: #FFF6E9; border: none; border-radius: 6px; font-size: 12px; font-weight: 800; padding: 2px 8px; cursor: pointer;">Ocultar ✕</button>
+              </div>
+
+              <!-- Mensajes del Chat -->
+              <div style="max-height: 140px; overflow-y: auto; background: #2B1B4D; border-radius: 12px; padding: 10px 14px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 6px; border: 3px solid #2B1B4D;">
+                <sc-for list="{{ plazaChatMessagesList }}" as="msg" hint-placeholder-count="3">
+                  <div style="font-size: 13px; line-height: 1.4; color: #FFF6E9;">
+                    <span style="opacity: 0.55; font-size: 11px; margin-right: 6px;">[{{ msg.time }}]</span>
+                    <span style="font-weight: 800; color: {{ msg.color }}; margin-right: 6px;">{{ msg.avatar }} {{ msg.sender }}:</span>
+                    <span style="font-weight: 600;">{{ msg.text }}</span>
+                  </div>
+                </sc-for>
+              </div>
+
+              <!-- Emojis rápidos y barra de entrada -->
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
+                <div style="display: flex; gap: 6px;">
+                  <sc-for list="{{ quickChatEmojis }}" as="em" hint-placeholder-count="6">
+                    <button onClick="{{ em.onClick }}" style="background: #FFF6E9; border: 2px solid #2B1B4D; border-radius: 8px; font-size: 15px; padding: 3px 8px; cursor: pointer;">{{ em.emoji }}</button>
+                  </sc-for>
+                </div>
+                <div style="font-size: 11px; opacity: 0.65; font-weight: 700;">Tip: Los vecinos e inspectores responden en tiempo real</div>
+              </div>
+
+              <div style="display: flex; gap: 8px;">
+                <input type="text" value="{{ plazaChatInputVal }}" onInput="{{ onPlazaChatInput }}" onKeyDown="{{ onPlazaChatKeyDown }}" placeholder="Escribí un mensaje para la Ciudad... (Enter)" style="flex: 1; padding: 9px 14px; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 14px; background: #FFF; outline: none;" />
+                <button onClick="{{ sendPlazaChatMessage }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 0 16px; cursor: pointer; box-shadow: 3px 3px 0 #2B1B4D;">Enviar ✉️</button>
+              </div>
+            </div>
+          </sc-if>
+
+          <div style="margin-top: 12px; font-size: 12px; font-weight: 700; opacity: 0.75; text-align: center; line-height: 1.7;">
+            Teclado: <strong>W A S D</strong> o <strong>flechas</strong> para caminar · <strong>Q/E</strong> desplazarte lateralmente · <strong>Shift</strong> para correr · <strong>Enter</strong> o <strong>clic</strong> para interactuar / entrar a edificios.<br/>
+            Visitá los <strong>18 edificios</strong>, la <strong>pista del Aeropuerto</strong>, el <strong>Helipuerto del Hospital</strong>, la <strong>Fuente</strong> y encontrá a <strong>Mickey, Donald y Goofy</strong>.
+          </div>
+
+          <!-- MODAL DIÁLOGO NPC & DISNEY & AMIGOS -->
+          <sc-if value="{{ hasActiveNpc }}" hint-placeholder-val="{{ false }}">
+            <div style="position: fixed; inset: 0; background: rgba(43,27,77,0.75); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px;">
+              <div style="background: #FFF6E9; border: 5px solid #2B1B4D; border-radius: 22px; padding: 24px; max-width: 520px; width: 100%; box-shadow: 10px 10px 0 #FFC93C; animation: jj-pop 0.3s ease-out;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="font-size: 38px; width: 54px; height: 54px; background: #FFC93C; border: 3px solid #2B1B4D; border-radius: 50%; display: flex; align-items: center; justify-content: center;">{{ activeNpcEmoji }}</div>
+                    <div>
+                      <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 20px; line-height: 1;">{{ activeNpcName }}</div>
+                      <div style="font-size: 11px; font-weight: 800; opacity: 0.65; letter-spacing: 0.05em;">{{ activeNpcRole }}</div>
+                    </div>
+                  </div>
+                  <div onClick="{{ closeNpcDialog }}" style="cursor: pointer; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 20px; padding: 2px 8px; border: 3px solid #2B1B4D; border-radius: 8px; background: #FFF6E9;">✕</div>
+                </div>
+                <div style="background: #2B1B4D; color: #FFF6E9; border-radius: 14px; padding: 16px 20px; font-size: 15px; font-weight: 600; line-height: 1.6; margin-bottom: 18px; border: 3px solid #2B1B4D;">
+                  "{{ activeNpcText }}"
+                </div>
+                <sc-if value="{{ hasNpcOptions }}" hint-placeholder-val="{{ true }}">
+                  <div style="display: grid; gap: 10px;">
+                    <sc-for list="{{ activeNpcOptions }}" as="opt" hint-placeholder-count="3">
+                      <button onClick="{{ opt.onClick }}" style="text-align: left; background: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; padding: 12px 16px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; color: #2B1B4D; cursor: pointer; transition: transform 0.1s; box-shadow: 4px 4px 0 #14C8B8;">
+                        👉 {{ opt.text }}
+                      </button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ hasNpcReply }}" hint-placeholder-val="{{ false }}">
+                  <div style="background: #14C8B833; border: 3px dashed #2B1B4D; border-radius: 12px; padding: 14px; margin-bottom: 14px; font-size: 14px; font-weight: 700; line-height: 1.6;">
+                    {{ activeNpcReplyText }}
+                  </div>
+                  <button onClick="{{ closeNpcDialog }}" style="width: 100%; background: #14C8B8; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 12px; padding: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">Entendido 👍</button>
+                </sc-if>
+              </div>
+            </div>
+          </sc-if>
+        </sc-if>
+
+        <!-- NOTIFICACIÓN TOAST DE SELLO O LOGRO -->
+        <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+          <div style="position: fixed; bottom: 24px; right: 24px; z-index: 120; background: #FFC93C; color: #2B1B4D; border: 4px solid #2B1B4D; border-radius: 16px; padding: 14px 22px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; box-shadow: 6px 6px 0 #2B1B4D; animation: jj-stamp-appear 0.4s ease-out; display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 24px;">🌟</span>
+            <span>{{ toastMessage }}</span>
+          </div>
+        </sc-if>
+
+        <!-- ==================== LOS 18 EDIFICIOS INTERIORES ==================== -->
+
+        <!-- INTERIOR 1: 🗞️ EL KIOSCO -->
+        <sc-if value="{{ plazaModeIsKiosco }}" hint-placeholder-val="{{ false }}">
+          <div style="background: #FFF6E9; border: 5px solid #2B1B4D; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #FFC93C; animation: jj-pop 0.3s ease-out;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 4px solid #2B1B4D; padding-bottom: 16px; margin-bottom: 22px;">
+              <div>
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 28px; color: #2B1B4D; line-height: 1;">🗞️ El Kiosco de la Gran Caja</div>
+                <div style="font-size: 13px; font-weight: 700; opacity: 0.7; margin-top: 4px;">Prensa libre aprobada por La Tía · Edición Nacional</div>
+              </div>
+              <button onClick="{{ exitPlazaInterior }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">🏛️ ← Volver a la Ciudad</button>
+            </div>
+            <div style="display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap;">
+              <button onClick="{{ setKioscoTabDiario }}" style="{{ kioscoTabDiarioStyle }}">📰 Periódico del Día</button>
+              <button onClick="{{ setKioscoTabClasificados }}" style="{{ kioscoTabClasificadosStyle }}">📢 Clasificados</button>
+              <button onClick="{{ setKioscoTabHoroscopo }}" style="{{ kioscoTabHoroscopoStyle }}">🔮 Horóscopo del Tomate</button>
+              <button onClick="{{ setKioscoTabChistes }}" style="{{ kioscoTabChistesStyle }}">🃏 Chistes y Refranes</button>
+            </div>
+            <sc-if value="{{ isKioscoDiario }}" hint-placeholder-val="{{ true }}">
+              <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 24px; box-shadow: 6px 6px 0 #2B1B4D;">
+                <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #2B1B4D; padding-bottom: 8px; margin-bottom: 16px; font-size: 12px; font-weight: 800; opacity: 0.7;">
+                  <span>DIARIO "LA VOZ DE LA CAJA"</span>
+                  <span>PRECIO: 0 🍅 (DISTRIBUCIÓN PATRIA)</span>
+                </div>
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 24px; line-height: 1.2; margin-bottom: 12px; color: #2B1B4D;">{{ currentHeadline }}</div>
+                <p style="font-size: 14px; line-height: 1.7; font-weight: 600;">Según el último parte agronómico de los Valles del Norte, el Tomate Sagrado amaneció con un color rojo institucional óptimo. El Consejo Moral emitió un comunicado recomendando regar las plantas familiares y evitar discusiones antes de las 14:00.</p>
+                <button onClick="{{ generateRandomHeadline }}" style="background: #FFC93C; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer;">🎲 Generar otra noticia</button>
+              </div>
+            </sc-if>
+            <sc-if value="{{ isKioscoClasificados }}">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+                <div style="background: #FFF; border: 3px solid #2B1B4D; border-radius: 14px; padding: 16px;">
+                  <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; color: #FF5A5F;">🐾 SE BUSCA</div>
+                  <div style="font-size: 13px; font-weight: 600; margin: 8px 0;">Jujapeluda que sepa doblar sábanas con el lomo. Remuneración en tomates cherry.</div>
+                </div>
+                <div style="background: #FFF; border: 3px solid #2B1B4D; border-radius: 14px; padding: 16px;">
+                  <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; color: #14C8B8;">📦 INMOBILIARIA</div>
+                  <div style="font-size: 13px; font-weight: 600; margin: 8px 0;">Caja de cartón de 2x2 metros con vista al sol. Precio: 4 🍅.</div>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ isKioscoHoroscopo }}">
+              <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 22px;">
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; margin-bottom: 12px;">Elegí tu signo de la Huerta:</div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;">
+                  <sc-for list="{{ horoscopoSigns }}" as="sign">
+                    <button onClick="{{ sign.onClick }}" style="{{ sign.style }}">{{ sign.emoji }} {{ sign.label }}</button>
+                  </sc-for>
+                </div>
+                <div style="background: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 14px; padding: 16px;">
+                  <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; color: #FF5A5F;">{{ activeHoroscopoTitle }}</div>
+                  <div style="font-size: 14px; font-weight: 600; line-height: 1.6; margin: 8px 0;">{{ activeHoroscopoPrediction }}</div>
+                  <div style="font-size: 12px; font-weight: 800; color: #14C8B8;">CONSEJO PATRIO: {{ activeHoroscopoAdvice }}</div>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ isKioscoChistes }}">
+              <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 20px;">
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 16px; color: #FF5A5F; margin-bottom: 8px;">Refrán Constituyente 📜</div>
+                <div style="font-size: 15px; font-weight: 600; line-height: 1.6;">"Semilla que no se riega el sábado, el domingo pide explicaciones en la mesa."</div>
+                <div style="margin-top: 16px;">
+                  <button onClick="{{ claimKioscoStamp }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer;">📰 Sellar mi pasaporte en el Kiosco</button>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <!-- INTERIOR 2: 🎭 CENTRO CULTURAL -->
+        <sc-if value="{{ plazaModeIsCultural }}" hint-placeholder-val="{{ false }}">
+          <div style="background: #2B1B4D; color: #FFF6E9; border: 5px solid #FF5A5F; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #FFC93C; animation: jj-pop 0.3s ease-out;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 4px solid #FFF6E9; padding-bottom: 16px; margin-bottom: 22px;">
+              <div>
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 28px; color: #FFC93C; line-height: 1;">🎭 Centro Cultural de Jujalandia</div>
+                <div style="font-size: 13px; font-weight: 700; opacity: 0.8; margin-top: 4px;">Artes, Música de Jujavisión, Mural y Cancha Tomat-Gol</div>
+              </div>
+              <button onClick="{{ exitPlazaInterior }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #FFF6E9; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #FFC93C;">🏛️ ← Volver a la Ciudad</button>
+            </div>
+            <div style="display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap;">
+              <button onClick="{{ setCulturalTabRockola }}" style="{{ culturalTabRockolaStyle }}">📻 Rockola</button>
+              <button onClick="{{ setCulturalTabMural }}" style="{{ culturalTabMuralStyle }}">🎨 Mural de Sellos</button>
+              <button onClick="{{ setCulturalTabTomatGol }}" style="{{ culturalTabTomatGolStyle }}">⚽ Cancha Tomat-Gol</button>
+            </div>
+            <sc-if value="{{ isCulturalRockola }}">
+              <div style="display: grid; gap: 12px;">
+                <sc-for list="{{ rockolaTracks }}" as="trk">
+                  <div style="background: #FFF6E9; color: #2B1B4D; border: 3px solid #FFC93C; border-radius: 14px; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                      <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 16px;">{{ trk.title }}</div>
+                      <div style="font-size: 12px; opacity: 0.75;">{{ trk.desc }}</div>
+                    </div>
+                    <button onClick="{{ trk.onPlay }}" style="background: #14C8B8; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 13px; padding: 8px 14px; cursor: pointer;">▶ Reproducir</button>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ isCulturalMural }}">
+              <div style="background: #FFF6E9; color: #2B1B4D; border: 4px solid #FFC93C; border-radius: 16px; padding: 18px;">
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; margin-bottom: 10px;">Elegí un sello y estampá tu marca en la pared:</div>
+                <div style="display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;">
+                  <sc-for list="{{ muralStampOptions }}" as="opt">
+                    <button onClick="{{ opt.onClick }}" style="{{ opt.style }}">{{ opt.emoji }}</button>
+                  </sc-for>
+                </div>
+                <div onClick="{{ onMuralClick }}" style="height: 220px; background: #FEF3C7; border: 4px dashed #2B1B4D; border-radius: 14px; position: relative; cursor: crosshair; overflow: hidden;">
+                  <sc-for list="{{ muralPlacedStamps }}" as="st">
+                    <div style="{{ st.style }}">{{ st.emoji }}</div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ isCulturalTomatGol }}">
+              <div style="background: #15803D; color: #FFF6E9; border: 4px solid #FFF6E9; border-radius: 18px; padding: 22px; text-align: center;">
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 24px; margin-bottom: 6px;">⚽ Cancha Nacional de Tomat-Gol 🍅</div>
+                <div style="font-size: 14px; font-weight: 700; margin-bottom: 16px;">Ronda {{ tgRound }}/5 · Marcador: {{ tgP1Score }} - {{ tgP2Score }}</div>
+                <div style="background: #166534; border: 3px solid #FFF; border-radius: 14px; height: 160px; position: relative; margin-bottom: 16px; display: flex; align-items: center; justify-content: center;">
+                  <div style="position: absolute; top: 10px; font-size: 44px; transform: translateX({{ tgKeeperOffset }}px); transition: transform 0.3s ease-out;">{{ tgKeeperEmoji }}</div>
+                  <div style="position: absolute; bottom: 15px; font-size: 38px; transform: translate({{ tgBallOffsetX }}px, {{ tgBallOffsetY }}px); transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);">🍅</div>
+                </div>
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 16px; color: #FFC93C; margin-bottom: 14px;">{{ tgMessage }}</div>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                  <button onClick="{{ shootLeft }}" style="background: #FFC93C; color: #2B1B4D; border: 3px solid #2B1B4D; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; padding: 10px 20px; border-radius: 10px; cursor: pointer;">⬅️ Izquierda</button>
+                  <button onClick="{{ shootCenter }}" style="background: #14C8B8; color: #2B1B4D; border: 3px solid #2B1B4D; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; padding: 10px 20px; border-radius: 10px; cursor: pointer;">⬆️ Centro</button>
+                  <button onClick="{{ shootRight }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; padding: 10px 20px; border-radius: 10px; cursor: pointer;">➡️ Derecha</button>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <!-- INTERIOR 3: ✉️ EL CORREO CENTRAL -->
+        <sc-if value="{{ plazaModeIsCorreo }}" hint-placeholder-val="{{ false }}">
+          <div style="background: #FFF6E9; border: 5px solid #2B1B4D; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #14C8B8; animation: jj-pop 0.3s ease-out;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 4px solid #2B1B4D; padding-bottom: 16px; margin-bottom: 22px;">
+              <div>
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 28px; color: #2B1B4D; line-height: 1;">✉️ El Correo Central de Jujalandia</div>
+                <div style="font-size: 13px; font-weight: 700; opacity: 0.7; margin-top: 4px;">Servicio Postal Oficial · Telegramas y Buzón Comunitario</div>
+              </div>
+              <button onClick="{{ exitPlazaInterior }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">🏛️ ← Volver a la Ciudad</button>
+            </div>
+            <div style="display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap;">
+              <button onClick="{{ setCorreoTabBuzon }}" style="{{ correoTabBuzonStyle }}">📬 Buzón</button>
+              <button onClick="{{ setCorreoTabRedactar }}" style="{{ correoTabRedactarStyle }}">✍️ Redactar</button>
+            </div>
+            <sc-if value="{{ isCorreoBuzon }}">
+              <div style="display: grid; gap: 12px;">
+                <sc-for list="{{ lettersList }}" as="let">
+                  <div style="background: #FFF; border: 3px solid #2B1B4D; border-radius: 14px; padding: 16px;">
+                    <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 16px; color: #2B1B4D;">{{ let.recipient }}</div>
+                    <div style="font-size: 12px; opacity: 0.65; margin-bottom: 6px;">Remitente: {{ let.author }} · {{ let.date }}</div>
+                    <div style="font-size: 14px; font-weight: 600;">"{{ let.message }}"</div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ isCorreoRedactar }}">
+              <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 22px;">
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; margin-bottom: 12px;">Escribí tu mensaje oficial:</div>
+                <input type="text" placeholder="Escribí tu petición..." value="{{ letterTextVal }}" onChange="{{ onLetterTextInput }}" style="width: 100%; box-sizing: border-box; padding: 12px; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 600; border: 3px solid #2B1B4D; border-radius: 10px; margin-bottom: 14px;"/>
+                <button onClick="{{ sendOfficialLetter }}" style="background: #14C8B8; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; padding: 10px 20px; cursor: pointer;">📮 Enviar carta oficial</button>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <!-- INTERIOR 4: 🏛️ EL MUSEO -->
+        <sc-if value="{{ plazaModeIsMuseo }}" hint-placeholder-val="{{ false }}">
+          <div style="background: #FFF6E9; border: 5px solid #2B1B4D; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #2B1B4D; animation: jj-pop 0.3s ease-out;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 4px solid #2B1B4D; padding-bottom: 16px; margin-bottom: 22px;">
+              <div>
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 28px; color: #2B1B4D; line-height: 1;">🏛️ Museo de Historia Patria</div>
+                <div style="font-size: 13px; font-weight: 700; opacity: 0.7; margin-top: 4px;">Reliquias de 1990 y Gran Trivia de los Abuelos</div>
+              </div>
+              <button onClick="{{ exitPlazaInterior }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">🏛️ ← Volver a la Ciudad</button>
+            </div>
+            <div style="display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap;">
+              <button onClick="{{ setMuseoTabReliquias }}" style="{{ museoTabReliquiasStyle }}">🏺 Reliquias</button>
+              <button onClick="{{ setMuseoTabTrivia }}" style="{{ museoTabTriviaStyle }}">🎓 Trivia Histórica</button>
+            </div>
+            <sc-if value="{{ isMuseoReliquias }}">
+              <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 22px; text-align: center;">
+                <div style="font-size: 64px; margin-bottom: 10px;">{{ activeRelicEmoji }}</div>
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 20px;">{{ activeRelicName }}</div>
+                <div style="font-size: 14px; font-weight: 600; margin: 10px 0;">{{ activeRelicDesc }}</div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ isMuseoTrivia }}">
+              <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 20px;">
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; margin-bottom: 14px;">Demostrá cuánto sabés sobre Jujalandia:</div>
+                <div style="display: grid; gap: 12px;">
+                  <sc-for list="{{ triviaQuestionsList }}" as="tq">
+                    <div style="background: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; padding: 14px;">
+                      <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; margin-bottom: 8px;">{{ tq.num }}. {{ tq.question }}</div>
+                      <div style="display: grid; gap: 6px;">
+                        <sc-for list="{{ tq.options }}" as="opt">
+                          <button onClick="{{ opt.onClick }}" style="{{ opt.style }}">{{ opt.text }}</button>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <!-- INTERIOR 5: 🏦 BANCO CENTRAL DE JUJALANDIA -->
+        <sc-if value="{{ plazaModeIsBanco }}" hint-placeholder-val="{{ false }}">
+          <div style="background: #FFF6E9; border: 5px solid #10B981; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #2B1B4D; animation: jj-pop 0.3s ease-out;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 4px solid #2B1B4D; padding-bottom: 16px; margin-bottom: 22px;">
+              <div>
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 28px; color: #10B981; line-height: 1;">🏦 Banco Central de Jujalandia</div>
+                <div style="font-size: 13px; font-weight: 700; opacity: 0.7; margin-top: 4px;">Emisión Monetaria de Tomatines y Bóveda Nacional</div>
+              </div>
+              <button onClick="{{ exitPlazaInterior }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">🏛️ ← Volver a la Ciudad</button>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px;">
+              <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 20px; text-align: center;">
+                <div style="font-size: 48px; margin-bottom: 8px;">🥫</div>
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px;">Bóveda de Salsa de Tomate</div>
+                <div style="font-size: 13px; font-weight: 600; opacity: 0.8; margin: 10px 0;">Respaldo total: 10.000 frascos de conserva casera de La Tía. Tasa de interés moral: 100% anual.</div>
+                <button onClick="{{ printBancoBill }}" style="background: #10B981; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer;">💵 Imprimir Billete de 100 Tomatines</button>
+              </div>
+              <div style="background: #10B98122; border: 4px dashed #10B981; border-radius: 16px; padding: 20px; text-align: center;">
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; color: #10B981;">Billete Oficial Emitido</div>
+                <sc-if value="{{ hasBancoBill }}">
+                  <div style="background: #D1FAE5; border: 3px solid #065F46; border-radius: 12px; padding: 16px; margin: 12px 0; font-family: 'Baloo 2', sans-serif; font-weight: 800; color: #065F46;">
+                    <div style="font-size: 14px;">🍅 100 TOMATINES 🍅</div>
+                    <div style="font-size: 18px; margin: 6px 0;">{{ verifiedLabel }}</div>
+                    <div style="font-size: 11px; opacity: 0.8;">VÁLIDO EN TODA LA GRAN CAJA</div>
+                  </div>
+                </sc-if>
+                <button onClick="{{ claimBancoStamp }}" style="background: #FFC93C; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 13px; padding: 8px 16px; cursor: pointer;">🏦 Sellar Pasaporte</button>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- INTERIOR 6: 🏥 HOSPITAL GENERAL & HELIPUERTO -->
+        <sc-if value="{{ plazaModeIsHospital }}" hint-placeholder-val="{{ false }}">
+          <div style="background: #FFF6E9; border: 5px solid #EF4444; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #2B1B4D; animation: jj-pop 0.3s ease-out;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 4px solid #2B1B4D; padding-bottom: 16px; margin-bottom: 22px;">
+              <div>
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 28px; color: #EF4444; line-height: 1;">🏥 Hospital General & Helipuerto</div>
+                <div style="font-size: 13px; font-weight: 700; opacity: 0.7; margin-top: 4px;">Sanatorio del Buen Vecino · Helipuerto en la Azotea</div>
+              </div>
+              <button onClick="{{ exitPlazaInterior }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">🏛️ ← Volver a la Ciudad</button>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px;">
+              <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 20px;">
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; color: #EF4444; margin-bottom: 8px;">🩺 Chequeo de Salud Cívica</div>
+                <div style="font-size: 13px; font-weight: 600; line-height: 1.6; margin-bottom: 14px;">Diagnóstico: Inmunidad total a la purpurina. Reflejos de mate en estado óptimo.</div>
+                <button onClick="{{ testHospitalReflex }}" style="background: #EF4444; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 13px; padding: 8px 14px; cursor: pointer; margin-right: 8px;">🔨 Probar Reflejos</button>
+                <button onClick="{{ issueHospitalCert }}" style="background: #14C8B8; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 13px; padding: 8px 14px; cursor: pointer;">📜 Certificado Médico</button>
+              </div>
+              <div style="background: #EF444415; border: 4px dashed #EF4444; border-radius: 16px; padding: 20px; text-align: center;">
+                <div style="font-size: 40px; margin-bottom: 6px;">🚁 🅗</div>
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 17px;">Helipuerto de Emergencias</div>
+                <div style="font-size: 13px; font-weight: 600; opacity: 0.8; margin: 8px 0;">El helicóptero cívico aterriza en el techo para traslados urgentes de dulce de tomate.</div>
+                <button onClick="{{ claimHospitalStamp }}" style="background: #FFC93C; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 13px; padding: 8px 16px; cursor: pointer;">🏥 Sellar Pasaporte</button>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- INTERIOR 7: ⚖️ NOTARÍA & REGISTRO MORAL -->
+        <sc-if value="{{ plazaModeIsNotaria }}" hint-placeholder-val="{{ false }}">
+          <div style="background: #FFF6E9; border: 5px solid #8B5CF6; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #2B1B4D; animation: jj-pop 0.3s ease-out;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 4px solid #2B1B4D; padding-bottom: 16px; margin-bottom: 22px;">
+              <div>
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 28px; color: #8B5CF6; line-height: 1;">⚖️ Notaría & Escribanía Moral</div>
+                <div style="font-size: 13px; font-weight: 700; opacity: 0.7; margin-top: 4px;">Fe Pública, Escrituras de Cajas y Actas del Termo</div>
+              </div>
+              <button onClick="{{ exitPlazaInterior }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">🏛️ ← Volver a la Ciudad</button>
+            </div>
+            <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 20px; margin-bottom: 16px;">
+              <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; margin-bottom: 8px;">📜 Título de Dominio Notarial</div>
+              <div style="font-size: 14px; font-weight: 600; line-height: 1.6; margin-bottom: 14px;">"Se certifica que el ciudadano portador de este pasaporte es dueño soberano de su caja de cartón y de su porción de cosecha del Tomate Sagrado."</div>
+              <button onClick="{{ issueNotariaDeed }}" style="background: #8B5CF6; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer;">✍️ Legalizar Escritura</button>
+              <button onClick="{{ claimNotariaStamp }}" style="background: #FFC93C; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; margin-left: 8px;">⚖️ Sellar Pasaporte</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- INTERIOR 8: 🛍️ BAZAR & TIENDA DE SOUVENIRS -->
+        <sc-if value="{{ plazaModeIsTienda }}" hint-placeholder-val="{{ false }}">
+          <div style="background: #FFF6E9; border: 5px solid #F59E0B; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #2B1B4D; animation: jj-pop 0.3s ease-out;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 4px solid #2B1B4D; padding-bottom: 16px; margin-bottom: 22px;">
+              <div>
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 28px; color: #F59E0B; line-height: 1;">🛍️ Bazar Oficial de Souvenirs</div>
+                <div style="font-size: 13px; font-weight: 700; opacity: 0.7; margin-top: 4px;">Recuerdos Auténticos de Nueva Juja · Compras Morales</div>
+              </div>
+              <button onClick="{{ exitPlazaInterior }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">🏛️ ← Volver a la Ciudad</button>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 18px;">
+              <sc-for list="{{ tiendaItemsList }}" as="item">
+                <div style="background: #FFF; border: 3px solid #2B1B4D; border-radius: 14px; padding: 16px; text-align: center;">
+                  <div style="font-size: 38px; margin-bottom: 6px;">{{ item.emoji }}</div>
+                  <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px;">{{ item.name }}</div>
+                  <div style="font-size: 12px; opacity: 0.7; margin: 4px 0;">{{ item.desc }}</div>
+                  <button onClick="{{ item.onBuy }}" style="background: #14C8B8; color: #2B1B4D; border: 2px solid #2B1B4D; border-radius: 8px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 12px; padding: 6px 12px; cursor: pointer; margin-top: 6px;">🎁 Adquirir (0 🍅)</button>
+                </div>
+              </sc-for>
+            </div>
+            <button onClick="{{ claimTiendaStamp }}" style="background: #F59E0B; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer;">🛍️ Sellar Pasaporte en el Bazar</button>
+          </div>
+        </sc-if>
+
+        <!-- INTERIOR 9: 👮 CARABINEROS MORALES -->
+        <sc-if value="{{ plazaModeIsCarabineros }}" hint-placeholder-val="{{ false }}">
+          <div style="background: #FFF6E9; border: 5px solid #1E3A8A; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #2B1B4D; animation: jj-pop 0.3s ease-out;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 4px solid #2B1B4D; padding-bottom: 16px; margin-bottom: 22px;">
+              <div>
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 28px; color: #1E3A8A; line-height: 1;">👮 Comisaría de Carabineros Morales</div>
+                <div style="font-size: 13px; font-weight: 700; opacity: 0.7; margin-top: 4px;">Guardia Cívica · Capitán Pajarito al Mando</div>
+              </div>
+              <button onClick="{{ exitPlazaInterior }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">🏛️ ← Volver a la Ciudad</button>
+            </div>
+            <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 20px; margin-bottom: 16px;">
+              <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; margin-bottom: 8px;">📖 Libro de Denuncias Vecinales</div>
+              <div style="font-size: 14px; font-weight: 600; line-height: 1.6; margin-bottom: 14px;">"Se reporta que alguien dejó enfriar el agua del mate en los Valles del Norte. El sospechoso fue apercibido con 10 caricias obligatorias a la Jujapeluda."</div>
+              <button onClick="{{ makeCarabinerosDenuncia }}" style="background: #1E3A8A; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer;">🚨 Radicar Denuncia</button>
+              <button onClick="{{ claimCarabinerosStamp }}" style="background: #FFC93C; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; margin-left: 8px;">👮 Sellar Pasaporte</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- INTERIOR 10: 🏛️ ALCALDÍA & PALACIO MUNICIPAL -->
+        <sc-if value="{{ plazaModeIsAlcaldia }}" hint-placeholder-val="{{ false }}">
+          <div style="background: #FFF6E9; border: 5px solid #FFC93C; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #2B1B4D; animation: jj-pop 0.3s ease-out;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 4px solid #2B1B4D; padding-bottom: 16px; margin-bottom: 22px;">
+              <div>
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 28px; color: #2B1B4D; line-height: 1;">🏛️ Alcaldía & Palacio de Gobierno</div>
+                <div style="font-size: 13px; font-weight: 700; opacity: 0.7; margin-top: 4px;">Sede del Consejo Moral · Despacho de Papá y Mamá</div>
+              </div>
+              <button onClick="{{ exitPlazaInterior }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">🏛️ ← Volver a la Ciudad</button>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px;">
+              <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 20px;">
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; margin-bottom: 8px;">🗳️ Plebiscito Municipal</div>
+                <div style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">¿Declarar el martes como "Día Oficial de Comer Empanadas de Tomate"?</div>
+                <button onClick="{{ voteAlcaldiaSi }}" style="background: #10B981; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 13px; padding: 8px 14px; cursor: pointer; margin-right: 8px;">👍 Votar SÍ</button>
+                <button onClick="{{ voteAlcaldiaNo }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 13px; padding: 8px 14px; cursor: pointer;">👎 Votar NO</button>
+              </div>
+              <div style="background: #FFC93C22; border: 4px dashed #FFC93C; border-radius: 16px; padding: 20px; text-align: center;">
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; margin-bottom: 6px;">📖 Libro de Honor de la República</div>
+                <div style="font-size: 13px; font-weight: 600; opacity: 0.8; margin-bottom: 12px;">Firmá el acta de visitantes ilustres en presencia de Papá y Mamá.</div>
+                <button onClick="{{ signHonorBook }}" style="background: #14C8B8; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 13px; padding: 8px 16px; cursor: pointer;">✍️ Firmar Libro de Honor</button>
+                <button onClick="{{ claimAlcaldiaStamp }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 13px; padding: 8px 16px; cursor: pointer; margin-top: 8px;">🏛️ Sellar Pasaporte</button>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- INTERIOR 11: 🌾 CONTROL FITOSANITARIO SAG -->
+        <sc-if value="{{ plazaModeIsSag }}" hint-placeholder-val="{{ false }}">
+          <div style="background: #FFF6E9; border: 5px solid #15803D; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #2B1B4D; animation: jj-pop 0.3s ease-out;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 4px solid #2B1B4D; padding-bottom: 16px; margin-bottom: 22px;">
+              <div>
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 28px; color: #15803D; line-height: 1;">🌾 Control Fitosanitario SAG</div>
+                <div style="font-size: 13px; font-weight: 700; opacity: 0.7; margin-top: 4px;">Inspección Biológica del Tomate Sagrado · Libre de Plagas</div>
+              </div>
+              <button onClick="{{ exitPlazaInterior }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">🏛️ ← Volver a la Ciudad</button>
+            </div>
+            <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 20px; margin-bottom: 16px;">
+              <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; color: #15803D; margin-bottom: 8px;">🔬 Escáner de Semillas Sagradas</div>
+              <div style="font-size: 14px; font-weight: 600; line-height: 1.6; margin-bottom: 14px;">"Las muestras analizadas certifican 100% de pureza orgánica y cero presencia de conservantes extranjeros."</div>
+              <button onClick="{{ scanSagSeed }}" style="background: #15803D; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer;">🔍 Escanear Semilla</button>
+              <button onClick="{{ claimSagStamp }}" style="background: #FFC93C; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; margin-left: 8px;">🌾 Sellar Pasaporte</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- INTERIOR 12: 🛂 ADUANA DE ULTRAMAR -->
+        <sc-if value="{{ plazaModeIsAduana }}" hint-placeholder-val="{{ false }}">
+          <div style="background: #FFF6E9; border: 5px solid #3B82F6; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #2B1B4D; animation: jj-pop 0.3s ease-out;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 4px solid #2B1B4D; padding-bottom: 16px; margin-bottom: 22px;">
+              <div>
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 28px; color: #3B82F6; line-height: 1;">🛂 Aduana de Ultramar de El Chino</div>
+                <div style="font-size: 13px; font-weight: 700; opacity: 0.7; margin-top: 4px;">Paso Fronterizo Internacional · Muelle de Carga</div>
+              </div>
+              <button onClick="{{ exitPlazaInterior }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">🏛️ ← Volver a la Ciudad</button>
+            </div>
+            <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 20px;">
+              <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; color: #3B82F6; margin-bottom: 8px;">🧳 Declaración Jurada de Equipaje</div>
+              <div style="font-size: 14px; font-weight: 600; line-height: 1.6; margin-bottom: 14px;">"Declarás no transportar purpurina de Disney, yerba mate vencida ni música comercial sin autorización de Roberto Musso."</div>
+              <button onClick="{{ declareAduanaLuggage }}" style="background: #3B82F6; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer;">🛂 Firmar Declaración</button>
+              <button onClick="{{ claimAduanaStamp }}" style="background: #FFC93C; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; margin-left: 8px;">🛂 Sellar Pasaporte</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- INTERIOR 13: 🏰 EMBAJADA CLANDESTINA DE DISNEY -->
+        <sc-if value="{{ plazaModeIsEmbajadaDisney }}" hint-placeholder-val="{{ false }}">
+          <div style="background: #FFF6E9; border: 5px solid #EC4899; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #2B1B4D; animation: jj-pop 0.3s ease-out;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 4px solid #2B1B4D; padding-bottom: 16px; margin-bottom: 22px;">
+              <div>
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 28px; color: #EC4899; line-height: 1;">🏰 Embajada Clandestina de Disney</div>
+                <div style="font-size: 13px; font-weight: 700; opacity: 0.7; margin-top: 4px;">Zona Diplomática Secreta · Inspector Mickey al Mando</div>
+              </div>
+              <button onClick="{{ exitPlazaInterior }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">🏛️ ← Volver a la Ciudad</button>
+            </div>
+            <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 20px;">
+              <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; color: #EC4899; margin-bottom: 8px;">🐭 Visado para Disneylandia</div>
+              <div style="font-size: 14px; font-weight: 600; line-height: 1.6; margin-bottom: 14px;">Mickey susurra: <em>"Si no le contás a La Tía, te tramito un pase express para Orlando con descuento en pochoclos, ja-ja!"</em></div>
+              <button onClick="{{ requestDisneyVisa }}" style="background: #EC4899; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer;">✨ Pedir Visa Clandestina</button>
+              <button onClick="{{ claimEmbajadaDisneyStamp }}" style="background: #FFC93C; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; margin-left: 8px;">🏰 Sellar Pasaporte</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- INTERIOR 14: 💒 CAPILLA DEL TOMATE SAGRADO -->
+        <sc-if value="{{ plazaModeIsIglesia }}" hint-placeholder-val="{{ false }}">
+          <div style="background: #FFF6E9; border: 5px solid #F59E0B; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #2B1B4D; animation: jj-pop 0.3s ease-out;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 4px solid #2B1B4D; padding-bottom: 16px; margin-bottom: 22px;">
+              <div>
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 28px; color: #F59E0B; line-height: 1;">💒 Capilla del Tomate Sagrado</div>
+                <div style="font-size: 13px; font-weight: 700; opacity: 0.7; margin-top: 4px;">Altar Mayor de la Cosecha · Bendición y Oración Agraria</div>
+              </div>
+              <button onClick="{{ exitPlazaInterior }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">🏛️ ← Volver a la Ciudad</button>
+            </div>
+            <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 22px; text-align: center;">
+              <div style="font-size: 56px; margin-bottom: 8px;">🍅🕯️</div>
+              <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 20px; color: #F59E0B; margin-bottom: 10px;">Velas Votivas de la Cosecha</div>
+              <div style="display: flex; gap: 12px; justify-content: center; margin-bottom: 16px;">
+                <sc-for list="{{ churchCandlesList }}" as="cdl">
+                  <button onClick="{{ cdl.onClick }}" style="{{ cdl.style }}">{{ cdl.emoji }}</button>
+                </sc-for>
+              </div>
+              <button onClick="{{ ringChurchBell }}" style="background: #F59E0B; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; margin-right: 8px;">🔔 Tocar la Campana</button>
+              <button onClick="{{ claimIglesiaStamp }}" style="background: #14C8B8; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer;">💒 Sellar Pasaporte</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- INTERIOR 15: 🎸 GRAN TEATRO ROBERTO MUSSO -->
+        <sc-if value="{{ plazaModeIsTeatro }}" hint-placeholder-val="{{ false }}">
+          <div style="background: #2B1B4D; color: #FFF6E9; border: 5px solid #7C3AED; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #FFC93C; animation: jj-pop 0.3s ease-out;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 4px solid #FFF6E9; padding-bottom: 16px; margin-bottom: 22px;">
+              <div>
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 28px; color: #FFC93C; line-height: 1;">🎸 Gran Teatro Roberto Musso</div>
+                <div style="font-size: 13px; font-weight: 700; opacity: 0.8; margin-top: 4px;">Sala de Conciertos Acústicos · Riffs Patrióticos 8-bit</div>
+              </div>
+              <button onClick="{{ exitPlazaInterior }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #FFF6E9; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #FFC93C;">🏛️ ← Volver a la Ciudad</button>
+            </div>
+            <div style="background: #1E1B4B; border: 4px solid #7C3AED; border-radius: 16px; padding: 24px; text-align: center;">
+              <div style="font-size: 54px; margin-bottom: 8px;">🎸 🎼 🎶</div>
+              <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 22px; color: #FFC93C; margin-bottom: 10px;">Gala Acústica en Vivo</div>
+              <div style="font-size: 14px; font-weight: 600; opacity: 0.9; margin-bottom: 16px;">Roberto Musso está probando sonido con su guitarra eléctrica distorsionada en compás de 8-bit.</div>
+              <button onClick="{{ playTeatroSolo }}" style="background: #7C3AED; color: #FFF6E9; border: 3px solid #FFF; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; margin-right: 8px;">🎸 Escuchar Solo de Guitarra</button>
+              <button onClick="{{ applaudTeatro }}" style="background: #14C8B8; color: #2B1B4D; border: 3px solid #FFF; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; margin-right: 8px;">👏 Ovacionar</button>
+              <button onClick="{{ claimTeatroStamp }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #FFF; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer;">🎸 Sellar Pasaporte</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- INTERIOR 16: 📋 REGISTRO CIVIL DE CIUDADANÍA -->
+        <sc-if value="{{ plazaModeIsRegistroCivil }}" hint-placeholder-val="{{ false }}">
+          <div style="background: #FFF6E9; border: 5px solid #06B6D4; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #2B1B4D; animation: jj-pop 0.3s ease-out;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 4px solid #2B1B4D; padding-bottom: 16px; margin-bottom: 22px;">
+              <div>
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 28px; color: #06B6D4; line-height: 1;">📋 Registro Civil de Ciudadanía</div>
+                <div style="font-size: 13px; font-weight: 700; opacity: 0.7; margin-top: 4px;">Padrón Oficial de Identidad y Parentesco Cívico</div>
+              </div>
+              <button onClick="{{ exitPlazaInterior }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">🏛️ ← Volver a la Ciudad</button>
+            </div>
+            <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 20px;">
+              <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; color: #06B6D4; margin-bottom: 8px;">📑 Acta de Parentesco con las 41 Jujapeludas</div>
+              <div style="font-size: 14px; font-weight: 600; line-height: 1.6; margin-bottom: 14px;">"Se deja constancia en el folio 1990 que {{ verifiedLabel }} goza de rango familiar directo y derecho a ronroneo prioritario."</div>
+              <button onClick="{{ issueCivilCert }}" style="background: #06B6D4; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer;">📋 Emitir Certificado</button>
+              <button onClick="{{ claimRegistroCivilStamp }}" style="background: #FFC93C; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; margin-left: 8px;">📋 Sellar Pasaporte</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- INTERIOR 17: ✈️ AEROPUERTO INTERNACIONAL EL TOMATE VOLADOR -->
+        <sc-if value="{{ plazaModeIsAeropuerto }}" hint-placeholder-val="{{ false }}">
+          <div style="background: #FFF6E9; border: 5px solid #0284C7; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #2B1B4D; animation: jj-pop 0.3s ease-out;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 4px solid #2B1B4D; padding-bottom: 16px; margin-bottom: 22px;">
+              <div>
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 28px; color: #0284C7; line-height: 1;">✈️ Aeropuerto Internacional "El Tomate Volador"</div>
+                <div style="font-size: 13px; font-weight: 700; opacity: 0.7; margin-top: 4px;">Torre de Control · Pista Balizada y Vuelos Panorámicos</div>
+              </div>
+              <button onClick="{{ exitPlazaInterior }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">🏛️ ← Volver a la Ciudad</button>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px;">
+              <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 20px;">
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; color: #0284C7; margin-bottom: 8px;">🛫 Pizarra de Vuelos Oficiales</div>
+                <div style="font-size: 13px; font-weight: 700; line-height: 1.8;">
+                  • Vuelo JJ-01 a Valles del Norte: 🟢 EN HORARIO<br/>
+                  • Vuelo JJ-02 a La Gran Caja: 🟢 EMBARCANDO<br/>
+                  • Vuelo JJ-03 a Orlando: 🔴 CANCELADO POR PURPURINA
+                </div>
+                <div style="margin-top: 14px;">
+                  <button onClick="{{ generateBoardingPass }}" style="background: #0284C7; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 13px; padding: 8px 14px; cursor: pointer;">🎫 Boarding Pass</button>
+                </div>
+              </div>
+              <div style="background: #0284C715; border: 4px dashed #0284C7; border-radius: 16px; padding: 20px; text-align: center;">
+                <div style="font-size: 44px; margin-bottom: 6px;">🛩️ 🗼</div>
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 17px;">Torre de Control Aéreo</div>
+                <div style="font-size: 13px; font-weight: 600; opacity: 0.8; margin: 8px 0;">La avioneta arrastra la pancarta y el helicóptero patrulla el perímetro sin novedades.</div>
+                <button onClick="{{ claimAeropuertoStamp }}" style="background: #FFC93C; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 13px; padding: 8px 16px; cursor: pointer;">✈️ Sellar Pasaporte</button>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- INTERIOR 18: 🚒 ESTACIÓN DE BOMBEROS VOLUNTARIOS -->
+        <sc-if value="{{ plazaModeIsBomberos }}" hint-placeholder-val="{{ false }}">
+          <div style="background: #FFF6E9; border: 5px solid #DC2626; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #2B1B4D; animation: jj-pop 0.3s ease-out;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 4px solid #2B1B4D; padding-bottom: 16px; margin-bottom: 22px;">
+              <div>
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 28px; color: #DC2626; line-height: 1;">🚒 Bomberos Voluntarios del Huerto</div>
+                <div style="font-size: 13px; font-weight: 700; opacity: 0.7; margin-top: 4px;">Cuartel General · Mangueras de Riego de Alta Presión</div>
+              </div>
+              <button onClick="{{ exitPlazaInterior }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">🏛️ ← Volver a la Ciudad</button>
+            </div>
+            <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 20px; text-align: center;">
+              <div style="font-size: 54px; margin-bottom: 8px;">🚒 🚨 💦</div>
+              <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 20px; color: #DC2626; margin-bottom: 8px;">Sirena y Riego de Emergencia</div>
+              <div style="font-size: 14px; font-weight: 600; opacity: 0.85; max-width: 540px; margin: 0 auto 16px;">El camión autobomba rojo está cargado con agua bendita del oráculo para refrescar los tomates en días de calor.</div>
+              <button onClick="{{ triggerFireAlarm }}" style="background: #DC2626; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; margin-right: 8px;">🚨 Sonar Sirena</button>
+              <button onClick="{{ waterTomatoes }}" style="background: #14C8B8; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; margin-right: 8px;">💦 Riego de Huerto</button>
+              <button onClick="{{ claimBomberosStamp }}" style="background: #FFC93C; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer;">🚒 Sellar Pasaporte</button>
+            </div>
+          </div>
+        </sc-if>
+      </sc-if>
     </div>
   </sc-if>
 
@@ -1517,30 +1688,137 @@ const STAMPS_DEF = [
   { id: 'correo', name: 'Correo Postal', emoji: '✉️', color: '#14C8B8' },
   { id: 'cultural', name: 'Mérito Artístico', emoji: '🎭', color: '#FF5A5F' },
   { id: 'museo', name: 'Custodio Histórico', emoji: '🏛️', color: '#2B1B4D' },
-  { id: 'jujapeluda', name: 'Amigo Jujapeluda', emoji: '🐾', color: '#FFC93C' },
-  { id: 'fuente', name: 'Devoto del Tomate', emoji: '⛲', color: '#14C8B8' }
+  { id: 'banco', name: 'Bóveda de Reserva', emoji: '🏦', color: '#10B981' },
+  { id: 'hospital', name: 'Salud Moral', emoji: '🏥', color: '#EF4444' },
+  { id: 'notaria', name: 'Fe Notarial', emoji: '⚖️', color: '#8B5CF6' },
+  { id: 'tienda', name: 'Comercio Justo', emoji: '🛍️', color: '#F59E0B' },
+  { id: 'carabineros', name: 'Orden Cívico', emoji: '👮', color: '#1E3A8A' },
+  { id: 'alcaldia', name: 'Soberanía Popular', emoji: '🏛️', color: '#FFC93C' },
+  { id: 'sag', name: 'Pureza Vegetal', emoji: '🌾', color: '#15803D' },
+  { id: 'aduana', name: 'Paso Aduanero', emoji: '🛂', color: '#3B82F6' },
+  { id: 'embajada_disney', name: 'Zona Neutral', emoji: '🏰', color: '#EC4899' },
+  { id: 'iglesia', name: 'Gracia Sagrada', emoji: '💒', color: '#F59E0B' },
+  { id: 'teatro', name: 'Gala Nacional', emoji: '🎸', color: '#7C3AED' },
+  { id: 'registro_civil', name: 'Estado Cívico', emoji: '📋', color: '#06B6D4' },
+  { id: 'aeropuerto', name: 'Vuelo Soberano', emoji: '✈️', color: '#0284C7' },
+  { id: 'bomberos', name: 'Protección Viva', emoji: '🚒', color: '#DC2626' }
 ];
 
-// ===== Motor 3D de "La Plaza" =====
+// ===== Motor 3D de "La Gran Ciudad de Jujalandia" =====
 const W3D = {
   persp: 720,
   eye: 168,
-  bound: 1500,
-  speed: 8,
+  bound: 2600,
+  speed: 8.5,
   turn: 2.6,
-  ground: 6000,
+  ground: 9000,
   fountainR: 200
 };
 
 const W3D_BUILDINGS = [
+  // Anillo Central-Norte
   { id: 'kiosco', label: 'El Kiosco', desc: 'Periódico y clasificados', emoji: '🗞️',
-    x: -680, z: -620, w: 300, d: 240, h: 235, wall: '#FFC93C', roof: '#FF5A5F', ink: '#2B1B4D' },
+    x: -850, z: -600, w: 290, d: 240, h: 240, wall: '#FFC93C', roof: '#FF5A5F', ink: '#2B1B4D' },
   { id: 'cultural', label: 'Centro Cultural', desc: 'Rockola, mural y cómics', emoji: '🎭',
-    x: 680, z: -620, w: 350, d: 265, h: 340, wall: '#FF5A5F', roof: '#2B1B4D', ink: '#FFF6E9' },
-  { id: 'correo', label: 'El Correo', desc: 'Buzón postal y telegramas', emoji: '✉️',
-    x: -680, z: 620, w: 320, d: 245, h: 255, wall: '#14C8B8', roof: '#2B1B4D', ink: '#2B1B4D' },
+    x: -450, z: -600, w: 320, d: 260, h: 320, wall: '#FF5A5F', roof: '#2B1B4D', ink: '#FFF6E9' },
+  { id: 'teatro', label: 'Teatro Musso', desc: 'Conciertos acústicos 8-bit', emoji: '🎸',
+    x: 450, z: -600, w: 340, d: 260, h: 340, wall: '#7C3AED', roof: '#FFC93C', ink: '#FFF6E9' },
   { id: 'museo', label: 'El Museo', desc: 'Reliquias y trivia histórica', emoji: '🏛️',
-    x: 680, z: 620, w: 365, d: 285, h: 310, wall: '#FFF6E9', roof: '#FFC93C', ink: '#2B1B4D' }
+    x: 850, z: -600, w: 330, d: 270, h: 300, wall: '#FFF6E9', roof: '#FFC93C', ink: '#2B1B4D' },
+
+  // Anillo Extremo-Norte (Gobierno & Finanzas)
+  { id: 'banco', label: 'Banco Central', desc: 'Bóveda y Tomatines', emoji: '🏦',
+    x: -500, z: -1150, w: 360, d: 270, h: 330, wall: '#10B981', roof: '#2B1B4D', ink: '#FFF6E9' },
+  { id: 'alcaldia', label: 'Alcaldía', desc: 'Despacho de Papá y Mamá', emoji: '🏛️',
+    x: 0, z: -1200, w: 420, d: 300, h: 360, wall: '#FFC93C', roof: '#FF5A5F', ink: '#2B1B4D' },
+  { id: 'notaria', label: 'Notaría Moral', desc: 'Escrituras y actas cívicas', emoji: '⚖️',
+    x: 500, z: -1150, w: 350, d: 260, h: 300, wall: '#8B5CF6', roof: '#2B1B4D', ink: '#FFF6E9' },
+
+  // Anillo Lateral Oeste & Este
+  { id: 'hospital', label: 'Hospital General', desc: 'Salud, curas y helipuerto', emoji: '🏥',
+    x: -1100, z: 0, w: 380, d: 280, h: 310, wall: '#FFF6E9', roof: '#EF4444', ink: '#2B1B4D' },
+  { id: 'registro_civil', label: 'Registro Civil', desc: 'Identidad y parentesco', emoji: '📋',
+    x: 1100, z: 0, w: 360, d: 270, h: 300, wall: '#06B6D4', roof: '#2B1B4D', ink: '#2B1B4D' },
+
+  // Anillo Central-Sur
+  { id: 'iglesia', label: 'Capilla del Tomate', desc: 'Velas y bendición agraria', emoji: '💒',
+    x: -650, z: 600, w: 330, d: 270, h: 350, wall: '#FFF6E9', roof: '#F59E0B', ink: '#2B1B4D' },
+  { id: 'correo', label: 'El Correo', desc: 'Buzón postal y telegramas', emoji: '✉️',
+    x: 0, z: 650, w: 320, d: 250, h: 260, wall: '#14C8B8', roof: '#2B1B4D', ink: '#2B1B4D' },
+  { id: 'tienda', label: 'Bazar Souvenirs', desc: 'Recuerdos y llaveros', emoji: '🛍️',
+    x: 650, z: 600, w: 320, d: 250, h: 270, wall: '#F59E0B', roof: '#14C8B8', ink: '#2B1B4D' },
+
+  // Anillo Extremo-Sur (Fronteras y Emergencias)
+  { id: 'carabineros', label: 'Carabineros', desc: 'Comisaría moral y orden', emoji: '👮',
+    x: -850, z: 1150, w: 350, d: 260, h: 300, wall: '#1E3A8A', roof: '#2B1B4D', ink: '#FFF6E9' },
+  { id: 'sag', label: 'Control SAG', desc: 'Aduana Fitosanitaria', emoji: '🌾',
+    x: -400, z: 1150, w: 320, d: 250, h: 270, wall: '#15803D', roof: '#FFC93C', ink: '#FFF6E9' },
+  { id: 'aduana', label: 'Aduana Ultramar', desc: 'Muelle de El Chino', emoji: '🛂',
+    x: 400, z: 1150, w: 340, d: 260, h: 280, wall: '#3B82F6', roof: '#2B1B4D', ink: '#FFF6E9' },
+  { id: 'embajada_disney', label: 'Embajada Disney', desc: 'Búnker clandestino', emoji: '🏰',
+    x: 850, z: 1150, w: 350, d: 260, h: 320, wall: '#EC4899', roof: '#1E1B4B', ink: '#FFF6E9' },
+
+  // Terminales de Transporte
+  { id: 'aeropuerto', label: 'Aeropuerto Int.', desc: 'Pista El Tomate Volador', emoji: '✈️',
+    x: -1250, z: 1200, w: 420, d: 280, h: 340, wall: '#0284C7', roof: '#FFC93C', ink: '#FFF6E9' },
+  { id: 'bomberos', label: 'Bomberos Voluntarios', desc: 'Cuartel y mangueras', emoji: '🚒',
+    x: 1250, z: 1200, w: 360, d: 270, h: 300, wall: '#DC2626', roof: '#2B1B4D', ink: '#FFF6E9' }
+];
+
+const W3D_VEHICLES_DEF = [
+  { id: 'v_citroneta', name: 'Citroneta Roja de Papá', emoji: '🚗', color: '#EF4444', speed: 0.0035, rx: 1750, rz: 1450, ph: 0 },
+  { id: 'v_fitito', name: 'Fitito Amarillo Cívico', emoji: '🚕', color: '#F59E0B', speed: 0.0042, rx: 1700, rz: 1400, ph: Math.PI * 0.5 },
+  { id: 'v_furgon', name: 'Furgón Tomatero', emoji: '🚐', color: '#10B981', speed: 0.0030, rx: 1800, rz: 1500, ph: Math.PI },
+  { id: 'v_camioneta', name: 'Camioneta 4x4', emoji: '🚙', color: '#3B82F6', speed: 0.0038, rx: 1850, rz: 1550, ph: Math.PI * 1.5 },
+  { id: 'v_patrulla', name: 'Patrulla Carabineros', emoji: '🚓', color: '#1E3A8A', speed: 0.0046, rx: 1650, rz: 1350, ph: Math.PI * 0.25 },
+  { id: 'v_microbus', name: 'Microbús Escolar', emoji: '🚌', color: '#F97316', speed: 0.0024, rx: 1900, rz: 1600, ph: Math.PI * 0.75 },
+  { id: 'v_bomberos', name: 'Autobomba Bomberos', emoji: '🚒', color: '#DC2626', speed: 0.0039, rx: 1780, rz: 1480, ph: Math.PI * 1.25 }
+];
+
+const W3D_AIR_DEF = [
+  { id: 'heli', name: 'Helicóptero Cívico', emoji: '🚁', y: 380, speed: 0.007, radius: 950, ph: 0 },
+  { id: 'avioneta', name: 'Avioneta con Pancarta', emoji: '🛩️', y: 560, speed: 0.0032, radius: 2200, ph: Math.PI * 0.8 },
+  { id: 'blimp', name: 'Dirigible del Tomate', emoji: '🎈', y: 720, speed: 0.0012, radius: 1500, ph: Math.PI * 0.3 }
+];
+
+const DISNEY_INCURSIONS = [
+  {
+    id: 'mickey',
+    name: 'Mickey Mouse',
+    role: 'Inspector Clandestino de Disney',
+    emoji: '🐭',
+    x: -240, z: -350,
+    text: '¡Hola amigos, ja-ja! Vengo a inspeccionar si pagan regalías porque las 41 Jujapeludas tienen orejas redondas...',
+    options: [
+      { text: 'Exigirle el Pasaporte de Jujalandia', reply: '¡Oh no, no tengo pasaporte patriótico! ¡Mejor me escapo antes de que me confisquen los guantes, ja-ja!' },
+      { text: 'Llamar a La Tía Constituyente', reply: '¡La Tía viene con el termo hirviendo y la escoba! ¡Corran por sus vidas, ja-ja!' },
+      { text: 'Comprarle un globo clandestino', reply: '¡Trato hecho! Te ganaste el souvenir clandestino de las orejas cívicas.' }
+    ]
+  },
+  {
+    id: 'donald',
+    name: 'Pato Donald',
+    role: 'Vendedor de Purpurina de Ultramar',
+    emoji: '🦆',
+    x: 240, z: -350,
+    text: '¡¡Quack, quack!! ¡Vendo purpurina mágica importada de contrabando para ponerle brillo al Tomate Sagrado!',
+    options: [
+      { text: 'Denunciarlo a Carabineros Morales', reply: '¡¡Quack!! ¡Los Carabineros me van a decomisar el sombrero marinero!' },
+      { text: 'Explicarle que acá reina el Tomate puro', reply: '¡¡Inconcebible!! ¡Nadie en esta caja aprecia mi purpurina mágica!' }
+    ]
+  },
+  {
+    id: 'goofy',
+    name: 'Tribilín / Goofy',
+    role: 'Turista Desorientado',
+    emoji: '🐶',
+    x: -280, z: 320,
+    text: '¡Ahyuck! Pensé que esto era el castillo de Orlando, pero este huerto de tomates huele mucho más rico...',
+    options: [
+      { text: 'Invitarlo a comer empanadas de tomate', reply: '¡Ahyuck! ¡Son las mejores empanadas del mundo! Me quedo a vivir acá.' },
+      { text: 'Preguntarle qué le parece Nueva Juja', reply: '¡Es una maravilla! Las 41 jujapeludas son re amigables y nadie usa despertador.' }
+    ]
+  }
 ];
 
 function makeCitizenSpriteSvg(avatar, nickname, shirtColor, pantsColor, bubbleText) {
@@ -2535,12 +2813,29 @@ class Component extends DCLogic {
     memPlaying: false,
 
     // Plaza & Enlaces 90s State
-    plazaView: 'walk', // 'walk' | 'kiosco' | 'correo' | 'cultural' | 'museo'
+    plazaView: 'walk',
     stamps: [],
     toastMessage: null,
     activeNpc: null,
     npcReply: null,
     patCount: 0,
+
+    // 18 Buildings States & Interactivity
+    bancoBillPrinted: false,
+    hospitalCertIssued: false,
+    notariaDeedIssued: false,
+    tiendaBoughtItems: [],
+    carabinerosDenuncias: [],
+    alcaldiaVote: null,
+    honorBookSigned: false,
+    sagScanned: false,
+    aduanaDeclared: false,
+    disneyVisaRequested: false,
+    churchCandles: [true, false, true, false],
+    teatroApplauded: false,
+    civilCertIssued: false,
+    boardingPassIssued: false,
+    tomatoesWatered: false,
 
     // Kiosco state
     kioscoTab: 'diario',
@@ -2936,7 +3231,7 @@ class Component extends DCLogic {
     this.setState({ activeNpc: npcEquiv, npcReply: null });
   };
 
-  // ============ MOTOR 3D DE LA PLAZA ============
+  // ============ MOTOR 3D DE LA GRAN METRÓPOLIS ============
 
   make3DPanel = (w, h, transform, css) => {
     const el = document.createElement('div');
@@ -2978,6 +3273,8 @@ class Component extends DCLogic {
     this.balloonEls = [];
     this.signEls = [];
     this.npcEls = [];
+    this.vehicleEls = [];
+    this.airEls = [];
 
     const P = this.make3DPanel;
     const S = this.make3DSprite;
@@ -2986,27 +3283,45 @@ class Component extends DCLogic {
     // Suelo con paleta de iluminación según momento del día
     const g = W3D.ground;
     const groundGrad = effTime === 'night'
-      ? 'radial-gradient(circle at 50% 50%, rgba(255,201,60,.15) 0 3.2%, rgba(0,0,0,0) 3.4%),' +
-        'radial-gradient(circle at 50% 50%, rgba(30,41,59,.9) 0 8%, rgba(0,0,0,0) 8.2%),' +
-        'radial-gradient(circle at 50% 50%, rgba(30,41,59,0) 0 15.5%, rgba(15,23,42,.4) 15.5% 16%, rgba(0,0,0,0) 16%),' +
-        'repeating-linear-gradient(0deg, rgba(15,23,42,.3) 0 2px, rgba(0,0,0,0) 2px 120px),' +
-        'repeating-linear-gradient(90deg, rgba(15,23,42,.3) 0 2px, rgba(0,0,0,0) 2px 120px),' +
+      ? 'radial-gradient(circle at 50% 50%, rgba(255,201,60,.15) 0 2%, rgba(0,0,0,0) 2.2%),' +
+        'radial-gradient(circle at 50% 50%, rgba(30,41,59,.9) 0 6%, rgba(0,0,0,0) 6.2%),' +
+        'radial-gradient(circle at 50% 50%, rgba(30,41,59,0) 0 11%, rgba(15,23,42,.4) 11% 12%, rgba(0,0,0,0) 12%),' +
+        'repeating-linear-gradient(0deg, rgba(15,23,42,.3) 0 2px, rgba(0,0,0,0) 2px 140px),' +
+        'repeating-linear-gradient(90deg, rgba(15,23,42,.3) 0 2px, rgba(0,0,0,0) 2px 140px),' +
         'radial-gradient(circle at 50% 50%, #293548 0 26%, #1e293b 26% 44%, #0f172a 100%);'
       : (effTime === 'sunset'
-        ? 'radial-gradient(circle at 50% 50%, rgba(255,201,60,.45) 0 3.2%, rgba(0,0,0,0) 3.4%),' +
-          'radial-gradient(circle at 50% 50%, rgba(254,215,170,.9) 0 8%, rgba(0,0,0,0) 8.2%),' +
-          'radial-gradient(circle at 50% 50%, rgba(254,215,170,0) 0 15.5%, rgba(67,23,78,.25) 15.5% 16%, rgba(0,0,0,0) 16%),' +
-          'repeating-linear-gradient(0deg, rgba(67,23,78,.15) 0 2px, rgba(0,0,0,0) 2px 120px),' +
-          'repeating-linear-gradient(90deg, rgba(67,23,78,.15) 0 2px, rgba(0,0,0,0) 2px 120px),' +
+        ? 'radial-gradient(circle at 50% 50%, rgba(255,201,60,.45) 0 2%, rgba(0,0,0,0) 2.2%),' +
+          'radial-gradient(circle at 50% 50%, rgba(254,215,170,.9) 0 6%, rgba(0,0,0,0) 6.2%),' +
+          'radial-gradient(circle at 50% 50%, rgba(254,215,170,0) 0 11%, rgba(67,23,78,.25) 11% 12%, rgba(0,0,0,0) 12%),' +
+          'repeating-linear-gradient(0deg, rgba(67,23,78,.15) 0 2px, rgba(0,0,0,0) 2px 140px),' +
+          'repeating-linear-gradient(90deg, rgba(67,23,78,.15) 0 2px, rgba(0,0,0,0) 2px 140px),' +
           'radial-gradient(circle at 50% 50%, #fbd5b5 0 26%, #e8b4b8 26% 44%, #b5838d 100%);'
-        : 'radial-gradient(circle at 50% 50%, rgba(255,201,60,.55) 0 3.2%, rgba(0,0,0,0) 3.4%),' +
-          'radial-gradient(circle at 50% 50%, rgba(255,246,233,.9) 0 8%, rgba(0,0,0,0) 8.2%),' +
-          'radial-gradient(circle at 50% 50%, rgba(255,246,233,0) 0 15.5%, rgba(43,27,77,.22) 15.5% 16%, rgba(0,0,0,0) 16%),' +
-          'repeating-linear-gradient(0deg, rgba(43,27,77,.10) 0 2px, rgba(0,0,0,0) 2px 120px),' +
-          'repeating-linear-gradient(90deg, rgba(43,27,77,.10) 0 2px, rgba(0,0,0,0) 2px 120px),' +
+        : 'radial-gradient(circle at 50% 50%, rgba(255,201,60,.55) 0 2%, rgba(0,0,0,0) 2.2%),' +
+          'radial-gradient(circle at 50% 50%, rgba(255,246,233,.9) 0 6%, rgba(0,0,0,0) 6.2%),' +
+          'radial-gradient(circle at 50% 50%, rgba(255,246,233,0) 0 11%, rgba(43,27,77,.22) 11% 12%, rgba(0,0,0,0) 12%),' +
+          'repeating-linear-gradient(0deg, rgba(43,27,77,.10) 0 2px, rgba(0,0,0,0) 2px 140px),' +
+          'repeating-linear-gradient(90deg, rgba(43,27,77,.10) 0 2px, rgba(0,0,0,0) 2px 140px),' +
           'radial-gradient(circle at 50% 50%, #efe3c6 0 26%, #d9e8c0 26% 44%, #cfe0b4 100%);');
 
     world.appendChild(P(g, g, 'translate3d(0,0,0) rotateX(90deg)', 'background:' + groundGrad));
+
+    // Avenidas Asfaltadas con sendas peatonales y líneas demarcatorias
+    const roadCss = 'background:#1e293b;border:3px solid #0f172a;box-sizing:border-box;' +
+      'background-image:repeating-linear-gradient(90deg, #f59e0b 0 30px, rgba(0,0,0,0) 30px 60px);';
+    world.appendChild(P(4800, 160, 'translate3d(0,-1px,-1500px) rotateX(90deg)', roadCss));
+    world.appendChild(P(4800, 160, 'translate3d(0,-1px,1500px) rotateX(90deg)', roadCss));
+    world.appendChild(P(160, 3200, 'translate3d(-1800px,-1px,0) rotateX(90deg)', 'background:#1e293b;border:3px solid #0f172a;'));
+    world.appendChild(P(160, 3200, 'translate3d(1800px,-1px,0) rotateX(90deg)', 'background:#1e293b;border:3px solid #0f172a;'));
+
+    // Pista de Aterrizaje del Aeropuerto
+    world.appendChild(P(380, 1100, 'translate3d(-1550px,-2px,1200px) rotateX(90deg) rotateZ(15deg)',
+      'background:#0f172a;border:4px solid #38bdf8;box-sizing:border-box;' +
+      'background-image:repeating-linear-gradient(0deg, #fff 0 40px, rgba(0,0,0,0) 40px 90px);'));
+
+    // Helipuerto del Hospital
+    world.appendChild(P(220, 220, 'translate3d(-1350px,-2px,0) rotateX(90deg)',
+      'background:#1e293b;border:4px solid #ef4444;border-radius:50%;display:flex;align-items:center;justify-content:center;' +
+      'font-family:\'Baloo 2\',sans-serif;font-weight:900;font-size:72px;color:#fff;'));
 
     // Fuente central
     world.appendChild(P(300, 300, 'translate3d(0,-46px,0) rotateX(90deg)',
@@ -3026,29 +3341,29 @@ class Component extends DCLogic {
     // Cielo según ciclo día/atardecer/noche
     const skyProps = effTime === 'night'
       ? [
-          { e: '🌙', x: -1300, y: 1150, z: -3100, s: 320, css: 'filter:drop-shadow(0 0 40px #E0F2FE);' },
-          { e: '✨', x: 900, y: 1300, z: -2800, s: 130, css: 'filter:drop-shadow(0 0 12px #FFD700);' },
-          { e: '⭐', x: -600, y: 1250, z: -2500, s: 120, css: 'filter:drop-shadow(0 0 15px #FFD700);' },
-          { e: '✨', x: 1600, y: 1050, z: -2000, s: 140, css: 'filter:drop-shadow(0 0 10px #FFD700);' },
-          { e: '⭐', x: -1800, y: 1100, z: -1600, s: 110, css: 'filter:drop-shadow(0 0 12px #FFD700);' }
+          { e: '🌙', x: -1600, y: 1350, z: -3500, s: 360, css: 'filter:drop-shadow(0 0 50px #E0F2FE);' },
+          { e: '✨', x: 1200, y: 1500, z: -3200, s: 150, css: 'filter:drop-shadow(0 0 14px #FFD700);' },
+          { e: '⭐', x: -800, y: 1450, z: -2900, s: 130, css: 'filter:drop-shadow(0 0 16px #FFD700);' },
+          { e: '✨', x: 2000, y: 1250, z: -2400, s: 150, css: 'filter:drop-shadow(0 0 12px #FFD700);' },
+          { e: '⭐', x: -2200, y: 1300, z: -2000, s: 130, css: 'filter:drop-shadow(0 0 14px #FFD700);' }
         ]
       : (effTime === 'sunset'
         ? [
-            { e: '🌅', x: -1200, y: 700, z: -3000, s: 380, css: 'filter:drop-shadow(0 0 45px #F97316);' },
-            { e: '⛅', x: 800, y: 950, z: -2800, s: 400, css: 'filter:sepia(0.5) hue-rotate(-20deg);' },
-            { e: '☁️', x: -400, y: 1100, z: -2500, s: 330, css: 'filter:sepia(0.4) hue-rotate(-25deg);' },
-            { e: '✨', x: 1400, y: 1200, z: -2200, s: 100, css: 'filter:drop-shadow(0 0 10px #FFD700);' }
+            { e: '🌅', x: -1500, y: 800, z: -3400, s: 420, css: 'filter:drop-shadow(0 0 50px #F97316);' },
+            { e: '⛅', x: 1000, y: 1150, z: -3100, s: 440, css: 'filter:sepia(0.5) hue-rotate(-20deg);' },
+            { e: '☁️', x: -500, y: 1300, z: -2800, s: 360, css: 'filter:sepia(0.4) hue-rotate(-25deg);' },
+            { e: '✨', x: 1600, y: 1400, z: -2500, s: 120, css: 'filter:drop-shadow(0 0 12px #FFD700);' }
           ]
         : [
-            { e: '☀️', x: -1500, y: 1250, z: -3200, s: 320, css: 'filter:drop-shadow(0 0 35px #FFD700);' },
-            { e: '☁️', x: 900, y: 1000, z: -2900, s: 420, css: '' },
-            { e: '☁️', x: -600, y: 1150, z: -2600, s: 340, css: '' },
-            { e: '☁️', x: 1700, y: 900, z: -1800, s: 300, css: '' }
+            { e: '☀️', x: -1800, y: 1450, z: -3600, s: 360, css: 'filter:drop-shadow(0 0 40px #FFD700);' },
+            { e: '☁️', x: 1100, y: 1200, z: -3300, s: 460, css: '' },
+            { e: '☁️', x: -700, y: 1350, z: -3000, s: 380, css: '' },
+            { e: '☁️', x: 1900, y: 1100, z: -2200, s: 340, css: '' }
           ]);
 
     skyProps.forEach((s) => world.appendChild(S(s.x, -s.y, s.z, s.s, s.e, 'opacity:.95;' + (s.css || ''))));
 
-    // Edificios
+    // Renderizar los 18 Edificios
     W3D_BUILDINGS.forEach((b) => {
       const hw = b.w / 2, hd = b.d / 2, cy = -b.h / 2;
       const bFilter = effTime === 'night' ? 'brightness(.75);' : (effTime === 'sunset' ? 'brightness(.95) sepia(.2);' : '');
@@ -3074,7 +3389,7 @@ class Component extends DCLogic {
       });
 
       const sign = P(b.w * 0.82, 54, 'translate3d(' + b.x + 'px,' + (-b.h - 6) + 'px,' + fz + 'px)' + rot,
-        'background:#FFF6E9;border:4px solid #2B1B4D;box-sizing:border-box;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:8px;font-family:\'Baloo 2\',sans-serif;font-weight:800;font-size:19px;color:#2B1B4D;transition:box-shadow .25s,background .25s;');
+        'background:#FFF6E9;border:4px solid #2B1B4D;box-sizing:border-box;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:8px;font-family:\'Baloo 2\',sans-serif;font-weight:800;font-size:18px;color:#2B1B4D;transition:box-shadow .25s,background .25s;');
       sign.textContent = b.emoji + ' ' + b.label;
       sign.dataset.id = b.id;
       world.appendChild(sign);
@@ -3083,6 +3398,28 @@ class Component extends DCLogic {
       const hit = P(b.w, b.h, 'translate3d(' + b.x + 'px,' + cy + 'px,' + (fz + front * 2) + 'px)' + rot, 'background:rgba(0,0,0,0);cursor:pointer;');
       hit.addEventListener('click', () => this.openPlazaBuilding(b.id));
       world.appendChild(hit);
+    });
+
+    // Flota de 7 Vehículos Terrestres
+    W3D_VEHICLES_DEF.forEach((v) => {
+      const el = S(0, -8, 0, 78, v.emoji, 'cursor:pointer;filter:drop-shadow(2px 5px 4px rgba(43,27,77,0.5));');
+      el.addEventListener('click', () => {
+        playSfx('tomatgol_kick');
+        this.showToast('🚗 ¡Vehículo Nacional: ' + v.name + ' tocando bocina patriótica!');
+      });
+      this.vehicleEls.push({ el, cfg: v });
+      world.appendChild(el);
+    });
+
+    // Tráfico Aéreo (Helicóptero, Avioneta, Dirigible)
+    W3D_AIR_DEF.forEach((a) => {
+      const el = S(0, -a.y, 0, a.id === 'blimp' ? 140 : 100, a.emoji, 'cursor:pointer;filter:drop-shadow(0 20px 25px rgba(43,27,77,0.3));');
+      el.addEventListener('click', () => {
+        playSfx('relic_chime');
+        this.showToast('✈️ ¡Vuelo Cívico: ' + a.name + ' saludando a la República!');
+      });
+      this.airEls.push({ el, cfg: a });
+      world.appendChild(el);
     });
 
     // Farolas con iluminación de suelo y halos dinámicos
@@ -3102,22 +3439,10 @@ class Component extends DCLogic {
       }
     });
 
-    // Muro perimetral
-    for (let i = -6; i <= 6; i++) {
-      [-1, 1].forEach((sgn) => {
-        const h = 150 + ((i + 7) % 3) * 60;
-        world.appendChild(P(240, h, 'translate3d(' + (i * 250) + 'px,' + (-h / 2) + 'px,' + (sgn * 1650) + 'px)' + (sgn === 1 ? ' rotateY(180deg)' : ''),
-          'background:#c39a63;border:4px solid #2B1B4D;box-sizing:border-box;background-image:repeating-linear-gradient(90deg, rgba(43,27,77,.18) 0 3px, rgba(0,0,0,0) 3px 40px);'));
-        world.appendChild(P(240, h, 'translate3d(' + (sgn * 1650) + 'px,' + (-h / 2) + 'px,' + (i * 250) + 'px) rotateY(' + (sgn * 90) + 'deg)',
-          'background:#b98d57;border:4px solid #2B1B4D;box-sizing:border-box;background-image:repeating-linear-gradient(90deg, rgba(43,27,77,.18) 0 3px, rgba(0,0,0,0) 3px 40px);'));
-      });
-    }
-
     // Decorados
     W3D_PROPS.forEach((p) => world.appendChild(S(p.x, 0, p.z, p.s, p.e)));
 
-    // NPCs en la Plaza con cuerpo completo
-    // NPCs históricos en la Plaza con cuerpo completo
+    // NPCs históricos en la Plaza
     W3D_NPCS.forEach((npc) => {
       const el = S(npc.x, 0, npc.z, npc.s, npc.spriteSvg || npc.emoji, 'cursor:pointer;', npc.w || npc.s, npc.h || npc.s);
       el.addEventListener('click', () => this.talkToNpc(npc.id));
@@ -3125,7 +3450,15 @@ class Component extends DCLogic {
       world.appendChild(el);
     });
 
-    // Amigos y Amigas Registrados en la Plaza (Cuerpo completo + Cartelito de Identificación estilo 90s)
+    // Incursiones Disney (Mickey, Donald, Goofy)
+    DISNEY_INCURSIONS.forEach((d) => {
+      const el = S(d.x, 0, d.z, 150, d.emoji, 'cursor:pointer;', 100, 150);
+      el.addEventListener('click', () => this.talkToDisney(d));
+      this.npcEls.push({ el, cfg: { ...d, isDisney: true } });
+      world.appendChild(el);
+    });
+
+    // Amigos y Amigas Registrados en la Plaza
     const allFriends = [];
     if (this.state.secondCitizen) {
       allFriends.push({
@@ -3136,7 +3469,7 @@ class Component extends DCLogic {
         pants: '#1E293B',
         x: 140, z: -220,
         role: 'Ciudadano Aliado',
-        text: '¡Hola! Qué alegría encontrarnos en la Plaza. ¿Vamos a la Aduana a firmar el Tratado Bilateral de Amistad o pateamos unos penales en Tomat-Gol?'
+        text: '¡Hola! Qué alegría encontrarnos en la Ciudad. ¿Vamos a la Notaría o volamos desde el Aeropuerto?'
       });
     }
     DEFAULT_PLAZA_FRIENDS.forEach((f) => allFriends.push(f));
@@ -3183,20 +3516,20 @@ class Component extends DCLogic {
 
     this.locEl = mk('top:12px;left:12px;background:#2B1B4Dd9;color:#FFF6E9;padding:7px 14px;' +
       'border-radius:999px;font-family:\'Baloo 2\',sans-serif;font-weight:800;font-size:13px;pointer-events:none;');
-    this.locEl.textContent = '📍 Plaza de Jujalandia';
+    this.locEl.textContent = '📍 Gran Ciudad de Jujalandia';
 
-    const mini = mk('top:12px;right:12px;width:104px;height:104px;background:#FFF6E9d9;' +
+    const mini = mk('top:12px;right:12px;width:120px;height:120px;background:#FFF6E9e6;' +
       'border:3px solid #2B1B4D;border-radius:12px;pointer-events:none;overflow:hidden;');
     W3D_BUILDINGS.forEach((b) => {
       const d = document.createElement('div');
-      const s = 104 / (W3D.bound * 2.4);
-      d.style.cssText = 'position:absolute;width:16px;height:16px;border-radius:4px;border:2px solid #2B1B4D;' +
+      const s = 120 / (W3D.bound * 2.2);
+      d.style.cssText = 'position:absolute;width:14px;height:14px;border-radius:3px;border:1.5px solid #2B1B4D;' +
         'box-sizing:border-box;background:' + b.wall + ';' +
-        'left:' + (52 + b.x * s - 8) + 'px;top:' + (52 + b.z * s - 8) + 'px;';
+        'left:' + (60 + b.x * s - 7) + 'px;top:' + (60 + b.z * s - 7) + 'px;';
       mini.appendChild(d);
     });
     const fountainDot = document.createElement('div');
-    fountainDot.style.cssText = 'position:absolute;left:47px;top:47px;width:10px;height:10px;border-radius:50%;background:#7fd8ea;border:2px solid #2B1B4D;box-sizing:border-box;';
+    fountainDot.style.cssText = 'position:absolute;left:55px;top:55px;width:10px;height:10px;border-radius:50%;background:#7fd8ea;border:2px solid #2B1B4D;box-sizing:border-box;';
     mini.appendChild(fountainDot);
     this.miniDot = document.createElement('div');
     this.miniDot.style.cssText = 'position:absolute;width:0;height:0;border-left:6px solid transparent;' +
@@ -3256,6 +3589,8 @@ class Component extends DCLogic {
       this.openPlazaBuilding(this.near3d);
     } else if (this.nearTargetType === 'npc' && this.nearTargetData) {
       this.talkToNpc(this.nearTargetData.id);
+    } else if (this.nearTargetType === 'disney' && this.nearTargetData) {
+      this.talkToDisney(this.nearTargetData);
     } else if (this.nearTargetType === 'friend' && this.nearTargetData) {
       this.talkToFriend(this.nearTargetData);
     } else if (this.nearTargetType === 'walker') {
@@ -3278,6 +3613,11 @@ class Component extends DCLogic {
     this.setState({ plazaView: 'walk' });
   };
 
+  talkToDisney = (char) => {
+    playSfx('relic_chime');
+    this.setState({ activeNpc: char, npcReply: null });
+  };
+
   talkToNpc = (npcId) => {
     const npc = W3D_NPCS.find((n) => n.id === npcId);
     if (!npc) return;
@@ -3298,7 +3638,6 @@ class Component extends DCLogic {
     const newPats = this.state.patCount + 1;
     this.setState({ patCount: newPats });
     try { localStorage.setItem('jj-pats', newPats.toString()); } catch (e) {}
-    this.unlockStamp('jujapeluda');
     this.showToast('¡Acariciaste a la Jujapeluda! 🐾 Caricias nacionales: ' + newPats);
   };
 
@@ -3311,7 +3650,6 @@ class Component extends DCLogic {
       'Quien riega en silencio los sábados, festeja los domingos.'
     ];
     const fortune = fortunes[Math.floor(Math.random() * fortunes.length)];
-    this.unlockStamp('fuente');
     this.showToast('⛲ Oráculo del Tomate: "' + fortune + '"');
   };
 
@@ -3389,6 +3727,24 @@ class Component extends DCLogic {
       el.style.transform = 'translate3d(' + el.dataset.x + 'px,' + el.dataset.y + 'px,' + el.dataset.z + 'px) ' + face;
     }
 
+    // Animación de vehículos en las calles
+    for (let i = 0; i < this.vehicleEls.length; i++) {
+      const v = this.vehicleEls[i], c = v.cfg;
+      const a = c.ph + cam.t * c.speed;
+      v.el.dataset.x = Math.cos(a) * c.rx;
+      v.el.dataset.z = Math.sin(a) * c.rz;
+      v.el.dataset.y = -8;
+    }
+
+    // Animación de tráfico aéreo
+    for (let i = 0; i < this.airEls.length; i++) {
+      const a = this.airEls[i], c = a.cfg;
+      const angle = c.ph + cam.t * c.speed;
+      a.el.dataset.x = Math.cos(angle) * c.radius;
+      a.el.dataset.z = Math.sin(angle) * c.radius;
+      a.el.dataset.y = -(c.y + Math.sin(cam.t * 0.03) * 20);
+    }
+
     for (let i = 0; i < this.walkerEls.length; i++) {
       const w = this.walkerEls[i], c = w.cfg;
       const a = c.ph + cam.t * c.sp;
@@ -3403,21 +3759,21 @@ class Component extends DCLogic {
     }
 
     if (this.miniDot) {
-      const s = 104 / (W3D.bound * 2.4);
-      this.miniDot.style.left = (52 + cam.x * s - 6) + 'px';
-      this.miniDot.style.top = (52 + cam.z * s - 7) + 'px';
+      const s = 120 / (W3D.bound * 2.2);
+      this.miniDot.style.left = (60 + cam.x * s - 6) + 'px';
+      this.miniDot.style.top = (60 + cam.z * s - 7) + 'px';
       this.miniDot.style.transform = 'rotate(' + (180 - cam.yaw) + 'deg)';
     }
 
-    // Check interaction targets: Building door, NPC, Walker, Fountain
+    // Check interaction targets: Building door, NPC, Disney, Walker, Fountain
     let targetType = null;
     let targetId = null;
     let targetData = null;
     let promptText = '';
-    let locText = '📍 Plaza de Jujalandia';
+    let locText = '📍 Gran Ciudad de Jujalandia';
 
-    // 1. Buildings
-    let bestD = 520;
+    // 1. Buildings (18 edificios)
+    let bestD = 540;
     for (let i = 0; i < W3D_BUILDINGS.length; i++) {
       const b = W3D_BUILDINGS[i];
       const front = b.z < 0 ? 1 : -1;
@@ -3433,7 +3789,7 @@ class Component extends DCLogic {
       locText = '📍 ' + b.label;
     }
 
-    // 2. NPCs y Amigos Registrados (si no hay puerta más cercana)
+    // 2. NPCs, Disney y Amigos Registrados
     if (!targetType) {
       let bestNpcD = 380;
       for (let i = 0; i < this.npcEls.length; i++) {
@@ -3443,10 +3799,10 @@ class Component extends DCLogic {
         const d = Math.sqrt(vx * vx + vz * vz);
         if (d < bestNpcD && (vx / (d || 1)) * fx + (vz / (d || 1)) * fz > 0.4) {
           bestNpcD = d;
-          targetType = npc.isFriend ? 'friend' : 'npc';
+          targetType = npc.isDisney ? 'disney' : (npc.isFriend ? 'friend' : 'npc');
           targetData = npc;
           const em = npc.avatar || npc.emoji || '🍅';
-          promptText = em + '  Hablar con ' + npc.name + ' (' + npc.role + ')  ⏎';
+          promptText = em + '  Hablar con ' + npc.name + ' (' + (npc.role || 'Visitante') + ')  ⏎';
           locText = '📍 ' + npc.name;
         }
       }
@@ -3494,6 +3850,129 @@ class Component extends DCLogic {
       s.style.background = on ? '#FFC93C' : '#FFF6E9';
       s.style.boxShadow = on ? '0 0 26px 8px rgba(255,201,60,.9)' : '0 0 0 rgba(255,201,60,0)';
     }
+  };
+
+  // ============ METODOS DE LOS 18 EDIFICIOS ============
+
+  claimStamp = (stampId, toastMsg) => {
+    this.unlockStamp(stampId);
+    playSfx('passport_stamp');
+    this.showToast(toastMsg || '¡Sello oficial obtenido!');
+  };
+
+  printBancoBill = () => {
+    playSfx('relic_chime');
+    this.setState({ bancoBillPrinted: true });
+    this.claimStamp('banco', '💵 ¡Emitiste tu Billete Oficial de 100 Tomatines!');
+  };
+
+  testHospitalReflex = () => {
+    playSfx('tomatgol_kick');
+    this.showToast('🔨 ¡Reflejos óptimos! El mate está en la temperatura ideal.');
+  };
+
+  issueHospitalCert = () => {
+    playSfx('fountain_magic');
+    this.setState({ hospitalCertIssued: true });
+    this.claimStamp('hospital', '🏥 ¡Certificado Médico de Inmunidad Total a Disney emitido!');
+  };
+
+  issueNotariaDeed = () => {
+    playSfx('passport_stamp');
+    this.setState({ notariaDeedIssued: true });
+    this.claimStamp('notaria', '⚖️ ¡Escritura Notarial de tu Caja de Cartón legalizada!');
+  };
+
+  buyTiendaItem = (item) => {
+    playSfx('correo_stamp');
+    this.setState((s) => ({
+      tiendaBoughtItems: [...s.tiendaBoughtItems, item.id]
+    }));
+    this.claimStamp('tienda', '🎁 ¡Adquiriste ' + item.name + ' con crédito moral!');
+  };
+
+  makeCarabinerosDenuncia = () => {
+    playSfx('kiosco_headline');
+    this.claimStamp('carabineros', '👮 ¡Denuncia asentada en el Libro Moral de Carabineros!');
+  };
+
+  castAlcaldiaVote = (option) => {
+    playSfx('card_match');
+    this.setState({ alcaldiaVote: option });
+    this.claimStamp('alcaldia', '🗳️ ¡Votaste ' + option + ' en el Plebiscito de la Alcaldía!');
+  };
+
+  signHonorBook = () => {
+    playSfx('passport_stamp');
+    this.setState({ honorBookSigned: true });
+    this.claimStamp('alcaldia', '📖 ¡Firmaste el Libro de Honor de la República!');
+  };
+
+  scanSagSeed = () => {
+    playSfx('fountain_magic');
+    this.setState({ sagScanned: true });
+    this.claimStamp('sag', '🌾 ¡Semilla analizada y certificada por el SAG!');
+  };
+
+  declareAduanaLuggage = () => {
+    playSfx('passport_stamp');
+    this.setState({ aduanaDeclared: true });
+    this.claimStamp('aduana', '🛂 ¡Declaración jurada aprobada en la Aduana de Ultramar!');
+  };
+
+  requestDisneyVisa = () => {
+    playSfx('card_flip');
+    this.setState({ disneyVisaRequested: true });
+    this.claimStamp('embajada_disney', '🏰 ¡Mickey te otorgó una visa clandestina con descuento!');
+  };
+
+  toggleChurchCandle = (idx) => {
+    playSfx('fountain_magic');
+    this.setState((s) => {
+      const copy = [...s.churchCandles];
+      copy[idx] = !copy[idx];
+      return { churchCandles: copy };
+    });
+    this.claimStamp('iglesia', '🕯️ ¡Encendiste una vela por la cosecha familiar!');
+  };
+
+  ringChurchBell = () => {
+    playSfx('relic_chime');
+    this.showToast('🔔 ¡Las campanas de la Capilla bendicen los huertos familiares!');
+  };
+
+  playTeatroSolo = () => {
+    playSfx('npc_musso');
+    this.claimStamp('teatro', '🎸 ¡Roberto Musso deslumbró con un riff patriótico 8-bit!');
+  };
+
+  applaudTeatro = () => {
+    playSfx('tomatgol_goal');
+    this.setState({ teatroApplauded: true });
+    this.showToast('👏 ¡La platea del Gran Teatro ovaciona de pie!');
+  };
+
+  issueCivilCert = () => {
+    playSfx('passport_stamp');
+    this.setState({ civilCertIssued: true });
+    this.claimStamp('registro_civil', '📋 ¡Acta de parentesco con las 41 Jujapeludas emitida!');
+  };
+
+  generateBoardingPass = () => {
+    playSfx('passport_stamp');
+    this.setState({ boardingPassIssued: true });
+    this.claimStamp('aeropuerto', '🎫 ¡Boarding Pass del Vuelo JJ-01 a los Valles del Norte listo!');
+  };
+
+  triggerFireAlarm = () => {
+    playSfx('tomatgol_kick');
+    this.showToast('🚨 ¡Sirena de Bomberos sonando en toda Nueva Juja!');
+  };
+
+  waterTomatoes = () => {
+    playSfx('fountain_magic');
+    this.setState({ tomatoesWatered: true });
+    this.claimStamp('bomberos', '💦 ¡Huertos regados con manguera de alta presión!');
   };
 
   // Kiosco Handlers
@@ -4165,7 +4644,7 @@ class Component extends DCLogic {
     const page = this.state.page;
     const plazaView = this.state.plazaView;
     const navDefs = [
-      ['hero', 'Inicio'], ['historia', 'Historia'], ['gobierno', 'Gobierno'],
+      ['hero', 'Inicio'], ['plaza', '🏙️ La Ciudad'], ['historia', 'Historia'], ['gobierno', 'Gobierno'],
       ['cultura', 'Cultura'], ['naturaleza', 'Naturaleza'], ['exterior', 'Exterior'],
       ['turismo', 'Turismo'], ['comics', 'Cómics'], ['juegos', 'Juegos'], ['leyes', 'Leyes'], ['inmigracion', 'Ciudadanía']
     ];
@@ -4531,15 +5010,106 @@ class Component extends DCLogic {
       speechBubbleText: this.state.speechBubbleText || '',
       activeCitizensCount: (this.state.secondCitizen ? 1 : 0) + DEFAULT_PLAZA_FRIENDS.length + 1,
 
-      // Plaza 3D & Modes
+      // Plaza Full-Screen & 18 Buildings Modes
+      isPlaza: page === 'plaza',
+      goPlaza: () => this.setPage('plaza'),
       plazaModeIsWalk: plazaView === 'walk',
       plazaModeIsKiosco: plazaView === 'kiosco',
-      plazaModeIsCorreo: plazaView === 'correo',
       plazaModeIsCultural: plazaView === 'cultural',
+      plazaModeIsCorreo: plazaView === 'correo',
       plazaModeIsMuseo: plazaView === 'museo',
+      plazaModeIsBanco: plazaView === 'banco',
+      plazaModeIsHospital: plazaView === 'hospital',
+      plazaModeIsNotaria: plazaView === 'notaria',
+      plazaModeIsTienda: plazaView === 'tienda',
+      plazaModeIsCarabineros: plazaView === 'carabineros',
+      plazaModeIsAlcaldia: plazaView === 'alcaldia',
+      plazaModeIsSag: plazaView === 'sag',
+      plazaModeIsAduana: plazaView === 'aduana',
+      plazaModeIsEmbajadaDisney: plazaView === 'embajada_disney',
+      plazaModeIsIglesia: plazaView === 'iglesia',
+      plazaModeIsTeatro: plazaView === 'teatro',
+      plazaModeIsRegistroCivil: plazaView === 'registro_civil',
+      plazaModeIsAeropuerto: plazaView === 'aeropuerto',
+      plazaModeIsBomberos: plazaView === 'bomberos',
       exitPlazaInterior: this.exitPlazaInterior,
       stampsCount: this.state.stamps.length,
       passportStampsBadges,
+
+      // Banco
+      printBancoBill: this.printBancoBill,
+      hasBancoBill: this.state.bancoBillPrinted,
+      claimBancoStamp: () => this.claimStamp('banco', '🏦 ¡Sellaste tu pasaporte en el Banco Central!'),
+
+      // Hospital
+      testHospitalReflex: this.testHospitalReflex,
+      issueHospitalCert: this.issueHospitalCert,
+      claimHospitalStamp: () => this.claimStamp('hospital', '🏥 ¡Sellaste tu pasaporte en el Hospital General!'),
+
+      // Notaria
+      issueNotariaDeed: this.issueNotariaDeed,
+      claimNotariaStamp: () => this.claimStamp('notaria', '⚖️ ¡Sellaste tu pasaporte en la Notaría Moral!'),
+
+      // Tienda Souvenirs
+      tiendaItemsList: [
+        { id: 'llavero', name: 'Llavero de Tomate 3D', emoji: '🍅', desc: 'Miniatura con aroma a huerto fresco', onBuy: () => this.buyTiendaItem({ id: 'llavero', name: 'Llavero de Tomate 3D' }) },
+        { id: 'peluche', name: 'Peluche Jujapeluda', emoji: '🐾', desc: 'Edición esponjosa con 41 pelos suaves', onBuy: () => this.buyTiendaItem({ id: 'peluche', name: 'Peluche Jujapeluda' }) },
+        { id: 'postal', name: 'Postal de la Gran Caja', emoji: '📦', desc: 'Estampa oficial de la fundación', onBuy: () => this.buyTiendaItem({ id: 'postal', name: 'Postal de la Gran Caja' }) },
+        { id: 'mate', name: 'Mate Patriótico 82°C', emoji: '🧉', desc: 'Termo grabado por La Tía', onBuy: () => this.buyTiendaItem({ id: 'mate', name: 'Mate Patriótico 82°C' }) },
+        { id: 'pua', name: 'Púa de Guitarra Musso', emoji: '🎸', desc: 'Firmada en el Gran Teatro', onBuy: () => this.buyTiendaItem({ id: 'pua', name: 'Púa de Guitarra Musso' }) },
+        { id: 'orejas', name: 'Orejas de Ratón Cívicas', emoji: '🐭', desc: 'Souvenir confiscado por El Chino', onBuy: () => this.buyTiendaItem({ id: 'orejas', name: 'Orejas de Ratón Cívicas' }) }
+      ],
+      claimTiendaStamp: () => this.claimStamp('tienda', '🛍️ ¡Sellaste tu pasaporte en el Bazar de Souvenirs!'),
+
+      // Carabineros
+      makeCarabinerosDenuncia: this.makeCarabinerosDenuncia,
+      claimCarabinerosStamp: () => this.claimStamp('carabineros', '👮 ¡Sellaste tu pasaporte en Carabineros Morales!'),
+
+      // Alcaldia
+      voteAlcaldiaSi: () => this.castAlcaldiaVote('SÍ'),
+      voteAlcaldiaNo: () => this.castAlcaldiaVote('NO'),
+      signHonorBook: this.signHonorBook,
+      claimAlcaldiaStamp: () => this.claimStamp('alcaldia', '🏛️ ¡Sellaste tu pasaporte en la Alcaldía!'),
+
+      // SAG
+      scanSagSeed: this.scanSagSeed,
+      claimSagStamp: () => this.claimStamp('sag', '🌾 ¡Sellaste tu pasaporte en el Control SAG!'),
+
+      // Aduana
+      declareAduanaLuggage: this.declareAduanaLuggage,
+      claimAduanaStamp: () => this.claimStamp('aduana', '🛂 ¡Sellaste tu pasaporte en la Aduana de Ultramar!'),
+
+      // Embajada Disney
+      requestDisneyVisa: this.requestDisneyVisa,
+      claimDisneyStamp: () => this.claimStamp('embajada_disney', '🏰 ¡Sellaste tu pasaporte en la Embajada Disney!'),
+      claimEmbajadaDisneyStamp: () => this.claimStamp('embajada_disney', '🏰 ¡Sellaste tu pasaporte en la Embajada Disney!'),
+
+      // Capilla del Tomate
+      churchCandlesList: this.state.churchCandles.map((lit, idx) => ({
+        emoji: lit ? '🕯️' : '🕯️ (Apagada)',
+        style: 'font-size: 26px; padding: 8px 16px; border: 3px solid #2B1B4D; border-radius: 12px; cursor: pointer; background: ' + (lit ? '#FFC93C' : '#e0e0e0') + '; opacity: ' + (lit ? '1' : '0.6') + '; box-shadow: ' + (lit ? '0 0 12px #FFC93C' : 'none') + ';',
+        onClick: () => this.toggleChurchCandle(idx)
+      })),
+      ringChurchBell: this.ringChurchBell,
+      claimIglesiaStamp: () => this.claimStamp('iglesia', '💒 ¡Sellaste tu pasaporte en la Capilla del Tomate!'),
+
+      // Teatro Musso
+      playTeatroSolo: this.playTeatroSolo,
+      applaudTeatro: this.applaudTeatro,
+      claimTeatroStamp: () => this.claimStamp('teatro', '🎸 ¡Sellaste tu pasaporte en el Gran Teatro Musso!'),
+
+      // Registro Civil
+      issueCivilCert: this.issueCivilCert,
+      claimRegistroCivilStamp: () => this.claimStamp('registro_civil', '📋 ¡Sellaste tu pasaporte en el Registro Civil!'),
+
+      // Aeropuerto
+      generateBoardingPass: this.generateBoardingPass,
+      claimAeropuertoStamp: () => this.claimStamp('aeropuerto', '✈️ ¡Sellaste tu pasaporte en el Aeropuerto Internacional!'),
+
+      // Bomberos
+      triggerFireAlarm: this.triggerFireAlarm,
+      waterTomatoes: this.waterTomatoes,
+      claimBomberosStamp: () => this.claimStamp('bomberos', '🚒 ¡Sellaste tu pasaporte en Bomberos Voluntarios!'),
 
       // NPC Dialogs
       hasActiveNpc: !!activeNpc,
@@ -4604,12 +5174,15 @@ class Component extends DCLogic {
       culturalTabRockolaStyle: tabBtnStyle(this.state.culturalTab === 'rockola', '#FFC93C'),
       culturalTabMuralStyle: tabBtnStyle(this.state.culturalTab === 'mural', '#14C8B8'),
       culturalTabComicsStyle: tabBtnStyle(this.state.culturalTab === 'comics', '#FF5A5F'),
+      culturalTabTomatGolStyle: tabBtnStyle(this.state.culturalTab === 'tomatgol', '#10B981'),
       setCulturalTabRockola: () => this.setCulturalTab('rockola'),
       setCulturalTabMural: () => this.setCulturalTab('mural'),
       setCulturalTabComics: () => this.setCulturalTab('comics'),
+      setCulturalTabTomatGol: () => this.setCulturalTab('tomatgol'),
       isCulturalRockola: this.state.culturalTab === 'rockola',
       isCulturalMural: this.state.culturalTab === 'mural',
       isCulturalComics: this.state.culturalTab === 'comics',
+      isCulturalTomatGol: this.state.culturalTab === 'tomatgol',
       rockolaTracks,
       stopRockola: this.stopRockola,
       muralStampOptions,
@@ -4661,6 +5234,7 @@ class Component extends DCLogic {
       tgModeDuoStyle: tabBtnStyle(this.state.tgMode === 'duo', '#FFC93C'),
       setTgModeSingle: this.setTgModeSingle,
       setTgModeDuo: this.setTgModeDuo,
+      tgRound: this.state.tgRound,
       tgP1Name,
       tgP1Score: this.state.tgP1Score,
       tgP2Name,
