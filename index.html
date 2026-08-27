@@ -1273,6 +1273,41 @@
             </div>
           </div>
         </sc-if>
+
+        <!-- INTERIOR 19: 🏫 COLEGIO NACIONAL DE JUJALANDIA -->
+        <sc-if value="{{ plazaModeIsColegio }}" hint-placeholder-val="{{ false }}">
+          <div style="background: #FFF6E9; border: 5px solid #3B82F6; border-radius: 22px; padding: 26px; box-shadow: 8px 8px 0 #2B1B4D; animation: jj-pop 0.3s ease-out;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 4px solid #2B1B4D; padding-bottom: 16px; margin-bottom: 22px;">
+              <div>
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 28px; color: #3B82F6; line-height: 1;">🏫 Colegio Nacional de Jujalandia</div>
+                <div style="font-size: 13px; font-weight: 700; opacity: 0.7; margin-top: 4px;">Escuela Primaria y Secundaria · Aula Magna del Tomate y la Siesta</div>
+              </div>
+              <button onClick="{{ exitPlazaInterior }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 10px 18px; cursor: pointer; box-shadow: 4px 4px 0 #2B1B4D;">🏛️ ← Volver a la Ciudad</button>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+              <div style="background: #1E293B; color: #FFF6E9; border: 4px solid #FFC93C; border-radius: 16px; padding: 20px;">
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; color: #FFC93C; margin-bottom: 10px;">📋 Pizarra de Lección Cívica</div>
+                <div style="font-family: monospace; font-size: 14px; line-height: 1.7; background: #0F172A; padding: 14px; border-radius: 10px; border: 2px dashed #FFC93C; margin-bottom: 12px;">
+                  🍅 Ejercicio N° 1:<br/>
+                  "Si 1 mate rinde 8 cebadas y La Tía ceba a 82°C,<br/>
+                  ¿cuántos minutos dura la siesta obligatoria?"<br/>
+                  👉 Respuesta Oficial: ¡Exactamente 45 minutos!
+                </div>
+                <div style="font-size: 13px; font-weight: 700; opacity: 0.85;">Profesor a cargo: Roberto Musso (Materia: Rima Aplicada)</div>
+              </div>
+              <div style="background: #FFF; border: 4px solid #2B1B4D; border-radius: 16px; padding: 20px; text-align: center;">
+                <div style="font-size: 50px; margin-bottom: 8px;">🔔 🎒 📜</div>
+                <div style="font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; color: #3B82F6; margin-bottom: 8px;">Recreo y Diploma de Excelencia</div>
+                <div style="font-size: 13px; font-weight: 600; opacity: 0.8; margin-bottom: 14px;">Hacé sonar la campana de recreo para que los estudiantes salgan al patio o emití tu Diploma Escolar.</div>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
+                  <button onClick="{{ ringSchoolBell }}" style="background: #FFC93C; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 13px; padding: 8px 14px; cursor: pointer;">🔔 Tocar Timbre de Recreo</button>
+                  <button onClick="{{ issueSchoolDiploma }}" style="background: #14C8B8; color: #2B1B4D; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 13px; padding: 8px 14px; cursor: pointer;">📜 Obtener Diploma</button>
+                  <button onClick="{{ claimColegioStamp }}" style="background: #3B82F6; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 13px; padding: 8px 14px; cursor: pointer;">🏫 Sellar Pasaporte</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
       </sc-if>
     </div>
   </sc-if>
@@ -1701,7 +1736,8 @@ const STAMPS_DEF = [
   { id: 'teatro', name: 'Gala Nacional', emoji: '🎸', color: '#7C3AED' },
   { id: 'registro_civil', name: 'Estado Cívico', emoji: '📋', color: '#06B6D4' },
   { id: 'aeropuerto', name: 'Vuelo Soberano', emoji: '✈️', color: '#0284C7' },
-  { id: 'bomberos', name: 'Protección Viva', emoji: '🚒', color: '#DC2626' }
+  { id: 'bomberos', name: 'Protección Viva', emoji: '🚒', color: '#DC2626' },
+  { id: 'colegio', name: 'Excelencia Escolar', emoji: '🏫', color: '#3B82F6' }
 ];
 
 // ===== Motor 3D de "La Gran Ciudad de Jujalandia" =====
@@ -1726,7 +1762,9 @@ const W3D_BUILDINGS = [
   { id: 'museo', label: 'El Museo', desc: 'Reliquias y trivia histórica', emoji: '🏛️',
     x: 850, z: -600, w: 330, d: 270, h: 300, wall: '#FFF6E9', roof: '#FFC93C', ink: '#2B1B4D' },
 
-  // Anillo Extremo-Norte (Gobierno & Finanzas)
+  // Anillo Extremo-Norte (Gobierno, Finanzas & Educación)
+  { id: 'colegio', label: 'Colegio Nacional', desc: 'Escuela cívica, recreo y timbre', emoji: '🏫',
+    x: -1500, z: -600, w: 380, d: 280, h: 320, wall: '#3B82F6', roof: '#FFC93C', ink: '#FFF6E9' },
   { id: 'banco', label: 'Banco Central', desc: 'Bóveda y Tomatines', emoji: '🏦',
     x: -500, z: -1150, w: 360, d: 270, h: 330, wall: '#10B981', roof: '#2B1B4D', ink: '#FFF6E9' },
   { id: 'alcaldia', label: 'Alcaldía', desc: 'Despacho de Papá y Mamá', emoji: '🏛️',
@@ -1765,20 +1803,97 @@ const W3D_BUILDINGS = [
     x: 1250, z: 1200, w: 360, d: 270, h: 300, wall: '#DC2626', roof: '#2B1B4D', ink: '#FFF6E9' }
 ];
 
+// Circuito de tráfico continuo por las avenidas perimetrales (13200 px de perímetro)
+function getPerimeterRoadPos(dist) {
+  const d = ((dist % 13200) + 13200) % 13200;
+  if (d < 3600) {
+    // Tramo Norte: hacia el Este
+    return { x: -1800 + d, z: -1500, facing: 'east' };
+  } else if (d < 6600) {
+    // Tramo Este: hacia el Sur
+    return { x: 1800, z: -1500 + (d - 3600), facing: 'south' };
+  } else if (d < 10200) {
+    // Tramo Sur: hacia el Oeste
+    return { x: 1800 - (d - 6600), z: 1500, facing: 'west' };
+  } else {
+    // Tramo Oeste: hacia el Norte
+    return { x: -1800, z: 1500 - (d - 10200), facing: 'north' };
+  }
+}
+
 const W3D_VEHICLES_DEF = [
-  { id: 'v_citroneta', name: 'Citroneta Roja de Papá', emoji: '🚗', color: '#EF4444', speed: 0.0035, rx: 1750, rz: 1450, ph: 0 },
-  { id: 'v_fitito', name: 'Fitito Amarillo Cívico', emoji: '🚕', color: '#F59E0B', speed: 0.0042, rx: 1700, rz: 1400, ph: Math.PI * 0.5 },
-  { id: 'v_furgon', name: 'Furgón Tomatero', emoji: '🚐', color: '#10B981', speed: 0.0030, rx: 1800, rz: 1500, ph: Math.PI },
-  { id: 'v_camioneta', name: 'Camioneta 4x4', emoji: '🚙', color: '#3B82F6', speed: 0.0038, rx: 1850, rz: 1550, ph: Math.PI * 1.5 },
-  { id: 'v_patrulla', name: 'Patrulla Carabineros', emoji: '🚓', color: '#1E3A8A', speed: 0.0046, rx: 1650, rz: 1350, ph: Math.PI * 0.25 },
-  { id: 'v_microbus', name: 'Microbús Escolar', emoji: '🚌', color: '#F97316', speed: 0.0024, rx: 1900, rz: 1600, ph: Math.PI * 0.75 },
-  { id: 'v_bomberos', name: 'Autobomba Bomberos', emoji: '🚒', color: '#DC2626', speed: 0.0039, rx: 1780, rz: 1480, ph: Math.PI * 1.25 }
+  { id: 'v_citroneta', name: 'Citroneta Roja', emoji: '🚗', color: '#EF4444', speed: 3.5, offset: 0 },
+  { id: 'v_fitito', name: 'Fitito Amarillo', emoji: '🚕', color: '#F59E0B', speed: 3.5, offset: 1885.7 },
+  { id: 'v_furgon', name: 'Furgón Tomatero', emoji: '🚐', color: '#10B981', speed: 3.5, offset: 3771.4 },
+  { id: 'v_camioneta', name: 'Camioneta 4x4', emoji: '🚙', color: '#3B82F6', speed: 3.5, offset: 5657.1 },
+  { id: 'v_patrulla', name: 'Patrulla Carabineros', emoji: '🚓', color: '#1E3A8A', speed: 3.5, offset: 7542.8 },
+  { id: 'v_microbus', name: 'Microbús Escolar', emoji: '🚌', color: '#F97316', speed: 3.5, offset: 9428.5 },
+  { id: 'v_bomberos', name: 'Autobomba Bomberos', emoji: '🚒', color: '#DC2626', speed: 3.5, offset: 11314.2 }
 ];
 
 const W3D_AIR_DEF = [
   { id: 'heli', name: 'Helicóptero Cívico', emoji: '🚁', y: 380, speed: 0.007, radius: 950, ph: 0 },
   { id: 'avioneta', name: 'Avioneta con Pancarta', emoji: '🛩️', y: 560, speed: 0.0032, radius: 2200, ph: Math.PI * 0.8 },
   { id: 'blimp', name: 'Dirigible del Tomate', emoji: '🎈', y: 720, speed: 0.0012, radius: 1500, ph: Math.PI * 0.3 }
+];
+
+const W3D_STUDENTS_DEF = [
+  {
+    id: 'est_pedrito',
+    name: 'Pedrito',
+    role: 'Estudiante (5to Básico)',
+    emoji: '👦',
+    shirt: '#FFFFFF',
+    pants: '#1E3A8A',
+    cx: -1500, cz: -460, r: 110, sp: 0.007, ph: 0,
+    text: '¡Por fin sonó el timbre del recreo! ¿Tenés un alfajor de tomate o una figurita de la Jujapeluda para cambiar?',
+    options: [
+      { text: 'Darle una semilla de tomate', reply: '¡Gracias! La voy a plantar en el cantero del colegio para la feria de ciencias.' },
+      { text: 'Preguntarle qué materia le gusta más', reply: '¡Recreo y Siesta Cívica! Aunque la clase de Rima con Roberto Musso también está buena.' }
+    ]
+  },
+  {
+    id: 'est_lucia',
+    name: 'Lucía',
+    role: 'Abanderada Escolar',
+    emoji: '👧',
+    shirt: '#FFFFFF',
+    pants: '#1E3A8A',
+    cx: -1380, cz: -580, r: 85, sp: -0.006, ph: 1.5,
+    text: 'La Tía nos tomó lección oral de la Constitución Nacional. Me saqué un 10 por recitar el Artículo del Mate a 82°C sin dudar.',
+    options: [
+      { text: 'Felicitarla por la nota', reply: '¡Gracias! El Consejo Moral me prometió una escarapela dorada para el desfile.' },
+      { text: 'Pedirle que te preste la carpeta', reply: '¡Está prolija con regla y tinta azul! Copiá rápido antes de que toque el timbre.' }
+    ]
+  },
+  {
+    id: 'est_mateo',
+    name: 'Mateo',
+    role: 'Delegado de Deportes',
+    emoji: '🎒',
+    shirt: '#FFC93C',
+    pants: '#1E293B',
+    cx: -1620, cz: -580, r: 125, sp: 0.009, ph: 3.1,
+    text: '¡Salí corriendo para no llegar tarde al partido de Tomat-Gol en el patio techado! ¿Querés jugar un picadito?',
+    options: [
+      { text: 'Patear un penal con él', reply: '¡Gooool de Jujalandia! ¡Qué comba le diste al Tomate!' },
+      { text: 'Decirle que no corra en el pasillo', reply: '¡Ups! La Tía me va a hacer escribir 50 veces "No correré con el termo cargado".' }
+    ]
+  },
+  {
+    id: 'est_sofia',
+    name: 'Sofía',
+    role: 'Delegada de Recreo',
+    emoji: '🎀',
+    shirt: '#FFFFFF',
+    pants: '#9333EA',
+    cx: -1460, cz: -720, r: 95, sp: -0.008, ph: 4.8,
+    text: 'Estamos juntando hojas y ramitas en el patio para armar el mapa gigante de Nueva Juja y sus Valles del Norte.',
+    options: [
+      { text: 'Ayudarla a juntar hojas', reply: '¡Genial! Con estas ramas ya completamos el bosque de la Gran Caja.' },
+      { text: 'Preguntarle la hora de salida', reply: '¡A las 16:30 en punto! Justo cuando la sirena de bomberos anuncia la hora de la merienda.' }
+    ]
+  }
 ];
 
 const DISNEY_INCURSIONS = [
@@ -1860,6 +1975,79 @@ function makeCitizenSpriteSvg(avatar, nickname, shirtColor, pantsColor, bubbleTe
     <circle cx="64" cy="43" r="3" fill="#FF8A8A" opacity="0.6"/>
     <circle cx="50" cy="18" r="9" fill="#FFF6E9" stroke="#2B1B4D" stroke-width="2"/>
     <text x="50" y="22" font-size="11" text-anchor="middle">${avatar || '🍅'}</text>
+  </svg>`;
+}
+
+function makeStudentSpriteSvg(avatar, nickname, shirtColor, pantsColor) {
+  const shirt = shirtColor || '#FFFFFF';
+  const pants = pantsColor || '#1E3A8A';
+  const label = (nickname || 'Estudiante').toUpperCase().slice(0, 16);
+  return `<svg viewBox="0 -28 100 188" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+    <g transform="translate(50, 4)">
+      <rect x="-44" y="-12" width="88" height="15" rx="5" fill="#1E3A8Ae6" stroke="#FFC93C" stroke-width="1.5"/>
+      <text x="0" y="-1" font-family="'Baloo 2', sans-serif" font-size="7" font-weight="900" fill="#FFF6E9" text-anchor="middle">🎒 ${label}</text>
+    </g>
+    <ellipse cx="50" cy="154" rx="32" ry="6" fill="rgba(43,27,77,0.35)"/>
+    <ellipse cx="38" cy="148" rx="10" ry="5" fill="#1E293B" stroke="#2B1B4D" stroke-width="2"/>
+    <ellipse cx="62" cy="148" rx="10" ry="5" fill="#1E293B" stroke="#2B1B4D" stroke-width="2"/>
+    <path d="M33 94 L35 146 L47 146 L49 104 L51 104 L53 146 L65 146 L67 94 Z" fill="${pants}" stroke="#2B1B4D" stroke-width="3"/>
+    <rect x="31" y="58" width="38" height="42" rx="4" fill="${shirt}" stroke="#2B1B4D" stroke-width="3"/>
+    <circle cx="50" cy="68" r="3" fill="#3B82F6"/>
+    <circle cx="50" cy="78" r="3" fill="#3B82F6"/>
+    <!-- Escarapela nacional -->
+    <circle cx="40" cy="66" r="4.5" fill="#38BDF8" stroke="#FFF" stroke-width="1.5"/>
+    <circle cx="40" cy="66" r="2" fill="#FFC93C"/>
+    <!-- Mochila roja a la espalda -->
+    <rect x="22" y="64" width="8" height="26" rx="3" fill="#EF4444" stroke="#2B1B4D" stroke-width="2"/>
+    <rect x="70" y="64" width="8" height="26" rx="3" fill="#EF4444" stroke="#2B1B4D" stroke-width="2"/>
+    <!-- Brazos con carpeta escolar -->
+    <path d="M31 62 L18 82 L28 88" stroke="${shirt}" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <rect x="18" y="82" width="14" height="18" rx="2" fill="#F59E0B" stroke="#2B1B4D" stroke-width="1.5" transform="rotate(15 18 82)"/>
+    <path d="M69 62 L82 82 L74 94" stroke="${shirt}" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <!-- Cabeza -->
+    <circle cx="50" cy="38" r="16" fill="#FED7AA" stroke="#2B1B4D" stroke-width="3"/>
+    <circle cx="43" cy="38" r="2" fill="#2B1B4D"/>
+    <circle cx="57" cy="38" r="2" fill="#2B1B4D"/>
+    <path d="M44 47 Q50 53 56 47" stroke="#2B1B4D" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <circle cx="36" cy="43" r="3" fill="#FF8A8A" opacity="0.6"/>
+    <circle cx="64" cy="43" r="3" fill="#FF8A8A" opacity="0.6"/>
+    <circle cx="50" cy="18" r="9" fill="#FFF6E9" stroke="#2B1B4D" stroke-width="2"/>
+    <text x="50" y="22" font-size="11" text-anchor="middle">${avatar || '🎒'}</text>
+  </svg>`;
+}
+
+function makeVehicleSpriteSvg(v) {
+  const c = v.color || '#EF4444';
+  const label = v.name.slice(0, 16);
+  const isSiren = v.id === 'v_patrulla' || v.id === 'v_bomberos';
+  const sirenHtml = isSiren ? `
+    <rect x="42" y="38" width="16" height="8" rx="3" fill="#3B82F6" stroke="#2B1B4D" stroke-width="2"/>
+    <rect x="50" y="38" width="8" height="8" rx="2" fill="#EF4444"/>
+    <circle cx="50" cy="34" r="5" fill="#FFC93C" opacity="0.9"/>
+  ` : '';
+
+  return `<svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+    <!-- Sombra -->
+    <ellipse cx="50" cy="88" rx="42" ry="8" fill="rgba(15,23,42,0.45)"/>
+    <!-- Ruedas -->
+    <rect x="14" y="74" width="16" height="14" rx="4" fill="#0F172A" stroke="#2B1B4D" stroke-width="2"/>
+    <rect x="70" y="74" width="16" height="14" rx="4" fill="#0F172A" stroke="#2B1B4D" stroke-width="2"/>
+    <circle cx="22" cy="81" r="3" fill="#94A3B8"/>
+    <circle cx="78" cy="81" r="3" fill="#94A3B8"/>
+    <!-- Chasis del Auto -->
+    <path d="M12 76 L14 62 L28 46 L72 46 L86 62 L88 76 Z" fill="${c}" stroke="#2B1B4D" stroke-width="3.5"/>
+    <!-- Parabrisas y Ventanillas -->
+    <path d="M30 48 L46 48 L46 62 L20 62 Z" fill="#BAE6FD" stroke="#2B1B4D" stroke-width="2"/>
+    <path d="M52 48 L68 48 L78 62 L52 62 Z" fill="#BAE6FD" stroke="#2B1B4D" stroke-width="2"/>
+    <!-- Faros Delanteros con Haz de Luz -->
+    <circle cx="84" cy="68" r="5" fill="#FEF08A" stroke="#2B1B4D" stroke-width="1.5"/>
+    <circle cx="16" cy="68" r="4" fill="#EF4444" stroke="#2B1B4D" stroke-width="1.5"/>
+    ${sirenHtml}
+    <!-- Cartelito Identificador -->
+    <g transform="translate(50, 22)">
+      <rect x="-38" y="-10" width="76" height="15" rx="4" fill="#2B1B4D" stroke="#FFC93C" stroke-width="1.5"/>
+      <text x="0" y="1" font-family="'Baloo 2', sans-serif" font-size="7" font-weight="900" fill="#FFF6E9" text-anchor="middle">${v.emoji} ${label}</text>
+    </g>
   </svg>`;
 }
 
@@ -2597,6 +2785,186 @@ function playSfx(type) {
         osc.start(t + 0.28 + i * 0.08);
         osc.stop(t + 0.28 + i * 0.08 + 0.3);
       });
+    } else if (type === 'school_bell') {
+      [523.25, 659.25, 783.99, 1046.50, 1318.51].forEach((f, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(f, t + i * 0.1);
+        gain.gain.setValueAtTime(0.18, t + i * 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.1 + 0.4);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t + i * 0.1);
+        osc.stop(t + i * 0.1 + 0.4);
+      });
+    }
+  } catch (e) {}
+}
+
+function playSpatialAmbient(type, volume) {
+  if (soundMutedGlobal) return;
+  const v = Math.max(0.01, Math.min(0.2, volume || 0.08));
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    if (ctx.state === 'suspended') ctx.resume();
+    const t = ctx.currentTime;
+
+    if (type === 'school') {
+      [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(f, t + i * 0.12);
+        gain.gain.setValueAtTime(v * 0.8, t + i * 0.12);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.12 + 0.3);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t + i * 0.12);
+        osc.stop(t + i * 0.12 + 0.3);
+      });
+    } else if (type === 'airport') {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(750, t);
+      osc.frequency.exponentialRampToValueAtTime(120, t + 0.75);
+      gain.gain.setValueAtTime(v * 0.5, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.75);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.75);
+    } else if (type === 'fire') {
+      [680, 520].forEach((f, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(f, t + i * 0.22);
+        gain.gain.setValueAtTime(v * 0.6, t + i * 0.22);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.22 + 0.28);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t + i * 0.22);
+        osc.stop(t + i * 0.22 + 0.28);
+      });
+    } else if (type === 'hospital') {
+      [0, 0.16].forEach((off) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, t + off);
+        gain.gain.setValueAtTime(v * 0.7, t + off);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + off + 0.08);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t + off);
+        osc.stop(t + off + 0.08);
+      });
+    } else if (type === 'church') {
+      [220, 330, 440].forEach((f) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(f, t);
+        gain.gain.setValueAtTime(v * 0.7, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 1.1);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t);
+        osc.stop(t + 1.1);
+      });
+    } else if (type === 'teatro') {
+      [164.81, 220, 277.18, 329.63].forEach((f, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(f, t + i * 0.04);
+        gain.gain.setValueAtTime(v * 0.7, t + i * 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.04 + 0.35);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t + i * 0.04);
+        osc.stop(t + i * 0.04 + 0.35);
+      });
+    } else if (type === 'carabineros') {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(920, t);
+      osc.frequency.setValueAtTime(1380, t + 0.05);
+      gain.gain.setValueAtTime(v * 0.45, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.15);
+    } else if (type === 'banco') {
+      [1800, 2400].forEach((f, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(f, t + i * 0.08);
+        gain.gain.setValueAtTime(v * 0.55, t + i * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.08 + 0.18);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t + i * 0.08);
+        osc.stop(t + i * 0.08 + 0.18);
+      });
+    } else if (type === 'fountain') {
+      [440, 580, 720].forEach((f, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(f + Math.random() * 40, t + i * 0.05);
+        gain.gain.setValueAtTime(v * 0.35, t + i * 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.05 + 0.12);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t + i * 0.05);
+        osc.stop(t + i * 0.05 + 0.12);
+      });
+    } else if (type === 'nature') {
+      [1200, 1600, 1400].forEach((f, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(f, t + i * 0.06);
+        gain.gain.setValueAtTime(v * 0.35, t + i * 0.06);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.06 + 0.1);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t + i * 0.06);
+        osc.stop(t + i * 0.06 + 0.1);
+      });
+    } else if (type === 'disney') {
+      [587, 740, 880, 1174].forEach((f, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(f, t + i * 0.08);
+        gain.gain.setValueAtTime(v * 0.45, t + i * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.08 + 0.18);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t + i * 0.08);
+        osc.stop(t + i * 0.08 + 0.18);
+      });
+    } else if (type === 'traffic') {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(80, t);
+      osc.frequency.setValueAtTime(95, t + 0.2);
+      gain.gain.setValueAtTime(v * 0.4, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.4);
     }
   } catch (e) {}
 }
@@ -2836,6 +3204,7 @@ class Component extends DCLogic {
     civilCertIssued: false,
     boardingPassIssued: false,
     tomatoesWatered: false,
+    schoolDiplomaIssued: false,
 
     // Kiosco state
     kioscoTab: 'diario',
@@ -3273,6 +3642,7 @@ class Component extends DCLogic {
     this.balloonEls = [];
     this.signEls = [];
     this.npcEls = [];
+    this.studentEls = [];
     this.vehicleEls = [];
     this.airEls = [];
 
@@ -3400,14 +3770,24 @@ class Component extends DCLogic {
       world.appendChild(hit);
     });
 
-    // Flota de 7 Vehículos Terrestres
+    // Flota de 7 Vehículos Terrestres con Sprite Vectorial y Faros
     W3D_VEHICLES_DEF.forEach((v) => {
-      const el = S(0, -8, 0, 78, v.emoji, 'cursor:pointer;filter:drop-shadow(2px 5px 4px rgba(43,27,77,0.5));');
+      const spriteSvg = makeVehicleSpriteSvg(v);
+      const el = S(0, -8, 0, 96, spriteSvg, 'cursor:pointer;filter:drop-shadow(2px 5px 4px rgba(43,27,77,0.5));', 96, 96);
       el.addEventListener('click', () => {
         playSfx('tomatgol_kick');
-        this.showToast('🚗 ¡Vehículo Nacional: ' + v.name + ' tocando bocina patriótica!');
+        this.showToast('🚗 ¡Vehículo Nacional: ' + v.name + ' tocando bocina!');
       });
       this.vehicleEls.push({ el, cfg: v });
+      world.appendChild(el);
+    });
+
+    // Estudiantes del Colegio Nacional en el Patio Escolar
+    W3D_STUDENTS_DEF.forEach((st) => {
+      const spriteSvg = makeStudentSpriteSvg(st.emoji, st.name, st.shirt, st.pants);
+      const el = S(st.cx, 0, st.cz, 160, spriteSvg, 'cursor:pointer;', 95, 160);
+      el.addEventListener('click', () => this.talkToStudent(st));
+      this.studentEls.push({ el, cfg: st });
       world.appendChild(el);
     });
 
@@ -3589,6 +3969,8 @@ class Component extends DCLogic {
       this.openPlazaBuilding(this.near3d);
     } else if (this.nearTargetType === 'npc' && this.nearTargetData) {
       this.talkToNpc(this.nearTargetData.id);
+    } else if (this.nearTargetType === 'student' && this.nearTargetData) {
+      this.talkToStudent(this.nearTargetData);
     } else if (this.nearTargetType === 'disney' && this.nearTargetData) {
       this.talkToDisney(this.nearTargetData);
     } else if (this.nearTargetType === 'friend' && this.nearTargetData) {
@@ -3613,6 +3995,11 @@ class Component extends DCLogic {
     this.setState({ plazaView: 'walk' });
   };
 
+  talkToStudent = (st) => {
+    playSfx('school_bell');
+    this.setState({ activeNpc: st, npcReply: null });
+  };
+
   talkToDisney = (char) => {
     playSfx('relic_chime');
     this.setState({ activeNpc: char, npcReply: null });
@@ -3623,6 +4010,40 @@ class Component extends DCLogic {
     if (!npc) return;
     playSfx('npc_' + npcId);
     this.setState({ activeNpc: npc, npcReply: null });
+  };
+
+  updateSpatialAudio = (cam) => {
+    if (soundMutedGlobal || this.state.soundMuted) return;
+    const zones = [
+      { key: 'school', x: -1500, z: -600, r: 560 },
+      { key: 'airport', x: -1250, z: 1200, r: 560 },
+      { key: 'fire', x: 1250, z: 1200, r: 560 },
+      { key: 'hospital', x: -1100, z: 0, r: 540 },
+      { key: 'church', x: -650, z: 600, r: 520 },
+      { key: 'teatro', x: 450, z: -600, r: 520 },
+      { key: 'carabineros', x: -850, z: 1150, r: 520 },
+      { key: 'banco', x: -500, z: -1150, r: 520 },
+      { key: 'fountain', x: 0, z: 0, r: 420 },
+      { key: 'nature', x: -400, z: 1150, r: 500 },
+      { key: 'disney', x: 850, z: 1150, r: 520 }
+    ];
+
+    let bestZone = null;
+    let minD = 99999;
+    for (let i = 0; i < zones.length; i++) {
+      const z = zones[i];
+      const vx = z.x - cam.x, vz = z.z - cam.z;
+      const d = Math.sqrt(vx * vx + vz * vz);
+      if (d < z.r && d < minD) {
+        minD = d;
+        bestZone = { ...z, dist: d };
+      }
+    }
+
+    if (bestZone) {
+      const vol = Math.max(0.02, (1 - bestZone.dist / bestZone.r) * 0.16);
+      playSpatialAmbient(bestZone.key, vol);
+    }
   };
 
   selectNpcOption = (opt) => {
@@ -3727,13 +4148,28 @@ class Component extends DCLogic {
       el.style.transform = 'translate3d(' + el.dataset.x + 'px,' + el.dataset.y + 'px,' + el.dataset.z + 'px) ' + face;
     }
 
-    // Animación de vehículos en las calles
+    // Tráfico de vehículos continuo y fluido en las 4 avenidas perimetrales (13200 px)
     for (let i = 0; i < this.vehicleEls.length; i++) {
       const v = this.vehicleEls[i], c = v.cfg;
-      const a = c.ph + cam.t * c.speed;
-      v.el.dataset.x = Math.cos(a) * c.rx;
-      v.el.dataset.z = Math.sin(a) * c.rz;
+      const dist = (c.offset + cam.t * c.speed) % 13200;
+      const p = getPerimeterRoadPos(dist);
+      v.el.dataset.x = p.x;
+      v.el.dataset.z = p.z;
       v.el.dataset.y = -8;
+    }
+
+    // Estudiantes jugando y caminando por el patio del colegio
+    for (let i = 0; i < this.studentEls.length; i++) {
+      const st = this.studentEls[i], c = st.cfg;
+      const a = c.ph + cam.t * c.sp;
+      st.el.dataset.x = c.cx + Math.cos(a) * c.r;
+      st.el.dataset.z = c.cz + Math.sin(a) * c.r;
+      st.el.dataset.y = -Math.abs(Math.sin(a * 7)) * 10;
+    }
+
+    // Audio Espacial por Sectores cada 75 frames
+    if (cam.t % 75 === 0) {
+      this.updateSpatialAudio(cam);
     }
 
     // Animación de tráfico aéreo
@@ -3765,14 +4201,14 @@ class Component extends DCLogic {
       this.miniDot.style.transform = 'rotate(' + (180 - cam.yaw) + 'deg)';
     }
 
-    // Check interaction targets: Building door, NPC, Disney, Walker, Fountain
+    // Check interaction targets: Building door, Student, NPC, Disney, Walker, Fountain
     let targetType = null;
     let targetId = null;
     let targetData = null;
     let promptText = '';
     let locText = '📍 Gran Ciudad de Jujalandia';
 
-    // 1. Buildings (18 edificios)
+    // 1. Buildings (19 edificios)
     let bestD = 540;
     for (let i = 0; i < W3D_BUILDINGS.length; i++) {
       const b = W3D_BUILDINGS[i];
@@ -3789,7 +4225,26 @@ class Component extends DCLogic {
       locText = '📍 ' + b.label;
     }
 
-    // 2. NPCs, Disney y Amigos Registrados
+    // 2. Estudiantes del Colegio Nacional
+    if (!targetType) {
+      for (let i = 0; i < this.studentEls.length; i++) {
+        const stObj = this.studentEls[i];
+        const st = stObj.cfg;
+        const sx = parseFloat(stObj.el.dataset.x) || st.cx;
+        const sz = parseFloat(stObj.el.dataset.z) || st.cz;
+        const vx = sx - cam.x, vz = sz - cam.z;
+        const d = Math.sqrt(vx * vx + vz * vz);
+        if (d < 320 && (vx / (d || 1)) * fx + (vz / (d || 1)) * fz > 0.35) {
+          targetType = 'student';
+          targetData = st;
+          promptText = st.emoji + '  Hablar con ' + st.name + ' (' + st.role + ')  ⏎';
+          locText = '📍 Colegio — ' + st.name;
+          break;
+        }
+      }
+    }
+
+    // 3. NPCs, Disney y Amigos Registrados
     if (!targetType) {
       let bestNpcD = 380;
       for (let i = 0; i < this.npcEls.length; i++) {
@@ -3808,7 +4263,7 @@ class Component extends DCLogic {
       }
     }
 
-    // 3. Walkers (Jujapeludas)
+    // 4. Walkers (Jujapeludas)
     if (!targetType) {
       for (let i = 0; i < this.walkerEls.length; i++) {
         const w = this.walkerEls[i];
@@ -3824,7 +4279,7 @@ class Component extends DCLogic {
       }
     }
 
-    // 4. Central Fountain
+    // 5. Central Fountain
     if (!targetType) {
       const fd = Math.sqrt(cam.x * cam.x + cam.z * cam.z);
       if (fd < 360) {
@@ -3973,6 +4428,17 @@ class Component extends DCLogic {
     playSfx('fountain_magic');
     this.setState({ tomatoesWatered: true });
     this.claimStamp('bomberos', '💦 ¡Huertos regados con manguera de alta presión!');
+  };
+
+  ringSchoolBell = () => {
+    playSfx('school_bell');
+    this.showToast('🔔 ¡Riiiiiing! ¡Sonó el timbre del recreo en el Colegio Nacional!');
+  };
+
+  issueSchoolDiploma = () => {
+    playSfx('relic_chime');
+    this.setState({ schoolDiplomaIssued: true });
+    this.claimStamp('colegio', '📜 ¡Diploma de Alumno Distinguido de Jujalandia emitido con honores!');
   };
 
   // Kiosco Handlers
@@ -5032,6 +5498,7 @@ class Component extends DCLogic {
       plazaModeIsRegistroCivil: plazaView === 'registro_civil',
       plazaModeIsAeropuerto: plazaView === 'aeropuerto',
       plazaModeIsBomberos: plazaView === 'bomberos',
+      plazaModeIsColegio: plazaView === 'colegio',
       exitPlazaInterior: this.exitPlazaInterior,
       stampsCount: this.state.stamps.length,
       passportStampsBadges,
@@ -5110,6 +5577,11 @@ class Component extends DCLogic {
       triggerFireAlarm: this.triggerFireAlarm,
       waterTomatoes: this.waterTomatoes,
       claimBomberosStamp: () => this.claimStamp('bomberos', '🚒 ¡Sellaste tu pasaporte en Bomberos Voluntarios!'),
+
+      // Colegio Nacional
+      ringSchoolBell: this.ringSchoolBell,
+      issueSchoolDiploma: this.issueSchoolDiploma,
+      claimColegioStamp: () => this.claimStamp('colegio', '🏫 ¡Sellaste tu pasaporte en el Colegio Nacional!'),
 
       // NPC Dialogs
       hasActiveNpc: !!activeNpc,
