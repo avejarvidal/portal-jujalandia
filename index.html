@@ -610,9 +610,10 @@
                 <span>✅ CIUDADANO VERIFICADO: {{ verifiedLabel }}</span>
               </div>
               <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <button onClick="{{ togglePlazaChat }}" style="background: #14C8B8; color: #2B1B4D; border: 2px solid #FFF6E9; border-radius: 8px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 12px; padding: 5px 12px; cursor: pointer;">💬 Chat ({{ chatMessagesCount }})</button>
                 <button onClick="{{ cycleTimeMode }}" style="background: #FFC93C; color: #2B1B4D; border: 2px solid #FFF6E9; border-radius: 8px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 12px; padding: 5px 12px; cursor: pointer;" title="Cambiar hora o seguir hora de Chile">{{ plazaTimeLabel }}</button>
                 <button onClick="{{ toggleSound }}" style="background: {{ soundBtnBg }}; color: #2B1B4D; border: 2px solid #FFF6E9; border-radius: 8px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 12px; padding: 5px 12px; cursor: pointer;">{{ soundBtnLabel }}</button>
-                <div style="background: #14C8B8; color: #2B1B4D; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 800;">🎖️ {{ stampsCount }}/6 SELLOS</div>
+                <div style="background: #FF5A5F; color: #FFF6E9; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 800;">🎖️ {{ stampsCount }}/6 SELLOS</div>
                 <span onClick="{{ logoutCitizen }}" style="cursor: pointer; text-decoration: underline; opacity: 0.8;">cambiar</span>
               </div>
             </div>
@@ -620,11 +621,57 @@
             <!-- MODO CAMINAR EN LA PLAZA 3D -->
             <sc-if value="{{ plazaModeIsWalk }}" hint-placeholder-val="{{ true }}">
               <div ref="{{ sceneRef }}" style="position: relative; border: 5px solid #2B1B4D; border-radius: 22px; overflow: hidden; box-shadow: 8px 8px 0 #2B1B4D; height: 460px; perspective: 720px; perspective-origin: 50% 50%; background: {{ plazaSkyBackground }}; cursor: grab; touch-action: none; user-select: none;">
+                <!-- BURBUJA DE DIÁLOGO FLOTANTE 3D -->
+                <sc-if value="{{ hasSpeechBubble }}" hint-placeholder-val="{{ false }}">
+                  <div style="position: absolute; top: 18px; left: 50%; transform: translateX(-50%); z-index: 20; background: #FFF6E9; border: 4px solid #2B1B4D; border-radius: 18px; padding: 10px 20px; box-shadow: 5px 5px 0 #FFC93C; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 15px; color: #2B1B4D; animation: jj-pop 0.25s ease-out; pointer-events: none; max-width: 85%; text-align: center;">
+                    💬 {{ speechBubbleText }}
+                  </div>
+                </sc-if>
                 <div ref="{{ worldRef }}" style="position: absolute; left: 50%; top: 50%; width: 0; height: 0; transform-style: preserve-3d;"></div>
               </div>
+
+              <!-- CHAT CÍVICO DE LA PLAZA -->
+              <sc-if value="{{ isPlazaChatOpen }}" hint-placeholder-val="{{ true }}">
+                <div style="margin-top: 14px; background: #FFF6E9; border: 4px solid #2B1B4D; border-radius: 18px; padding: 16px; box-shadow: 5px 5px 0 #14C8B8;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                    <div style="display: flex; align-items: center; gap: 8px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 16px; color: #2B1B4D;">
+                      <span>💬 Chat Cívico de la Plaza</span>
+                      <span style="font-size: 11px; background: #14C8B8; color: #2B1B4D; padding: 2px 8px; border-radius: 999px; font-weight: 800;">{{ activeCitizensCount }} ciudadanos paseando</span>
+                    </div>
+                    <button onClick="{{ togglePlazaChat }}" style="background: #2B1B4D; color: #FFF6E9; border: none; border-radius: 6px; font-size: 12px; font-weight: 800; padding: 2px 8px; cursor: pointer;">Ocultar ✕</button>
+                  </div>
+
+                  <!-- Mensajes del Chat -->
+                  <div style="max-height: 140px; overflow-y: auto; background: #2B1B4D; border-radius: 12px; padding: 10px 14px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 6px; border: 3px solid #2B1B4D;">
+                    <sc-for list="{{ plazaChatMessagesList }}" as="msg" hint-placeholder-count="3">
+                      <div style="font-size: 13px; line-height: 1.4; color: #FFF6E9;">
+                        <span style="opacity: 0.55; font-size: 11px; margin-right: 6px;">[{{ msg.time }}]</span>
+                        <span style="font-weight: 800; color: {{ msg.color }}; margin-right: 6px;">{{ msg.avatar }} {{ msg.sender }}:</span>
+                        <span style="font-weight: 600;">{{ msg.text }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+
+                  <!-- Emojis rápidos y barra de entrada -->
+                  <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
+                    <div style="display: flex; gap: 6px;">
+                      <sc-for list="{{ quickChatEmojis }}" as="em" hint-placeholder-count="6">
+                        <button onClick="{{ em.onClick }}" style="background: #FFF6E9; border: 2px solid #2B1B4D; border-radius: 8px; font-size: 15px; padding: 3px 8px; cursor: pointer;">{{ em.emoji }}</button>
+                      </sc-for>
+                    </div>
+                    <div style="font-size: 11px; opacity: 0.65; font-weight: 700;">Tip: Los amigos en la plaza te responden en tiempo real</div>
+                  </div>
+
+                  <div style="display: flex; gap: 8px;">
+                    <input type="text" value="{{ plazaChatInputVal }}" onInput="{{ onPlazaChatInput }}" onKeyDown="{{ onPlazaChatKeyDown }}" placeholder="Escribí un mensaje para los ciudadanos en la Plaza... (Enter)" style="flex: 1; padding: 9px 14px; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 14px; background: #FFF; outline: none;" />
+                    <button onClick="{{ sendPlazaChatMessage }}" style="background: #FF5A5F; color: #FFF6E9; border: 3px solid #2B1B4D; border-radius: 10px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 14px; padding: 0 16px; cursor: pointer; box-shadow: 3px 3px 0 #2B1B4D;">Enviar ✉️</button>
+                  </div>
+                </div>
+              </sc-if>
+
               <div style="margin-top: 12px; font-size: 12px; font-weight: 700; opacity: 0.7; text-align: center; line-height: 1.7;">
                 Teclado: <strong>W A S D</strong> o <strong>flechas</strong> para caminar y girar · <strong>Q</strong>/<strong>E</strong> para desplazarte de costado · <strong>Shift</strong> para correr · <strong>Enter</strong> o <strong>clic</strong> para interactuar / entrar.<br/>
-                Acercate a <strong>La Tía</strong>, a <strong>Roberto Musso</strong>, a <strong>El Chino</strong>, a <strong>Papá</strong>, a <strong>Mamá</strong>, a las <strong>Jujapeludas</strong> o a la <strong>Fuente</strong> para hablar o interactuar.
+                Acercate a <strong>tus amigos y amigas en la plaza</strong>, a <strong>La Tía</strong>, <strong>Musso</strong>, <strong>El Chino</strong>, <strong>Papá</strong>, <strong>Mamá</strong>, a las <strong>Jujapeludas</strong> o a la <strong>Fuente</strong>.
               </div>
 
               <!-- MODAL DIÁLOGO NPC EN LA PLAZA -->
@@ -1494,6 +1541,81 @@ const W3D_BUILDINGS = [
     x: -680, z: 620, w: 320, d: 245, h: 255, wall: '#14C8B8', roof: '#2B1B4D', ink: '#2B1B4D' },
   { id: 'museo', label: 'El Museo', desc: 'Reliquias y trivia histórica', emoji: '🏛️',
     x: 680, z: 620, w: 365, d: 285, h: 310, wall: '#FFF6E9', roof: '#FFC93C', ink: '#2B1B4D' }
+];
+
+function makeCitizenSpriteSvg(avatar, nickname, shirtColor, pantsColor, bubbleText) {
+  const shirt = shirtColor || '#14C8B8';
+  const pants = pantsColor || '#2563EB';
+  const label = (nickname || 'Ciudadano').toUpperCase().slice(0, 18);
+  const bubbleHtml = bubbleText ? `
+    <g transform="translate(10, -22)">
+      <rect x="0" y="0" width="80" height="24" rx="7" fill="#FFF6E9" stroke="#2B1B4D" stroke-width="2.5" filter="drop-shadow(2px 3px 0 #2B1B4D)"/>
+      <polygon points="40,24 46,24 40,29" fill="#FFF6E9" stroke="#2B1B4D" stroke-width="2.5"/>
+      <polygon points="39,23 45,23 41,27" fill="#FFF6E9"/>
+      <text x="40" y="15" font-family="'Baloo 2', sans-serif" font-size="8" font-weight="900" fill="#2B1B4D" text-anchor="middle">${bubbleText.slice(0, 14)}</text>
+    </g>
+  ` : '';
+
+  return `<svg viewBox="0 -28 100 188" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+    ${bubbleHtml}
+    <g transform="translate(50, 4)">
+      <rect x="-44" y="-12" width="88" height="15" rx="5" fill="#2B1B4De6" stroke="#FFC93C" stroke-width="1.5"/>
+      <text x="0" y="-1" font-family="'Baloo 2', sans-serif" font-size="7" font-weight="900" fill="#FFF6E9" text-anchor="middle">${label}</text>
+    </g>
+    <ellipse cx="50" cy="154" rx="34" ry="6" fill="rgba(43,27,77,0.35)"/>
+    <ellipse cx="38" cy="148" rx="10" ry="5" fill="#FF5A5F" stroke="#2B1B4D" stroke-width="2"/>
+    <ellipse cx="62" cy="148" rx="10" ry="5" fill="#FF5A5F" stroke="#2B1B4D" stroke-width="2"/>
+    <path d="M33 94 L35 146 L47 146 L49 104 L51 104 L53 146 L65 146 L67 94 Z" fill="${pants}" stroke="#2B1B4D" stroke-width="3"/>
+    <rect x="33" y="90" width="34" height="6" fill="#1E293B" stroke="#2B1B4D" stroke-width="2"/>
+    <rect x="47" y="90" width="6" height="6" fill="#FFC93C" stroke="#2B1B4D" stroke-width="1.5"/>
+    <rect x="31" y="58" width="38" height="34" rx="5" fill="${shirt}" stroke="#2B1B4D" stroke-width="3"/>
+    <circle cx="50" cy="74" r="7" fill="#FFF6E9"/>
+    <text x="50" y="78" font-size="9" text-anchor="middle">${avatar || '🍅'}</text>
+    <path d="M31 62 L18 82 L26 94" stroke="${shirt}" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <path d="M69 62 L82 82 L74 94" stroke="${shirt}" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <circle cx="50" cy="38" r="17" fill="#FED7AA" stroke="#2B1B4D" stroke-width="3"/>
+    <ellipse cx="50" cy="22" rx="14" ry="8" fill="#573820" stroke="#2B1B4D" stroke-width="2"/>
+    <circle cx="43" cy="38" r="2" fill="#2B1B4D"/>
+    <circle cx="57" cy="38" r="2" fill="#2B1B4D"/>
+    <path d="M44 47 Q50 53 56 47" stroke="#2B1B4D" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <circle cx="36" cy="43" r="3" fill="#FF8A8A" opacity="0.6"/>
+    <circle cx="64" cy="43" r="3" fill="#FF8A8A" opacity="0.6"/>
+    <circle cx="50" cy="18" r="9" fill="#FFF6E9" stroke="#2B1B4D" stroke-width="2"/>
+    <text x="50" y="22" font-size="11" text-anchor="middle">${avatar || '🍅'}</text>
+  </svg>`;
+}
+
+const DEFAULT_PLAZA_FRIENDS = [
+  {
+    id: 'friend_guardian',
+    name: 'Guardián Valiente',
+    avatar: '🍅',
+    shirt: '#10B981',
+    pants: '#1E3A8A',
+    x: 440, z: -260,
+    role: 'Vecino del Huerto',
+    text: '¡Buenas tardes! Estoy acá en el Centro Cultural escuchando el Himno Nacional en la Rockola. Cuidemos los tomates y comamos en familia.'
+  },
+  {
+    id: 'friend_duquesa',
+    name: 'Duquesa Estelar',
+    avatar: '🐾',
+    shirt: '#8B5CF6',
+    pants: '#F59E0B',
+    x: -160, z: 220,
+    role: 'Mascota Diplomática',
+    text: '¡Hola! Las 41 jujapeludas de la Plaza te saludamos con protocolo oficial. Si necesitás caricias o paz cívica, ¡acá estamos!'
+  },
+  {
+    id: 'friend_comandante',
+    name: 'Comandante Gigante',
+    avatar: '👑',
+    shirt: '#F97316',
+    pants: '#1E3A8A',
+    x: -440, z: -260,
+    role: 'Cronista de Jujavisión',
+    text: '¡Saludos patrios! Acabo de mandar un telegrama desde El Correo para felicitar al Consejo Moral por la cosecha de este año.'
+  }
 ];
 
 const NPC_SPRITES = {
@@ -2470,7 +2592,17 @@ class Component extends DCLogic {
 
     // Sound and Chile Time Cycle State
     soundMuted: soundMutedGlobal,
-    plazaTimeMode: 'auto' // 'auto' | 'day' | 'sunset' | 'night'
+    plazaTimeMode: 'auto', // 'auto' | 'day' | 'sunset' | 'night'
+
+    // Plaza Chat & Multiple Friends State
+    plazaChatOpen: true,
+    plazaChatInput: '',
+    speechBubbleText: null,
+    plazaChatMessages: [
+      { id: '1', sender: 'Duquesa Estelar', avatar: '🐾', color: '#14C8B8', text: '¡Bienvenidos a la Plaza de Jujalandia! 🍅', time: '12:00' },
+      { id: '2', sender: 'Guardián Valiente', avatar: '🍅', color: '#FF5A5F', text: '¡Hoy el sol brilla hermoso sobre los huertos!', time: '12:02' },
+      { id: '3', sender: 'Comandante Gigante', avatar: '👑', color: '#FFC93C', text: '¡Saludos a todos los ciudadanos de la Gran Caja!', time: '12:05' }
+    ]
   };
 
   constructor(props) {
@@ -2661,6 +2793,149 @@ class Component extends DCLogic {
     return 'linear-gradient(180deg, #58d5ea 0%, #9fe8e4 46%, #d8f2d0 62%, #cfe6b8 100%)';
   };
 
+  // ============ CHAT CÍVICO & AMIGOS EN LA PLAZA ============
+
+  togglePlazaChat = () => {
+    this.setState({ plazaChatOpen: !this.state.plazaChatOpen });
+  };
+
+  onPlazaChatInput = (e) => {
+    this.setState({ plazaChatInput: e.target.value });
+  };
+
+  onPlazaChatKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      this.sendPlazaChatMessage();
+    }
+  };
+
+  insertQuickChatEmoji = (emoji) => {
+    const cur = this.state.plazaChatInput || '';
+    this.setState({ plazaChatInput: (cur ? cur + ' ' : '') + emoji });
+  };
+
+  sendPlazaChatMessage = (customText) => {
+    const text = (typeof customText === 'string' ? customText : this.state.plazaChatInput || '').trim();
+    if (!text) return;
+    const userNick = this.state.verifiedCitizen ? this.state.verifiedCitizen.nickname : this.state.nickname || 'Mi Ciudadano';
+    const userAv = this.state.avatar || '🍅';
+    const ct = getChileTime();
+
+    playSfx('kiosco_headline');
+
+    const newMsg = {
+      id: Date.now().toString(),
+      sender: userNick,
+      avatar: userAv,
+      color: '#FFC93C',
+      text: text,
+      time: ct.formatted
+    };
+
+    const nextMessages = [...this.state.plazaChatMessages, newMsg];
+    this.setState({
+      plazaChatMessages: nextMessages,
+      plazaChatInput: '',
+      speechBubbleText: userAv + ' ' + userNick + ': "' + text + '"'
+    });
+
+    clearTimeout(this.speechBubbleTimeout);
+    this.speechBubbleTimeout = setTimeout(() => {
+      this.setState({ speechBubbleText: null });
+    }, 4500);
+
+    // Respuesta dinámica e inteligente de los amigos registrados en la Plaza
+    setTimeout(() => {
+      const lower = text.toLowerCase();
+      let replyText = '';
+      let chosenFriend = null;
+
+      if (this.state.secondCitizen && Math.random() > 0.35) {
+        chosenFriend = {
+          name: this.state.secondCitizen.nickname,
+          avatar: '🐾',
+          color: '#EC4899'
+        };
+      } else {
+        const pool = [
+          { name: 'Duquesa Estelar', avatar: '🐾', color: '#14C8B8' },
+          { name: 'Guardián Valiente', avatar: '🍅', color: '#FF5A5F' },
+          { name: 'Comandante Gigante', avatar: '👑', color: '#FFC93C' }
+        ];
+        chosenFriend = pool[Math.floor(Math.random() * pool.length)];
+      }
+
+      if (lower.includes('hola') || lower.includes('buenas') || lower.includes('saludos')) {
+        replyText = '¡Hola ' + userNick + '! Qué lindo verte paseando por la Plaza 🍅✨';
+      } else if (lower.includes('tomate') || lower.includes('huerto') || lower.includes('semilla')) {
+        replyText = '¡El Tomate Sagrado es nuestro mayor tesoro nacional! ¡A regarlo siempre!';
+      } else if (lower.includes('jujapeluda') || lower.includes('gato') || lower.includes('miau') || lower.includes('pelo')) {
+        replyText = '🐾 ¡Las 41 Jujapeludas ronronean en señal de aprobación ciudadana!';
+      } else if (lower.includes('mate') || lower.includes('termo') || lower.includes('tía') || lower.includes('tia')) {
+        replyText = '¡Cuidado con hervir el agua del termo que La Tía no perdona! 🧉';
+      } else if (lower.includes('tomatgol') || lower.includes('gol') || lower.includes('futbol') || lower.includes('fútbol')) {
+        replyText = '⚽ ¡Vamos a jugar un partido a la Cancha Nacional de Tomat-Gol!';
+      } else if (lower.includes('música') || lower.includes('rockola') || lower.includes('cancion') || lower.includes('canción')) {
+        replyText = '🎵 ¡En el Centro Cultural están pasando los mejores temas de Roberto Musso!';
+      } else {
+        const genericReplies = [
+          '¡Totalmente de acuerdo! La concordia reina en Jujalandia.',
+          '¡Viva la Gran Caja y el Consejo Moral de Papá y Mamá!',
+          '¡Hermoso día para disfrutar de la libertad cívica y las empanadas de tomate!',
+          '¡Aprobado por unanimidad en la asamblea de vecinos de la Plaza!'
+        ];
+        replyText = genericReplies[Math.floor(Math.random() * genericReplies.length)];
+      }
+
+      const friendMsg = {
+        id: (Date.now() + 1).toString(),
+        sender: chosenFriend.name,
+        avatar: chosenFriend.avatar,
+        color: chosenFriend.color,
+        text: replyText,
+        time: getChileTime().formatted
+      };
+
+      playSfx('card_match');
+      this.setState((s) => ({
+        plazaChatMessages: [...s.plazaChatMessages, friendMsg],
+        speechBubbleText: chosenFriend.avatar + ' ' + chosenFriend.name + ': "' + replyText + '"'
+      }));
+
+      clearTimeout(this.speechBubbleTimeout);
+      this.speechBubbleTimeout = setTimeout(() => {
+        this.setState({ speechBubbleText: null });
+      }, 4500);
+    }, 1200);
+  };
+
+  talkToFriend = (friend) => {
+    playSfx('npc_papa');
+    const npcEquiv = {
+      id: friend.id,
+      name: friend.name,
+      role: friend.role || 'Ciudadano Amigo Registrado',
+      emoji: friend.avatar || '🍅',
+      text: friend.text || ('¡Hola! Soy ' + friend.name + ', ciudadano amigo de Jujalandia. ¡Qué alegría compartir la Plaza con vos!'),
+      options: [
+        {
+          text: 'Saludar por el Chat Cívico de la Plaza',
+          reply: '¡Te mandé un saludo al Chat de la Plaza! Mirá los mensajes abajo.'
+        },
+        {
+          text: 'Preguntarle qué novedades hay en la micronación',
+          reply: 'Paseando por la Fuente, acariciando a las jujapeludas y esperando la próxima cosecha del Tomate Gigante.'
+        },
+        {
+          text: 'Invitarlo a jugar al Tomat-Gol',
+          reply: '¡De una! Entrá a la Cancha Nacional o al Centro Cultural y pateamos unos penales.'
+        }
+      ]
+    };
+    this.setState({ activeNpc: npcEquiv, npcReply: null });
+  };
+
   // ============ MOTOR 3D DE LA PLAZA ============
 
   make3DPanel = (w, h, transform, css) => {
@@ -2842,10 +3117,35 @@ class Component extends DCLogic {
     W3D_PROPS.forEach((p) => world.appendChild(S(p.x, 0, p.z, p.s, p.e)));
 
     // NPCs en la Plaza con cuerpo completo
+    // NPCs históricos en la Plaza con cuerpo completo
     W3D_NPCS.forEach((npc) => {
       const el = S(npc.x, 0, npc.z, npc.s, npc.spriteSvg || npc.emoji, 'cursor:pointer;', npc.w || npc.s, npc.h || npc.s);
       el.addEventListener('click', () => this.talkToNpc(npc.id));
       this.npcEls.push({ el, cfg: npc });
+      world.appendChild(el);
+    });
+
+    // Amigos y Amigas Registrados en la Plaza (Cuerpo completo + Cartelito de Identificación estilo 90s)
+    const allFriends = [];
+    if (this.state.secondCitizen) {
+      allFriends.push({
+        id: 'friend_second',
+        name: this.state.secondCitizen.nickname,
+        avatar: '🐾',
+        shirt: '#EC4899',
+        pants: '#1E293B',
+        x: 140, z: -220,
+        role: 'Ciudadano Aliado',
+        text: '¡Hola! Qué alegría encontrarnos en la Plaza. ¿Vamos a la Aduana a firmar el Tratado Bilateral de Amistad o pateamos unos penales en Tomat-Gol?'
+      });
+    }
+    DEFAULT_PLAZA_FRIENDS.forEach((f) => allFriends.push(f));
+
+    allFriends.forEach((fr) => {
+      const spriteSvg = makeCitizenSpriteSvg(fr.avatar, fr.name, fr.shirt, fr.pants);
+      const el = S(fr.x, 0, fr.z, 175, spriteSvg, 'cursor:pointer;', 110, 175);
+      el.addEventListener('click', () => this.talkToFriend(fr));
+      this.npcEls.push({ el, cfg: { ...fr, isFriend: true } });
       world.appendChild(el);
     });
 
@@ -2956,6 +3256,8 @@ class Component extends DCLogic {
       this.openPlazaBuilding(this.near3d);
     } else if (this.nearTargetType === 'npc' && this.nearTargetData) {
       this.talkToNpc(this.nearTargetData.id);
+    } else if (this.nearTargetType === 'friend' && this.nearTargetData) {
+      this.talkToFriend(this.nearTargetData);
     } else if (this.nearTargetType === 'walker') {
       this.petJujapeluda();
     } else if (this.nearTargetType === 'fountain') {
@@ -3131,18 +3433,20 @@ class Component extends DCLogic {
       locText = '📍 ' + b.label;
     }
 
-    // 2. NPCs (if no closer building door)
+    // 2. NPCs y Amigos Registrados (si no hay puerta más cercana)
     if (!targetType) {
       let bestNpcD = 380;
-      for (let i = 0; i < W3D_NPCS.length; i++) {
-        const npc = W3D_NPCS[i];
+      for (let i = 0; i < this.npcEls.length; i++) {
+        const npcObj = this.npcEls[i];
+        const npc = npcObj.cfg;
         const vx = npc.x - cam.x, vz = npc.z - cam.z;
         const d = Math.sqrt(vx * vx + vz * vz);
         if (d < bestNpcD && (vx / (d || 1)) * fx + (vz / (d || 1)) * fz > 0.4) {
           bestNpcD = d;
-          targetType = 'npc';
+          targetType = npc.isFriend ? 'friend' : 'npc';
           targetData = npc;
-          promptText = npc.emoji + '  Hablar con ' + npc.name + ' (' + npc.role + ')  ⏎';
+          const em = npc.avatar || npc.emoji || '🍅';
+          promptText = em + '  Hablar con ' + npc.name + ' (' + npc.role + ')  ⏎';
           locText = '📍 ' + npc.name;
         }
       }
@@ -4209,6 +4513,23 @@ class Component extends DCLogic {
       plazaTimeLabel: this.getPlazaTimeLabel(),
       cycleTimeMode: this.cycleTimeMode,
       plazaSkyBackground: this.getPlazaSkyBackground(),
+
+      // Plaza Chat & Speech Bubble & Friends
+      isPlazaChatOpen: this.state.plazaChatOpen,
+      togglePlazaChat: this.togglePlazaChat,
+      chatMessagesCount: this.state.plazaChatMessages.length,
+      plazaChatMessagesList: this.state.plazaChatMessages,
+      plazaChatInputVal: this.state.plazaChatInput,
+      onPlazaChatInput: this.onPlazaChatInput,
+      onPlazaChatKeyDown: this.onPlazaChatKeyDown,
+      sendPlazaChatMessage: () => this.sendPlazaChatMessage(),
+      quickChatEmojis: ['🍅', '🐾', '🧉', '⚽', '📜', '✨'].map((emoji) => ({
+        emoji,
+        onClick: () => this.insertQuickChatEmoji(emoji)
+      })),
+      hasSpeechBubble: !!this.state.speechBubbleText,
+      speechBubbleText: this.state.speechBubbleText || '',
+      activeCitizensCount: (this.state.secondCitizen ? 1 : 0) + DEFAULT_PLAZA_FRIENDS.length + 1,
 
       // Plaza 3D & Modes
       plazaModeIsWalk: plazaView === 'walk',
