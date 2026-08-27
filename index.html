@@ -1744,97 +1744,97 @@ const STAMPS_DEF = [
 const W3D = {
   persp: 720,
   eye: 168,
-  bound: 2600,
-  speed: 8.5,
-  turn: 2.6,
-  ground: 9000,
-  fountainR: 200
+  bound: 3800,
+  speed: 9.5,
+  turn: 2.8,
+  ground: 14000,
+  fountainR: 240
 };
 
 const W3D_BUILDINGS = [
-  // Anillo Central-Norte
-  { id: 'kiosco', label: 'El Kiosco', desc: 'Periódico y clasificados', emoji: '🗞️',
-    x: -850, z: -600, w: 290, d: 240, h: 240, wall: '#FFC93C', roof: '#FF5A5F', ink: '#2B1B4D' },
-  { id: 'cultural', label: 'Centro Cultural', desc: 'Rockola, mural y cómics', emoji: '🎭',
-    x: -450, z: -600, w: 320, d: 260, h: 320, wall: '#FF5A5F', roof: '#2B1B4D', ink: '#FFF6E9' },
-  { id: 'teatro', label: 'Teatro Musso', desc: 'Conciertos acústicos 8-bit', emoji: '🎸',
-    x: 450, z: -600, w: 340, d: 260, h: 340, wall: '#7C3AED', roof: '#FFC93C', ink: '#FFF6E9' },
-  { id: 'museo', label: 'El Museo', desc: 'Reliquias y trivia histórica', emoji: '🏛️',
-    x: 850, z: -600, w: 330, d: 270, h: 300, wall: '#FFF6E9', roof: '#FFC93C', ink: '#2B1B4D' },
-
-  // Anillo Extremo-Norte (Gobierno, Finanzas & Educación)
-  { id: 'colegio', label: 'Colegio Nacional', desc: 'Escuela cívica, recreo y timbre', emoji: '🏫',
-    x: -1500, z: -600, w: 380, d: 280, h: 320, wall: '#3B82F6', roof: '#FFC93C', ink: '#FFF6E9' },
-  { id: 'banco', label: 'Banco Central', desc: 'Bóveda y Tomatines', emoji: '🏦',
-    x: -500, z: -1150, w: 360, d: 270, h: 330, wall: '#10B981', roof: '#2B1B4D', ink: '#FFF6E9' },
+  // 1. DISTRITO GUBERNAMENTAL & FINANCIERO (Norte Lejano)
   { id: 'alcaldia', label: 'Alcaldía', desc: 'Despacho de Papá y Mamá', emoji: '🏛️',
-    x: 0, z: -1200, w: 420, d: 300, h: 360, wall: '#FFC93C', roof: '#FF5A5F', ink: '#2B1B4D' },
+    x: 0, z: -1700, w: 440, d: 320, h: 380, wall: '#FFC93C', roof: '#FF5A5F', ink: '#2B1B4D' },
+  { id: 'banco', label: 'Banco Central', desc: 'Bóveda y Tomatines', emoji: '🏦',
+    x: -850, z: -1700, w: 380, d: 280, h: 340, wall: '#10B981', roof: '#2B1B4D', ink: '#FFF6E9' },
   { id: 'notaria', label: 'Notaría Moral', desc: 'Escrituras y actas cívicas', emoji: '⚖️',
-    x: 500, z: -1150, w: 350, d: 260, h: 300, wall: '#8B5CF6', roof: '#2B1B4D', ink: '#FFF6E9' },
+    x: 850, z: -1700, w: 380, d: 280, h: 320, wall: '#8B5CF6', roof: '#2B1B4D', ink: '#FFF6E9' },
 
-  // Anillo Lateral Oeste & Este
+  // 2. DISTRITO CULTURAL & DE OCIO (Norte Medio)
+  { id: 'kiosco', label: 'El Kiosco', desc: 'Periódico y clasificados', emoji: '🗞️',
+    x: -1050, z: -850, w: 300, d: 240, h: 250, wall: '#FFC93C', roof: '#FF5A5F', ink: '#2B1B4D' },
+  { id: 'cultural', label: 'Centro Cultural', desc: 'Rockola, mural y cómics', emoji: '🎭',
+    x: -450, z: -900, w: 340, d: 270, h: 330, wall: '#FF5A5F', roof: '#2B1B4D', ink: '#FFF6E9' },
+  { id: 'teatro', label: 'Teatro Musso', desc: 'Conciertos acústicos 8-bit', emoji: '🎸',
+    x: 450, z: -900, w: 360, d: 270, h: 350, wall: '#7C3AED', roof: '#FFC93C', ink: '#FFF6E9' },
+  { id: 'museo', label: 'El Museo', desc: 'Reliquias y trivia histórica', emoji: '🏛️',
+    x: 1050, z: -850, w: 350, d: 280, h: 320, wall: '#FFF6E9', roof: '#FFC93C', ink: '#2B1B4D' },
+
+  // 3. DISTRITO EDUCATIVO & SALUD (Oeste)
+  { id: 'colegio', label: 'Colegio Nacional', desc: 'Escuela cívica, recreo y timbre', emoji: '🏫',
+    x: -1900, z: -900, w: 440, d: 300, h: 340, wall: '#3B82F6', roof: '#FFC93C', ink: '#FFF6E9' },
   { id: 'hospital', label: 'Hospital General', desc: 'Salud, curas y helipuerto', emoji: '🏥',
-    x: -1100, z: 0, w: 380, d: 280, h: 310, wall: '#FFF6E9', roof: '#EF4444', ink: '#2B1B4D' },
+    x: -1900, z: 0, w: 440, d: 300, h: 330, wall: '#FFF6E9', roof: '#EF4444', ink: '#2B1B4D' },
+
+  // 4. DISTRITO CÍVICO & COMERCIAL (Este y Sur Medio)
   { id: 'registro_civil', label: 'Registro Civil', desc: 'Identidad y parentesco', emoji: '📋',
-    x: 1100, z: 0, w: 360, d: 270, h: 300, wall: '#06B6D4', roof: '#2B1B4D', ink: '#2B1B4D' },
-
-  // Anillo Central-Sur
+    x: 1900, z: 0, w: 420, d: 280, h: 320, wall: '#06B6D4', roof: '#2B1B4D', ink: '#2B1B4D' },
   { id: 'iglesia', label: 'Capilla del Tomate', desc: 'Velas y bendición agraria', emoji: '💒',
-    x: -650, z: 600, w: 330, d: 270, h: 350, wall: '#FFF6E9', roof: '#F59E0B', ink: '#2B1B4D' },
+    x: -900, z: 850, w: 360, d: 280, h: 360, wall: '#FFF6E9', roof: '#F59E0B', ink: '#2B1B4D' },
   { id: 'correo', label: 'El Correo', desc: 'Buzón postal y telegramas', emoji: '✉️',
-    x: 0, z: 650, w: 320, d: 250, h: 260, wall: '#14C8B8', roof: '#2B1B4D', ink: '#2B1B4D' },
+    x: 0, z: 900, w: 340, d: 260, h: 280, wall: '#14C8B8', roof: '#2B1B4D', ink: '#2B1B4D' },
   { id: 'tienda', label: 'Bazar Souvenirs', desc: 'Recuerdos y llaveros', emoji: '🛍️',
-    x: 650, z: 600, w: 320, d: 250, h: 270, wall: '#F59E0B', roof: '#14C8B8', ink: '#2B1B4D' },
+    x: 900, z: 850, w: 340, d: 260, h: 290, wall: '#F59E0B', roof: '#14C8B8', ink: '#2B1B4D' },
 
-  // Anillo Extremo-Sur (Fronteras y Emergencias)
+  // 5. DISTRITO FRONTERIZO & DIPLOMÁTICO (Sur Lejano)
   { id: 'carabineros', label: 'Carabineros', desc: 'Comisaría moral y orden', emoji: '👮',
-    x: -850, z: 1150, w: 350, d: 260, h: 300, wall: '#1E3A8A', roof: '#2B1B4D', ink: '#FFF6E9' },
+    x: -1200, z: 1750, w: 380, d: 280, h: 320, wall: '#1E3A8A', roof: '#2B1B4D', ink: '#FFF6E9' },
   { id: 'sag', label: 'Control SAG', desc: 'Aduana Fitosanitaria', emoji: '🌾',
-    x: -400, z: 1150, w: 320, d: 250, h: 270, wall: '#15803D', roof: '#FFC93C', ink: '#FFF6E9' },
+    x: -500, z: 1750, w: 350, d: 260, h: 280, wall: '#15803D', roof: '#FFC93C', ink: '#FFF6E9' },
   { id: 'aduana', label: 'Aduana Ultramar', desc: 'Muelle de El Chino', emoji: '🛂',
-    x: 400, z: 1150, w: 340, d: 260, h: 280, wall: '#3B82F6', roof: '#2B1B4D', ink: '#FFF6E9' },
+    x: 500, z: 1750, w: 360, d: 270, h: 290, wall: '#3B82F6', roof: '#2B1B4D', ink: '#FFF6E9' },
   { id: 'embajada_disney', label: 'Embajada Disney', desc: 'Búnker clandestino', emoji: '🏰',
-    x: 850, z: 1150, w: 350, d: 260, h: 320, wall: '#EC4899', roof: '#1E1B4B', ink: '#FFF6E9' },
+    x: 1200, z: 1750, w: 380, d: 280, h: 330, wall: '#EC4899', roof: '#1E1B4B', ink: '#FFF6E9' },
 
-  // Terminales de Transporte
+  // 6. DISTRITO DE TRANSPORTE & EMERGENCIAS (Extremos)
   { id: 'aeropuerto', label: 'Aeropuerto Int.', desc: 'Pista El Tomate Volador', emoji: '✈️',
-    x: -1250, z: 1200, w: 420, d: 280, h: 340, wall: '#0284C7', roof: '#FFC93C', ink: '#FFF6E9' },
+    x: -1900, z: 1750, w: 460, d: 300, h: 360, wall: '#0284C7', roof: '#FFC93C', ink: '#FFF6E9' },
   { id: 'bomberos', label: 'Bomberos Voluntarios', desc: 'Cuartel y mangueras', emoji: '🚒',
-    x: 1250, z: 1200, w: 360, d: 270, h: 300, wall: '#DC2626', roof: '#2B1B4D', ink: '#FFF6E9' }
+    x: 1900, z: 1750, w: 380, d: 280, h: 310, wall: '#DC2626', roof: '#2B1B4D', ink: '#FFF6E9' }
 ];
 
-// Circuito de tráfico continuo por las avenidas perimetrales (13200 px de perímetro)
+// Circuito de tráfico continuo por las avenidas perimetrales amplias (19200 px de perímetro)
 function getPerimeterRoadPos(dist) {
-  const d = ((dist % 13200) + 13200) % 13200;
-  if (d < 3600) {
-    // Tramo Norte: hacia el Este
-    return { x: -1800 + d, z: -1500, facing: 'east' };
-  } else if (d < 6600) {
-    // Tramo Este: hacia el Sur
-    return { x: 1800, z: -1500 + (d - 3600), facing: 'south' };
-  } else if (d < 10200) {
-    // Tramo Sur: hacia el Oeste
-    return { x: 1800 - (d - 6600), z: 1500, facing: 'west' };
+  const d = ((dist % 19200) + 19200) % 19200;
+  if (d < 5200) {
+    // Tramo 1 Norte: de (-2600, -2200) a (2600, -2200) hacia el Este
+    return { x: -2600 + d, z: -2200, facing: 'east' };
+  } else if (d < 9600) {
+    // Tramo 2 Este: de (2600, -2200) a (2600, 2200) hacia el Sur
+    return { x: 2600, z: -2200 + (d - 5200), facing: 'south' };
+  } else if (d < 14800) {
+    // Tramo 3 Sur: de (2600, 2200) a (-2600, 2200) hacia el Oeste
+    return { x: 2600 - (d - 9600), z: 2200, facing: 'west' };
   } else {
-    // Tramo Oeste: hacia el Norte
-    return { x: -1800, z: 1500 - (d - 10200), facing: 'north' };
+    // Tramo 4 Oeste: de (-2600, 2200) a (-2600, -2200) hacia el Norte
+    return { x: -2600, z: 2200 - (d - 14800), facing: 'north' };
   }
 }
 
 const W3D_VEHICLES_DEF = [
-  { id: 'v_citroneta', name: 'Citroneta Roja', emoji: '🚗', color: '#EF4444', speed: 3.5, offset: 0 },
-  { id: 'v_fitito', name: 'Fitito Amarillo', emoji: '🚕', color: '#F59E0B', speed: 3.5, offset: 1885.7 },
-  { id: 'v_furgon', name: 'Furgón Tomatero', emoji: '🚐', color: '#10B981', speed: 3.5, offset: 3771.4 },
-  { id: 'v_camioneta', name: 'Camioneta 4x4', emoji: '🚙', color: '#3B82F6', speed: 3.5, offset: 5657.1 },
-  { id: 'v_patrulla', name: 'Patrulla Carabineros', emoji: '🚓', color: '#1E3A8A', speed: 3.5, offset: 7542.8 },
-  { id: 'v_microbus', name: 'Microbús Escolar', emoji: '🚌', color: '#F97316', speed: 3.5, offset: 9428.5 },
-  { id: 'v_bomberos', name: 'Autobomba Bomberos', emoji: '🚒', color: '#DC2626', speed: 3.5, offset: 11314.2 }
+  { id: 'v_citroneta', name: 'Citroneta Roja', emoji: '🚗', color: '#EF4444', speed: 4.2, offset: 0 },
+  { id: 'v_fitito', name: 'Fitito Amarillo', emoji: '🚕', color: '#F59E0B', speed: 4.2, offset: 2742.8 },
+  { id: 'v_furgon', name: 'Furgón Tomatero', emoji: '🚐', color: '#10B981', speed: 4.2, offset: 5485.7 },
+  { id: 'v_camioneta', name: 'Camioneta 4x4', emoji: '🚙', color: '#3B82F6', speed: 4.2, offset: 8228.5 },
+  { id: 'v_patrulla', name: 'Patrulla Carabineros', emoji: '🚓', color: '#1E3A8A', speed: 4.2, offset: 10971.4 },
+  { id: 'v_microbus', name: 'Microbús Escolar', emoji: '🚌', color: '#F97316', speed: 4.2, offset: 13714.2 },
+  { id: 'v_bomberos', name: 'Autobomba Bomberos', emoji: '🚒', color: '#DC2626', speed: 4.2, offset: 16457.1 }
 ];
 
 const W3D_AIR_DEF = [
-  { id: 'heli', name: 'Helicóptero Cívico', emoji: '🚁', y: 380, speed: 0.007, radius: 950, ph: 0 },
-  { id: 'avioneta', name: 'Avioneta con Pancarta', emoji: '🛩️', y: 560, speed: 0.0032, radius: 2200, ph: Math.PI * 0.8 },
-  { id: 'blimp', name: 'Dirigible del Tomate', emoji: '🎈', y: 720, speed: 0.0012, radius: 1500, ph: Math.PI * 0.3 }
+  { id: 'heli', name: 'Helicóptero Cívico', emoji: '🚁', y: 440, speed: 0.006, radius: 1100, ph: 0 },
+  { id: 'avioneta', name: 'Avioneta con Pancarta', emoji: '🛩️', y: 640, speed: 0.0028, radius: 2800, ph: Math.PI * 0.8 },
+  { id: 'blimp', name: 'Dirigible del Tomate', emoji: '🎈', y: 820, speed: 0.0010, radius: 1900, ph: Math.PI * 0.3 }
 ];
 
 const W3D_STUDENTS_DEF = [
@@ -1845,7 +1845,7 @@ const W3D_STUDENTS_DEF = [
     emoji: '👦',
     shirt: '#FFFFFF',
     pants: '#1E3A8A',
-    cx: -1500, cz: -460, r: 110, sp: 0.007, ph: 0,
+    cx: -1900, cz: -720, r: 120, sp: 0.007, ph: 0,
     text: '¡Por fin sonó el timbre del recreo! ¿Tenés un alfajor de tomate o una figurita de la Jujapeluda para cambiar?',
     options: [
       { text: 'Darle una semilla de tomate', reply: '¡Gracias! La voy a plantar en el cantero del colegio para la feria de ciencias.' },
@@ -1859,7 +1859,7 @@ const W3D_STUDENTS_DEF = [
     emoji: '👧',
     shirt: '#FFFFFF',
     pants: '#1E3A8A',
-    cx: -1380, cz: -580, r: 85, sp: -0.006, ph: 1.5,
+    cx: -1760, cz: -880, r: 90, sp: -0.006, ph: 1.5,
     text: 'La Tía nos tomó lección oral de la Constitución Nacional. Me saqué un 10 por recitar el Artículo del Mate a 82°C sin dudar.',
     options: [
       { text: 'Felicitarla por la nota', reply: '¡Gracias! El Consejo Moral me prometió una escarapela dorada para el desfile.' },
@@ -1873,7 +1873,7 @@ const W3D_STUDENTS_DEF = [
     emoji: '🎒',
     shirt: '#FFC93C',
     pants: '#1E293B',
-    cx: -1620, cz: -580, r: 125, sp: 0.009, ph: 3.1,
+    cx: -2040, cz: -880, r: 130, sp: 0.009, ph: 3.1,
     text: '¡Salí corriendo para no llegar tarde al partido de Tomat-Gol en el patio techado! ¿Querés jugar un picadito?',
     options: [
       { text: 'Patear un penal con él', reply: '¡Gooool de Jujalandia! ¡Qué comba le diste al Tomate!' },
@@ -1887,7 +1887,7 @@ const W3D_STUDENTS_DEF = [
     emoji: '🎀',
     shirt: '#FFFFFF',
     pants: '#9333EA',
-    cx: -1460, cz: -720, r: 95, sp: -0.008, ph: 4.8,
+    cx: -1860, cz: -1080, r: 100, sp: -0.008, ph: 4.8,
     text: 'Estamos juntando hojas y ramitas en el patio para armar el mapa gigante de Nueva Juja y sus Valles del Norte.',
     options: [
       { text: 'Ayudarla a juntar hojas', reply: '¡Genial! Con estas ramas ya completamos el bosque de la Gran Caja.' },
@@ -1902,7 +1902,7 @@ const DISNEY_INCURSIONS = [
     name: 'Mickey Mouse',
     role: 'Inspector Clandestino de Disney',
     emoji: '🐭',
-    x: -240, z: -350,
+    cx: 350, cz: 400, rx: 460, rz: 320, sp: 0.005, ph: 0,
     text: '¡Hola amigos, ja-ja! Vengo a inspeccionar si pagan regalías porque las 41 Jujapeludas tienen orejas redondas...',
     options: [
       { text: 'Exigirle el Pasaporte de Jujalandia', reply: '¡Oh no, no tengo pasaporte patriótico! ¡Mejor me escapo antes de que me confisquen los guantes, ja-ja!' },
@@ -1915,7 +1915,7 @@ const DISNEY_INCURSIONS = [
     name: 'Pato Donald',
     role: 'Vendedor de Purpurina de Ultramar',
     emoji: '🦆',
-    x: 240, z: -350,
+    cx: 0, cz: 1450, rx: 550, rz: 180, sp: -0.007, ph: 1.8,
     text: '¡¡Quack, quack!! ¡Vendo purpurina mágica importada de contrabando para ponerle brillo al Tomate Sagrado!',
     options: [
       { text: 'Denunciarlo a Carabineros Morales', reply: '¡¡Quack!! ¡Los Carabineros me van a decomisar el sombrero marinero!' },
@@ -1927,7 +1927,7 @@ const DISNEY_INCURSIONS = [
     name: 'Tribilín / Goofy',
     role: 'Turista Desorientado',
     emoji: '🐶',
-    x: -280, z: 320,
+    cx: 0, cz: 0, rx: 420, rz: 420, sp: 0.004, ph: 3.4,
     text: '¡Ahyuck! Pensé que esto era el castillo de Orlando, pero este huerto de tomates huele mucho más rico...',
     options: [
       { text: 'Invitarlo a comer empanadas de tomate', reply: '¡Ahyuck! ¡Son las mejores empanadas del mundo! Me quedo a vivir acá.' },
@@ -1935,6 +1935,116 @@ const DISNEY_INCURSIONS = [
     ]
   }
 ];
+
+function makeMickeySpriteSvg() {
+  return `<svg viewBox="0 0 100 160" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="50" cy="154" rx="34" ry="6" fill="rgba(43,27,77,0.35)"/>
+    <ellipse cx="34" cy="148" rx="14" ry="8" fill="#FACC15" stroke="#2B1B4D" stroke-width="2.5"/>
+    <ellipse cx="66" cy="148" rx="14" ry="8" fill="#FACC15" stroke="#2B1B4D" stroke-width="2.5"/>
+    <rect x="36" y="112" width="7" height="30" rx="3" fill="#0F172A"/>
+    <rect x="57" y="112" width="7" height="30" rx="3" fill="#0F172A"/>
+    <path d="M30 108 Q14 114 12 94 Q10 82 2 86" fill="none" stroke="#0F172A" stroke-width="3" stroke-linecap="round"/>
+    <path d="M26 84 C26 84 24 116 34 118 C44 120 48 106 50 106 C52 106 56 120 66 118 C76 116 74 84 74 84 Z" fill="#DC2626" stroke="#2B1B4D" stroke-width="3"/>
+    <ellipse cx="38" cy="98" rx="4.5" ry="7" fill="#FFF" stroke="#2B1B4D" stroke-width="1.5"/>
+    <ellipse cx="62" cy="98" rx="4.5" ry="7" fill="#FFF" stroke="#2B1B4D" stroke-width="1.5"/>
+    <rect x="37" y="60" width="26" height="28" rx="6" fill="#0F172A"/>
+    <path d="M37 66 L20 86 L26 94" fill="none" stroke="#0F172A" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="24" cy="95" r="8" fill="#FFF" stroke="#2B1B4D" stroke-width="2"/>
+    <path d="M22 91 L22 97 M24 90 L24 98 M26 91 L26 97" stroke="#2B1B4D" stroke-width="1.2"/>
+    <path d="M63 66 L80 86 L74 94" fill="none" stroke="#0F172A" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="76" cy="95" r="8" fill="#FFF" stroke="#2B1B4D" stroke-width="2"/>
+    <path d="M74 91 L74 97 M76 90 L76 98 M78 91 L78 97" stroke="#2B1B4D" stroke-width="1.2"/>
+    <circle cx="28" cy="22" r="18" fill="#0F172A" stroke="#2B1B4D" stroke-width="1"/>
+    <circle cx="72" cy="22" r="18" fill="#0F172A" stroke="#2B1B4D" stroke-width="1"/>
+    <circle cx="50" cy="38" r="22" fill="#0F172A"/>
+    <ellipse cx="50" cy="42" rx="16" ry="14" fill="#FED7AA"/>
+    <ellipse cx="44" cy="34" rx="7" ry="11" fill="#FED7AA"/>
+    <ellipse cx="56" cy="34" rx="7" ry="11" fill="#FED7AA"/>
+    <ellipse cx="45" cy="34" rx="3" ry="6" fill="#FFF"/>
+    <ellipse cx="55" cy="34" rx="3" ry="6" fill="#FFF"/>
+    <ellipse cx="46" cy="35" rx="1.8" ry="3.5" fill="#0F172A"/>
+    <ellipse cx="54" cy="35" rx="1.8" ry="3.5" fill="#0F172A"/>
+    <ellipse cx="50" cy="42" rx="4.5" ry="3" fill="#0F172A"/>
+    <path d="M40 44 Q50 54 60 44" fill="#881337" stroke="#0F172A" stroke-width="2"/>
+    <path d="M46 49 Q50 46 54 49" fill="#F43F5E"/>
+    <g transform="translate(50, 4)">
+      <rect x="-42" y="-12" width="84" height="14" rx="4" fill="#DC2626e6" stroke="#FFC93C" stroke-width="1.5"/>
+      <text x="0" y="-2" font-family="'Baloo 2', sans-serif" font-size="7" font-weight="900" fill="#FFF6E9" text-anchor="middle">🐭 MICKEY MOUSE</text>
+    </g>
+  </svg>`;
+}
+
+function makeDonaldSpriteSvg() {
+  return `<svg viewBox="0 0 100 160" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="50" cy="154" rx="34" ry="6" fill="rgba(43,27,77,0.35)"/>
+    <path d="M22 152 L36 142 L42 154 Z" fill="#F97316" stroke="#2B1B4D" stroke-width="2"/>
+    <path d="M58 154 L64 142 L78 152 Z" fill="#F97316" stroke="#2B1B4D" stroke-width="2"/>
+    <rect x="34" y="122" width="6" height="22" rx="3" fill="#F97316"/>
+    <rect x="60" y="122" width="6" height="22" rx="3" fill="#F97316"/>
+    <ellipse cx="50" cy="108" rx="24" ry="18" fill="#FFFFFF" stroke="#2B1B4D" stroke-width="2.5"/>
+    <path d="M26 104 Q14 100 18 90 Q24 94 28 98" fill="#FFFFFF" stroke="#2B1B4D" stroke-width="2"/>
+    <path d="M30 68 L26 102 L74 102 L70 68 Z" fill="#1D4ED8" stroke="#2B1B4D" stroke-width="3"/>
+    <rect x="28" y="98" width="44" height="4" fill="#FACC15"/>
+    <path d="M30 68 L50 86 L70 68 L58 64 L50 72 L42 64 Z" fill="#1E40AF" stroke="#2B1B4D" stroke-width="2"/>
+    <path d="M50 78 L40 70 L40 86 Z" fill="#DC2626" stroke="#2B1B4D" stroke-width="1.5"/>
+    <path d="M50 78 L60 70 L60 86 Z" fill="#DC2626" stroke="#2B1B4D" stroke-width="1.5"/>
+    <circle cx="50" cy="78" r="3.5" fill="#EF4444" stroke="#2B1B4D" stroke-width="1.5"/>
+    <path d="M30 72 L16 88 L24 96" fill="none" stroke="#1D4ED8" stroke-width="7" stroke-linecap="round"/>
+    <circle cx="23" cy="96" r="6" fill="#FFFFFF" stroke="#2B1B4D" stroke-width="1.5"/>
+    <path d="M70 72 L84 88 L76 96" fill="none" stroke="#1D4ED8" stroke-width="7" stroke-linecap="round"/>
+    <circle cx="77" cy="96" r="6" fill="#FFFFFF" stroke="#2B1B4D" stroke-width="1.5"/>
+    <ellipse cx="50" cy="44" rx="18" ry="16" fill="#FFFFFF" stroke="#2B1B4D" stroke-width="2.5"/>
+    <ellipse cx="38" cy="48" rx="6" ry="6" fill="#FFFFFF"/>
+    <ellipse cx="62" cy="48" rx="6" ry="6" fill="#FFFFFF"/>
+    <ellipse cx="44" cy="38" rx="3.5" ry="6" fill="#1D4ED8"/>
+    <circle cx="45" cy="37" r="1.5" fill="#FFF"/>
+    <ellipse cx="56" cy="38" rx="3.5" ry="6" fill="#1D4ED8"/>
+    <circle cx="55" cy="37" r="1.5" fill="#FFF"/>
+    <path d="M34 46 Q50 40 66 46 Q50 58 34 46 Z" fill="#F97316" stroke="#2B1B4D" stroke-width="2.5"/>
+    <path d="M38 48 Q50 52 62 48" fill="none" stroke="#C2410C" stroke-width="1.5"/>
+    <path d="M42 26 L58 26 L62 18 L38 18 Z" fill="#1D4ED8" stroke="#2B1B4D" stroke-width="2"/>
+    <circle cx="50" cy="18" r="4" fill="#1E40AF"/>
+    <path d="M60 22 Q72 18 78 26 Q70 24 62 26" fill="#0F172A"/>
+    <g transform="translate(50, 4)">
+      <rect x="-42" y="-12" width="84" height="14" rx="4" fill="#1D4ED8e6" stroke="#FACC15" stroke-width="1.5"/>
+      <text x="0" y="-2" font-family="'Baloo 2', sans-serif" font-size="7" font-weight="900" fill="#FFF6E9" text-anchor="middle">🦆 PATO DONALD</text>
+    </g>
+  </svg>`;
+}
+
+function makeGoofySpriteSvg() {
+  return `<svg viewBox="0 0 100 180" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="50" cy="174" rx="34" ry="6" fill="rgba(43,27,77,0.35)"/>
+    <path d="M22 170 C22 162 38 162 42 170 C42 174 22 174 22 170 Z" fill="#78350F" stroke="#2B1B4D" stroke-width="2.5"/>
+    <path d="M58 170 C58 162 74 162 78 170 C78 174 58 174 58 170 Z" fill="#78350F" stroke="#2B1B4D" stroke-width="2.5"/>
+    <path d="M34 116 L34 166 L42 166 L46 122 L54 122 L58 166 L66 166 L66 116 Z" fill="#2563EB" stroke="#2B1B4D" stroke-width="2.5"/>
+    <rect x="36" y="66" width="28" height="52" rx="4" fill="#EA580C" stroke="#2B1B4D" stroke-width="2.5"/>
+    <path d="M36 66 L44 118 L36 118 Z" fill="#0F172A"/>
+    <path d="M64 66 L56 118 L64 118 Z" fill="#0F172A"/>
+    <path d="M36 72 L18 100 L24 110" fill="none" stroke="#EA580C" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="23" cy="112" r="7" fill="#FFFFFF" stroke="#2B1B4D" stroke-width="2"/>
+    <path d="M64 72 L82 100 L76 110" fill="none" stroke="#EA580C" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="77" cy="112" r="7" fill="#FFFFFF" stroke="#2B1B4D" stroke-width="2"/>
+    <path d="M36 44 C26 56 22 74 24 88 C28 88 32 74 38 52 Z" fill="#0F172A" stroke="#2B1B4D" stroke-width="1.5"/>
+    <path d="M64 44 C74 56 78 74 76 88 C72 88 68 74 62 52 Z" fill="#0F172A" stroke="#2B1B4D" stroke-width="1.5"/>
+    <ellipse cx="50" cy="46" rx="14" ry="16" fill="#0F172A"/>
+    <ellipse cx="50" cy="52" rx="12" ry="10" fill="#FED7AA"/>
+    <ellipse cx="50" cy="46" rx="5" ry="3.5" fill="#0F172A"/>
+    <rect x="46" y="58" width="3.5" height="5" fill="#FFFFFF" stroke="#2B1B4D" stroke-width="1"/>
+    <rect x="50.5" y="58" width="3.5" height="5" fill="#FFFFFF" stroke="#2B1B4D" stroke-width="1"/>
+    <ellipse cx="46" cy="38" rx="3" ry="6" fill="#FFFFFF" stroke="#2B1B4D" stroke-width="1"/>
+    <ellipse cx="54" cy="38" rx="3" ry="6" fill="#FFFFFF" stroke="#2B1B4D" stroke-width="1"/>
+    <circle cx="47" cy="39" r="1.5" fill="#0F172A"/>
+    <circle cx="53" cy="39" r="1.5" fill="#0F172A"/>
+    <ellipse cx="50" cy="30" rx="12" ry="3" fill="#15803D" stroke="#2B1B4D" stroke-width="1.5"/>
+    <path d="M44 30 L46 16 L54 16 L56 30 Z" fill="#16A34A" stroke="#2B1B4D" stroke-width="1.5"/>
+    <rect x="44.5" y="26" width="11" height="3" fill="#0F172A"/>
+    <g transform="translate(50, 4)">
+      <rect x="-44" y="-12" width="88" height="14" rx="4" fill="#15803De6" stroke="#FFC93C" stroke-width="1.5"/>
+      <text x="0" y="-2" font-family="'Baloo 2', sans-serif" font-size="7" font-weight="900" fill="#FFF6E9" text-anchor="middle">🐶 GOOFY / TRIBILÍN</text>
+    </g>
+  </svg>`;
+}
 
 function makeCitizenSpriteSvg(avatar, nickname, shirtColor, pantsColor, bubbleText) {
   const shirt = shirtColor || '#14C8B8';
@@ -3642,6 +3752,7 @@ class Component extends DCLogic {
     this.balloonEls = [];
     this.signEls = [];
     this.npcEls = [];
+    this.disneyEls = [];
     this.studentEls = [];
     this.vehicleEls = [];
     this.airEls = [];
@@ -3675,23 +3786,23 @@ class Component extends DCLogic {
 
     world.appendChild(P(g, g, 'translate3d(0,0,0) rotateX(90deg)', 'background:' + groundGrad));
 
-    // Avenidas Asfaltadas con sendas peatonales y líneas demarcatorias
+    // Avenidas Asfaltadas con sendas peatonales y líneas demarcatorias (Espaciado Gran Metrópolis)
     const roadCss = 'background:#1e293b;border:3px solid #0f172a;box-sizing:border-box;' +
       'background-image:repeating-linear-gradient(90deg, #f59e0b 0 30px, rgba(0,0,0,0) 30px 60px);';
-    world.appendChild(P(4800, 160, 'translate3d(0,-1px,-1500px) rotateX(90deg)', roadCss));
-    world.appendChild(P(4800, 160, 'translate3d(0,-1px,1500px) rotateX(90deg)', roadCss));
-    world.appendChild(P(160, 3200, 'translate3d(-1800px,-1px,0) rotateX(90deg)', 'background:#1e293b;border:3px solid #0f172a;'));
-    world.appendChild(P(160, 3200, 'translate3d(1800px,-1px,0) rotateX(90deg)', 'background:#1e293b;border:3px solid #0f172a;'));
+    world.appendChild(P(5600, 180, 'translate3d(0,-1px,-2200px) rotateX(90deg)', roadCss));
+    world.appendChild(P(5600, 180, 'translate3d(0,-1px,2200px) rotateX(90deg)', roadCss));
+    world.appendChild(P(180, 4800, 'translate3d(-2600px,-1px,0) rotateX(90deg)', 'background:#1e293b;border:3px solid #0f172a;'));
+    world.appendChild(P(180, 4800, 'translate3d(2600px,-1px,0) rotateX(90deg)', 'background:#1e293b;border:3px solid #0f172a;'));
 
     // Pista de Aterrizaje del Aeropuerto
-    world.appendChild(P(380, 1100, 'translate3d(-1550px,-2px,1200px) rotateX(90deg) rotateZ(15deg)',
+    world.appendChild(P(420, 1250, 'translate3d(-2250px,-2px,1750px) rotateX(90deg) rotateZ(10deg)',
       'background:#0f172a;border:4px solid #38bdf8;box-sizing:border-box;' +
       'background-image:repeating-linear-gradient(0deg, #fff 0 40px, rgba(0,0,0,0) 40px 90px);'));
 
     // Helipuerto del Hospital
-    world.appendChild(P(220, 220, 'translate3d(-1350px,-2px,0) rotateX(90deg)',
+    world.appendChild(P(240, 240, 'translate3d(-2250px,-2px,0) rotateX(90deg)',
       'background:#1e293b;border:4px solid #ef4444;border-radius:50%;display:flex;align-items:center;justify-content:center;' +
-      'font-family:\'Baloo 2\',sans-serif;font-weight:900;font-size:72px;color:#fff;'));
+      'font-family:\'Baloo 2\',sans-serif;font-weight:900;font-size:76px;color:#fff;'));
 
     // Fuente central
     world.appendChild(P(300, 300, 'translate3d(0,-46px,0) rotateX(90deg)',
@@ -3830,11 +3941,15 @@ class Component extends DCLogic {
       world.appendChild(el);
     });
 
-    // Incursiones Disney (Mickey, Donald, Goofy)
+    // Incursiones Disney (Mickey, Donald, Goofy) con sprites vectoriales y patrullaje vivo
     DISNEY_INCURSIONS.forEach((d) => {
-      const el = S(d.x, 0, d.z, 150, d.emoji, 'cursor:pointer;', 100, 150);
+      let spriteSvg = '';
+      if (d.id === 'mickey') spriteSvg = makeMickeySpriteSvg();
+      else if (d.id === 'donald') spriteSvg = makeDonaldSpriteSvg();
+      else if (d.id === 'goofy') spriteSvg = makeGoofySpriteSvg();
+      const el = S(d.cx, 0, d.cz, 175, spriteSvg, 'cursor:pointer;', 105, 175);
       el.addEventListener('click', () => this.talkToDisney(d));
-      this.npcEls.push({ el, cfg: { ...d, isDisney: true } });
+      this.disneyEls.push({ el, cfg: d });
       world.appendChild(el);
     });
 
@@ -4015,17 +4130,17 @@ class Component extends DCLogic {
   updateSpatialAudio = (cam) => {
     if (soundMutedGlobal || this.state.soundMuted) return;
     const zones = [
-      { key: 'school', x: -1500, z: -600, r: 560 },
-      { key: 'airport', x: -1250, z: 1200, r: 560 },
-      { key: 'fire', x: 1250, z: 1200, r: 560 },
-      { key: 'hospital', x: -1100, z: 0, r: 540 },
-      { key: 'church', x: -650, z: 600, r: 520 },
-      { key: 'teatro', x: 450, z: -600, r: 520 },
-      { key: 'carabineros', x: -850, z: 1150, r: 520 },
-      { key: 'banco', x: -500, z: -1150, r: 520 },
-      { key: 'fountain', x: 0, z: 0, r: 420 },
-      { key: 'nature', x: -400, z: 1150, r: 500 },
-      { key: 'disney', x: 850, z: 1150, r: 520 }
+      { key: 'school', x: -1900, z: -900, r: 600 },
+      { key: 'airport', x: -1900, z: 1750, r: 650 },
+      { key: 'fire', x: 1900, z: 1750, r: 600 },
+      { key: 'hospital', x: -1900, z: 0, r: 600 },
+      { key: 'church', x: -900, z: 850, r: 550 },
+      { key: 'teatro', x: 450, z: -900, r: 550 },
+      { key: 'carabineros', x: -1200, z: 1750, r: 550 },
+      { key: 'banco', x: -850, z: -1700, r: 550 },
+      { key: 'fountain', x: 0, z: 0, r: 450 },
+      { key: 'nature', x: -500, z: 1750, r: 550 },
+      { key: 'disney', x: 1200, z: 1750, r: 550 }
     ];
 
     let bestZone = null;
@@ -4148,14 +4263,23 @@ class Component extends DCLogic {
       el.style.transform = 'translate3d(' + el.dataset.x + 'px,' + el.dataset.y + 'px,' + el.dataset.z + 'px) ' + face;
     }
 
-    // Tráfico de vehículos continuo y fluido en las 4 avenidas perimetrales (13200 px)
+    // Tráfico de vehículos continuo y fluido en las 4 avenidas perimetrales amplias (19200 px)
     for (let i = 0; i < this.vehicleEls.length; i++) {
       const v = this.vehicleEls[i], c = v.cfg;
-      const dist = (c.offset + cam.t * c.speed) % 13200;
+      const dist = (c.offset + cam.t * c.speed) % 19200;
       const p = getPerimeterRoadPos(dist);
       v.el.dataset.x = p.x;
       v.el.dataset.z = p.z;
       v.el.dataset.y = -8;
+    }
+
+    // Incursiones Disney animadas caminando y patrullando la ciudad
+    for (let i = 0; i < this.disneyEls.length; i++) {
+      const d = this.disneyEls[i], c = d.cfg;
+      const a = c.ph + cam.t * c.sp;
+      d.el.dataset.x = c.cx + Math.cos(a) * c.rx;
+      d.el.dataset.z = c.cz + Math.sin(a) * c.rz;
+      d.el.dataset.y = -Math.abs(Math.sin(a * 8)) * 12;
     }
 
     // Estudiantes jugando y caminando por el patio del colegio
@@ -4201,15 +4325,15 @@ class Component extends DCLogic {
       this.miniDot.style.transform = 'rotate(' + (180 - cam.yaw) + 'deg)';
     }
 
-    // Check interaction targets: Building door, Student, NPC, Disney, Walker, Fountain
+    // Check interaction targets: Building door, Student, Disney, NPC, Walker, Fountain
     let targetType = null;
     let targetId = null;
     let targetData = null;
     let promptText = '';
     let locText = '📍 Gran Ciudad de Jujalandia';
 
-    // 1. Buildings (19 edificios)
-    let bestD = 540;
+    // 1. Buildings (19 edificios con puertas holgadas)
+    let bestD = 580;
     for (let i = 0; i < W3D_BUILDINGS.length; i++) {
       const b = W3D_BUILDINGS[i];
       const front = b.z < 0 ? 1 : -1;
@@ -4244,7 +4368,26 @@ class Component extends DCLogic {
       }
     }
 
-    // 3. NPCs, Disney y Amigos Registrados
+    // 3. Incursiones Disney (Mickey, Donald, Goofy)
+    if (!targetType) {
+      for (let i = 0; i < this.disneyEls.length; i++) {
+        const dObj = this.disneyEls[i];
+        const d = dObj.cfg;
+        const dx = parseFloat(dObj.el.dataset.x) || d.cx;
+        const dz = parseFloat(dObj.el.dataset.z) || d.cz;
+        const vx = dx - cam.x, vz = dz - cam.z;
+        const dist = Math.sqrt(vx * vx + vz * vz);
+        if (dist < 340 && (vx / (dist || 1)) * fx + (vz / (dist || 1)) * fz > 0.35) {
+          targetType = 'disney';
+          targetData = d;
+          promptText = d.emoji + '  Hablar con ' + d.name + ' (' + d.role + ')  ⏎';
+          locText = '📍 ' + d.name + ' en la Ciudad';
+          break;
+        }
+      }
+    }
+
+    // 4. NPCs y Amigos Registrados
     if (!targetType) {
       let bestNpcD = 380;
       for (let i = 0; i < this.npcEls.length; i++) {
@@ -4254,7 +4397,7 @@ class Component extends DCLogic {
         const d = Math.sqrt(vx * vx + vz * vz);
         if (d < bestNpcD && (vx / (d || 1)) * fx + (vz / (d || 1)) * fz > 0.4) {
           bestNpcD = d;
-          targetType = npc.isDisney ? 'disney' : (npc.isFriend ? 'friend' : 'npc');
+          targetType = npc.isFriend ? 'friend' : 'npc';
           targetData = npc;
           const em = npc.avatar || npc.emoji || '🍅';
           promptText = em + '  Hablar con ' + npc.name + ' (' + (npc.role || 'Visitante') + ')  ⏎';
